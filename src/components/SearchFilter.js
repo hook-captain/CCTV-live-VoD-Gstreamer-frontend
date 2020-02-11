@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-
-import SearchIcon from "@mui/icons-material/Search";
+import { useDispatch, useSelector } from "react-redux";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import {
   TextField,
@@ -11,75 +9,98 @@ import {
   InputLabel,
   FormControl,
   Grid,
+  Button,
 } from "@mui/material";
 import { getThumbnail } from "../actions/action";
 
 export default function SearchFilter() {
-  const [duration, setDuration] = useState("");
-  const [starttime, setStarttime] = useState("2017-05-24T10:30");
-  const [endtime, setEndtime] = useState("2017-05-24T10:30");
+  const { camera } = useSelector((state) => state.camera);
+  const [duration, setDuration] = useState(5);
+
+  const DateTime = (Date) => {
+    let result,
+      Month,
+      Day,
+      Hour,
+      Min,
+      CurrentTime = Date;
+      
+    if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
+    else Month = `${CurrentTime.getMonth() + 1}`;
+
+    if (CurrentTime.getDate() < 10) Day = `0${CurrentTime.getDate()}`;
+    else Day = `${CurrentTime.getDate()}`;
+
+    if (CurrentTime.getHours() < 10) Hour = `0${CurrentTime.getHours()}`;
+    else Hour = `${CurrentTime.getHours()}`;
+
+    if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
+    else Min = `${CurrentTime.getMinutes()}`;
+
+    result = `${CurrentTime.getFullYear()}-${Month}-${Day}T${Hour}:${Min}`;
+    return result;
+  };
+
+  const getDatetime = () => {
+    let CurrentTime = new Date();
+    CurrentTime.setDate(CurrentTime.getDate() - 3);
+    return DateTime(CurrentTime);
+  };
+  const [starttime, setStarttime] = useState(`${getDatetime()}`);
+  const [endtime, setEndtime] = useState(`${DateTime(new Date())}`);
 
   const handleChange = (e) => {
     setDuration(e.target.value);
   };
   const setStarttimeChange = (e) => {
-    setStarttime(e.target.value)
+    setStarttime(e.target.value);
   };
   const setEndtimeChange = (e) => {
-    setEndtime(e.target.value)
+    setEndtime(e.target.value);
   };
   const dispatch = useDispatch();
   //const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
 
-  const cameraid = 1;
-
   const getThumbnailClick = () => {
-    dispatch(getThumbnail(cameraid, starttime, endtime, duration));
+    dispatch(getThumbnail(camera.id, starttime, endtime, duration));
   };
 
   return (
     <Grid style={{ marginTop: 15 }} container spacing={2}>
-      <Grid item xs={1}>
-        <SearchIcon
-          fontSize="large"
-          style={{ color: "rgb(2, 151, 253)", marginTop: 15 }}
-          onClick={() => getThumbnailClick()}
-        />
-        </Grid>
-        <Grid item xs={3}>
+      <Grid item xs={3}>
         <TextField
           id="datetime-local"
           label="Start Time"
           type="datetime-local"
-          sx={{ width: 250 }}
+          sx={{ width: "70%" }}
           InputLabelProps={{
             shrink: true,
           }}
           value={starttime}
-          onChange={(e)=>setStarttimeChange(e)}
+          onChange={(e) => setStarttimeChange(e)}
         />
-        </Grid>
-        <Grid item xs={1}>
+      </Grid>
+      <Grid item xs={1}>
         <ArrowForwardIcon
           fontSize="large"
-          style={{ color: "rgb(2, 151, 253)", marginTop:10 }}
+          style={{ color: "rgb(2, 151, 253)", marginTop: 10 }}
         />
-        </Grid>
-        <Grid item xs={3}>
+      </Grid>
+      <Grid item xs={3}>
         <TextField
           id="datetime-local"
           label="End Time"
           type="datetime-local"
-          sx={{ width: 250 }}
+          sx={{ width: "70%" }}
           InputLabelProps={{
             shrink: true,
           }}
           value={endtime}
-          onChange={(e)=>setEndtimeChange(e)}
+          onChange={(e) => setEndtimeChange(e)}
         />
       </Grid>
-      <Grid item xs={4}>
-        <Box sx={{ width: 200 }}>
+      <Grid item xs={2}>
+        <Box sx={{ width: "80%" }}>
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">Clip Duration</InputLabel>
             <Select
@@ -97,6 +118,11 @@ export default function SearchFilter() {
             </Select>
           </FormControl>
         </Box>
+      </Grid>
+      <Grid item xs={1} marginTop={1}>
+        <Button variant="outlined" onClick={() => getThumbnailClick()}>
+          Search
+        </Button>
       </Grid>
     </Grid>
   );

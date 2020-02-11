@@ -1,54 +1,76 @@
-import { ImageList, Grid, Input, NativeSelect, Paper } from "@mui/material";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import "./App.css";
+import ReactHlsPlayer from "react-hls-player";
+
+import { ImageList, Grid, Input, Paper } from "@mui/material";
+
+import "./public/App.css";
 
 import CameraListItem from "./components/CameraListItem";
 import SearchFilter from "./components/SearchFilter";
 import Thumbnails from "./components/Thumbnails";
-import ReactPlayer from "react-player";
+import Header from "./components/Header";
 
-import { getCameras } from "./actions/action";
-
-import video from "./sample.mp4";
+import { GetLiveVideo, getCameras, setCamera } from "./actions/action";
 
 function App() {
   const dispatch = useDispatch();
-  const [id, setID] = useState("-1");
-  const cameras = useSelector((state) => state.camera.cameras);
+  const { camera, cameras } = useSelector((state) => state.camera);
+  const {mode, video} = useSelector((state) => state.video);
+  const searchCameras = (value) => {
+    dispatch(getCameras(value));
+  };
+  const getSelectedLiveVideo = (target) => {
+    if (target.id) {
+      dispatch(setCamera(cameras[target.id]));
+      dispatch(GetLiveVideo(camera.id));
+    }
+  };
+
   useState(() => {
-    dispatch(getCameras());
+    dispatch(getCameras(""));
   }, []);
+
   return (
     <div className="App">
+      <Header />
       <Grid container spacing={2}>
         <Grid item xs={3}>
-          <div style={{ marginLeft: "10%" }}>
+          <div style={{ marginLeft: "10%", marginTop: "5%" }}>
             <Paper
               sx={{
                 paddingLeft: 2,
                 paddingTop: 2,
-                maxWidth: 300,
+                paddingBottom: 2,
+                maxWidth: "76%",
                 maxHeight: 100,
                 backgroundColor: (theme) => "#fff",
               }}
             >
-              <Input placeholder="Search" />{" "}
-              <NativeSelect>
-                <option>Califonia</option>
-              </NativeSelect>
+              <Input
+                style={{ width: "95%" }}
+                placeholder="Search"
+                onChange={(e) => searchCameras(e.target.value)}
+              />{" "}
             </Paper>
-            <ImageList sx={{ width: "85%", height: 850 }} cols={1}>
-              {cameras.map((item) => {
+            <ImageList sx={{ width: "85%", maxHeight: 720 }} cols={1}>
+              {cameras.map((item, index) => {
                 return (
-                  <div key={item.id} onClick={(e) => setID(e.target.id)}>
+                  <div
+                    key={index}
+                    onClick={(e) => {
+                      getSelectedLiveVideo(e.target);
+                    }}
+                  >
                     <CameraListItem
-                      selected={id}
-                      id={item.id}
+                      selected={camera.id}
+                      id={index}
+                      self={item.id}
                       name={item.name}
                       location={item.location}
-                      conn={item.conn}
+                      conn={item.online}
+                      image={item.thumbnail}
                     />
                   </div>
                 );
@@ -60,7 +82,14 @@ function App() {
           <SearchFilter />
           <Thumbnails />
           <div className="videoview">
-            <ReactPlayer url={video} width={800} height={450} controls />
+          <div className="Modetext">{mode === "LIVE" ? "Live Video Mode" : "Vod Video Mode"}</div>
+            <ReactHlsPlayer
+              src={mode === "VOD" ? video : ""}
+              autoPlay={true}
+              controls={true}
+              width="55%"
+              height="auto"
+            />
           </div>
         </Grid>
       </Grid>

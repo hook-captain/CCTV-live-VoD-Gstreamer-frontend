@@ -5,9 +5,8 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import ButtonBase from "@mui/material/ButtonBase";
 
-import online from "./badge.png";
-import offline from "./badge-off.png";
-import img from "./WINDOWS.jpg";
+import online from "../public/badge.png";
+import offline from "../public/badge-off.png";
 
 const Img = styled("img")({
   margin: "auto",
@@ -16,7 +15,15 @@ const Img = styled("img")({
   maxHeight: "100%",
 });
 
-export default function ComplexGrid({ selected, id, name, location, conn }) {
+export default function ComplexGrid({
+  selected,
+  id,
+  self,
+  name,
+  location,
+  conn,
+  image,
+}) {
   return (
     <Paper
       sx={{
@@ -30,19 +37,23 @@ export default function ComplexGrid({ selected, id, name, location, conn }) {
         <Grid item>
           <ButtonBase
             sx={
-              selected.toString() === id.toString()
-                ? { width: 150, height: 80, border: "3px solid rgb(2, 151, 253)" }
+              selected.toString() === self.toString()
+                ? {
+                    width: 150,
+                    height: 80,
+                    border: "3px solid rgb(2, 151, 253)",
+                  }
                 : { width: 150, height: 80 }
             }
           >
             <div className="container">
               <Img
-                id={id}
+                id={id}              
                 alt="complex"
                 sx={{ width: 150, height: 80 }}
-                src={img}
+                src={image}
               />
-              {selected.toString() === id.toString() ? (
+              {selected.toString() === self.toString() ? (
                 <div className="tag" style={{ marginTop: "37.5%" }}>
                   {" "}
                   ✓ Selected
@@ -73,7 +84,7 @@ export default function ComplexGrid({ selected, id, name, location, conn }) {
                     width={10}
                     height={10}
                   ></img>{" "}
-                  {conn === true ? (
+                  {conn === "YES" ? (
                     <font color="#33cc33">Online</font>
                   ) : (
                     <font color="grey">Offline</font>

@@ -1,4 +1,4 @@
-import { GET_CAMERA_LIST } from "../types";
+import { GET_CAMERA_LIST, SET_CAMERA_SELECT } from "../types";
 
 const initialState = {
   camera: {},
@@ -11,7 +11,13 @@ const camera = (state = initialState, action) => {
       return {
         ...state,
         cameras: action.payload,
+        camera: action.payload[0]
       };
+    case SET_CAMERA_SELECT:
+      return {
+        ...state,
+        camera: action.payload
+      }
     default:
       return state;
   }
