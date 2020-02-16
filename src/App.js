@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import ReactHlsPlayer from "react-hls-player";
-
 import { ImageList, Grid, Input, Paper } from "@mui/material";
 
 import "./public/App.css";
@@ -11,13 +9,14 @@ import CameraListItem from "./components/CameraListItem";
 import SearchFilter from "./components/SearchFilter";
 import Thumbnails from "./components/Thumbnails";
 import Header from "./components/Header";
+import HLSPlayer from "./components/HLSPlayer";
 
 import { GetLiveVideo, getCameras, setCamera } from "./actions/action";
 
 function App() {
   const dispatch = useDispatch();
   const { camera, cameras } = useSelector((state) => state.camera);
-  const {mode, video} = useSelector((state) => state.video);
+
   const searchCameras = (value) => {
     dispatch(getCameras(value));
   };
@@ -81,16 +80,7 @@ function App() {
         <Grid item xs={9}>
           <SearchFilter />
           <Thumbnails />
-          <div className="videoview">
-          <div className="Modetext">{mode === "LIVE" ? "Live Video Mode" : "Vod Video Mode"}</div>
-            <ReactHlsPlayer
-              src={mode === "VOD" ? video : ""}
-              autoPlay={true}
-              controls={true}
-              width="55%"
-              height="auto"
-            />
-          </div>
+          <HLSPlayer/>
         </Grid>
       </Grid>
     </div>

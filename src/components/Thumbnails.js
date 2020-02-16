@@ -1,26 +1,39 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useState } from "react";
 import Thumbnail from "./Thumbnail";
 import ImageList from "@mui/material/ImageList";
 import "../public/Thumbnail.css";
 import { Divider } from "@mui/material";
 import { useSelector } from "react-redux";
-import { GetVodVideo, selectThumbnail } from "../actions/action";
 
 export default function Thumbnails() {
-  const dispatch = useDispatch();
   const { mode } = useSelector((state) => state.video);
-  const { camera } = useSelector((state) => state.camera);
   const {selected, thumbnails} = useSelector((state) => state.thumbnail);
-  const getSelectedVodVideo = (id) => {
-    if (id) {
-      let start = thumbnails[id][0].time;
-      let end = thumbnails[id][thumbnails[id].length - 1].time;
-      dispatch(GetVodVideo(camera.id, start, end));
-      dispatch(selectThumbnail(id));
-    }
+  const [showtime, setShowtime] = useState(new Date());  
+  const [status, setStatus] = useState(0); 
+
+  const DateTime = (Dates) => {
+    let result,
+      Month,
+      Day,
+      Hour,
+      Min,
+      CurrentTime = Dates;
+      
+    if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
+    else Month = `${CurrentTime.getMonth() + 1}`;
+
+    if (CurrentTime.getDate() < 10) Day = `0${CurrentTime.getDate()}`;
+    else Day = `${CurrentTime.getDate()}`;
+
+    if (CurrentTime.getHours() < 10) Hour = `0${CurrentTime.getHours()}`;
+    else Hour = `${CurrentTime.getHours()}`;
+
+    if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
+    else Min = `${CurrentTime.getMinutes()}`;
+
+    result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}:00 ~`;
+    return result;
   };
-  //const vodVideo = useSelector((state) => state.VodVideo.VodVideos);
 
   return mode === "VOD" ? (
     <div>
@@ -35,9 +48,6 @@ export default function Thumbnails() {
           return (
             <div
               key={index}
-              onClick={(e) => {
-                getSelectedVodVideo(e.target.id);
-              }}
             >
               <Thumbnail
                 id={index}

@@ -28,7 +28,7 @@ export default function ComplexGrid({
     <Paper
       sx={{
         p: 2,
-        maxWidth: 300,
+        maxWidth: "85%",
         maxHeight: 100,
         backgroundColor: (theme) => "#fff",
       }}
@@ -39,18 +39,18 @@ export default function ComplexGrid({
             sx={
               selected.toString() === self.toString()
                 ? {
-                    width: 150,
+                    width: "100%",
                     height: 80,
                     border: "3px solid rgb(2, 151, 253)",
                   }
-                : { width: 150, height: 80 }
+                : { width: "96.5%", height: 80 }
             }
           >
             <div className="container">
               <Img
                 id={id}              
                 alt="complex"
-                sx={{ width: 150, height: 80 }}
+                sx={{ width: "100%", height: 80 }}
                 src={image}
               />
               {selected.toString() === self.toString() ? (
@@ -80,7 +80,7 @@ export default function ComplexGrid({
                   <img
                     alt="alt"
                     prop="prop"
-                    src={conn === true ? online : offline}
+                    src={conn === "YES" ? online : offline}
                     width={10}
                     height={10}
                   ></img>{" "}

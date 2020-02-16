@@ -8,14 +8,18 @@ import {
   Select,
   InputLabel,
   FormControl,
-  Grid,
-  Button,
+  Grid
 } from "@mui/material";
-import { getThumbnail } from "../actions/action";
+import { getThumbnail, GetVodVideo } from "../actions/action";
+import { START_TIME_GROUP } from "../redux/types";
 
 export default function SearchFilter() {
   const { camera } = useSelector((state) => state.camera);
+  const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
+  const [startTime, setstartTime] = useState(new Date());
+  const video = useSelector((state) => state.video); 
   const [duration, setDuration] = useState(5);
+  const dispatch = useDispatch();
 
   const DateTime = (Date) => {
     let result,
@@ -49,21 +53,35 @@ export default function SearchFilter() {
   const [starttime, setStarttime] = useState(`${getDatetime()}`);
   const [endtime, setEndtime] = useState(`${DateTime(new Date())}`);
 
+  const getdefaultVod = (camera_id) => {
+    if(video.mode === "VOD"){
+      let start = thumbnails[0][0].time
+      let end = thumbnails[thumbnails.length-1][thumbnails[thumbnails.length-1].length - 2].time
+      if (video.video){
+        dispatch(GetVodVideo(camera_id, start, end));
+        let startTime = start;
+        setstartTime(startTime);
+        dispatch({type: START_TIME_GROUP, payload: startTime});
+      } 
+    }
+  }  
+
   const handleChange = (e) => {
     setDuration(e.target.value);
+    dispatch(getThumbnail(camera.id, starttime, endtime, e.target.value));
+    getdefaultVod(camera.id)
   };
   const setStarttimeChange = (e) => {
     setStarttime(e.target.value);
+    dispatch(getThumbnail(camera.id, e.target.value, endtime, duration));
+    getdefaultVod(camera.id)
   };
   const setEndtimeChange = (e) => {
     setEndtime(e.target.value);
+    dispatch(getThumbnail(camera.id, starttime, e.target.value, duration));
+    getdefaultVod(camera.id)
   };
-  const dispatch = useDispatch();
-  //const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
 
-  const getThumbnailClick = () => {
-    dispatch(getThumbnail(camera.id, starttime, endtime, duration));
-  };
 
   return (
     <Grid style={{ marginTop: 15 }} container spacing={2}>
@@ -108,7 +126,7 @@ export default function SearchFilter() {
               id="demo-simple-select"
               value={duration}
               label="Clip Duration"
-              onChange={handleChange}
+              onChange={(e) => handleChange(e)}
             >
               <MenuItem value={1}>1 minute</MenuItem>
               <MenuItem value={5}>5 minutes</MenuItem>
@@ -118,11 +136,6 @@ export default function SearchFilter() {
             </Select>
           </FormControl>
         </Box>
-      </Grid>
-      <Grid item xs={1} marginTop={1}>
-        <Button variant="outlined" onClick={() => getThumbnailClick()}>
-          Search
-        </Button>
       </Grid>
     </Grid>
   );
