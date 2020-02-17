@@ -34,6 +34,27 @@ export default function Thumbnails() {
     result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}:00 ~`;
     return result;
   };
+  // let defaultTime , count = 0;
+  // const timeArray = new Object();
+
+  // if(thumbnails[0])
+  //   for(let i=0;i<thumbnails.length;i++)
+  //     {
+  //       if(DateTime(new Date(thumbnails[i][0].time)) != defaultTime)
+  //         {
+  //           count = 1;
+  //           defaultTime = DateTime(new Date(thumbnails[i][0].time))
+  //           timeArray.defaultTime = count;
+  //         }
+  //       else
+  //       {
+  //         count = count + 1;
+  //         timeArray.defaultTime = count;
+  //       }
+  //     }
+
+  // console.log(timeArray)
+
 
   return mode === "VOD" ? (
     <div>
@@ -45,10 +66,14 @@ export default function Thumbnails() {
       <ImageList sx={{ width: "98%", maxHeight: 280 }} cols={6}>
         {thumbnails.map((cell, index) => {
           let item = cell[0];
+          let truse = 0;
+          if ((index>0)&&(DateTime(new Date(thumbnails[index][0].time)) == DateTime(new Date(thumbnails[index-1][0].time))))
+            truse = 1;
           return (
             <div
               key={index}
             >
+            {truse===0?<div style={{color : "blue"}}>{DateTime(new Date(item.time))}</div>:<div style={{marginBottom:20}}></div>}
               <Thumbnail
                 id={index}
                 selected={selected}

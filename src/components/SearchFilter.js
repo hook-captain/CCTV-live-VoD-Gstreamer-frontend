@@ -50,6 +50,7 @@ export default function SearchFilter() {
     CurrentTime.setDate(CurrentTime.getDate() - 3);
     return DateTime(CurrentTime);
   };
+
   const [starttime, setStarttime] = useState(`${getDatetime()}`);
   const [endtime, setEndtime] = useState(`${DateTime(new Date())}`);
 
@@ -69,7 +70,7 @@ export default function SearchFilter() {
   const handleChange = (e) => {
     setDuration(e.target.value);
     dispatch(getThumbnail(camera.id, starttime, endtime, e.target.value));
-    getdefaultVod(camera.id)
+    getdefaultVod(camera.id) 
   };
   const setStarttimeChange = (e) => {
     setStarttime(e.target.value);

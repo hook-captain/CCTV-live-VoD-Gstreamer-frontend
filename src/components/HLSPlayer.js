@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     AppBar,
     Toolbar,
@@ -64,7 +64,14 @@ function HLSPlayer() {
     const dispatch = useDispatch();
     const [Datetime, setDatetime] = useState(new Date());
     const [status, setStatus] = useState(0);
-  // const playerRef = React.useRef();
+
+    const [selectState, setSelectState] = useState(0);
+    const playerRef = React.useRef(null);
+
+
+    useEffect(() => {
+            dispatch(selectThumbnail(selectState));
+    },[selectState]);
 
     const GoLiveVideo = () => {
         dispatch(GetLiveVideo(camera.id))  
@@ -72,7 +79,7 @@ function HLSPlayer() {
 
     const previousClick = () =>{
         if(mode === "VOD"){
-            if(selected>0){
+            if(selected && selected > 0){
                 let start = thumbnails[selected-1][0].time
                 let end = thumbnails[thumbnails.length-1][thumbnails[thumbnails.length-1].length - 2].time
                 dispatch(GetVodVideo(camera.id, start, end)); 
@@ -83,11 +90,13 @@ function HLSPlayer() {
 
     const nextClick = () => {
         if(mode === "VOD"){
-          if(selected < thumbnails.length-1){
-            let start = thumbnails[selected+1][0].time
-            let end = thumbnails[thumbnails.length-1][thumbnails[thumbnails.length-1].length - 2].time
-            dispatch(GetVodVideo(camera.id, start, end)); 
-            dispatch(selectThumbnail(selected+1));}
+          if(parseInt(selected) < thumbnails.length-1){
+                let start = thumbnails[parseInt(selected) + 1][0].time;
+                let end = thumbnails[thumbnails.length-1][thumbnails[thumbnails.length-1].length - 2].time;
+                dispatch(GetVodVideo(camera.id, start, end)); 
+
+                setSelectState(parseInt(selected) + 1);
+          }
         }
     }
 
@@ -103,17 +112,21 @@ function HLSPlayer() {
     // function increase() {
     //     startTime = addSeconds(startTime, 1);
     // }
-    function playVideo() {
+    function playVideo(e) {
+        // e.view.play();
+        // console.log(playerRef);
         // playerRef.current.play();
         // let status = 0;
-        // setStatus(status)
+        // setStatus(status);
       }
 
-      function pauseVideo() {
-        // playerRef.current.pause();
-        // let status = 1;
-        // setStatus(status)
-      }
+  function pauseVideo() {
+    // e.view.pause();
+    // console.log(playerRef);
+    // playerRef.current.pause();
+    // let status = 1;
+    // setStatus(status);
+  }
 
 return (
     <div>
@@ -122,10 +135,9 @@ return (
             <ReactHlsPlayer
                 src={mode === "VOD" ? video : ""}
                 autoPlay={true}
-                controls={true}
+                controls={false}
                 width="50%"
                 height="auto"
-                // playerRef={playerRef}
             />
         </div>          
         <AppBar position="static" className="playcontrols">
@@ -133,12 +145,12 @@ return (
             <Grid container spacing={0}>
             <Grid item xs={4}>
                 <Typography variant="h12" sx={{ maxWidth: "25%"}}>
-                {startTime}
+                {DateTime(new Date(startTime))}
                 </Typography>
             </Grid>
             <Grid item xs={2}>
                 <SkipPreviousOutlined onClick={()=>previousClick()}/>
-                {status === 1?<PlayCircleOutlineOutlined onClick={playVideo}/>
+                {status === 1?<PlayCircleOutlineOutlined onClick={()=>playVideo()}/>
                 :<PauseCircleOutlineOutlined onClick={pauseVideo}/>}
                 <SkipNextOutlined onClick={()=>nextClick()}/>
             </Grid>
