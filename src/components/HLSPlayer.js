@@ -62,12 +62,10 @@ function HLSPlayer() {
     const startTime = useSelector((state)=>state.thumbnail.startTime)
     const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
     const dispatch = useDispatch();
-    const [Datetime, setDatetime] = useState(new Date());
     const [status, setStatus] = useState(0);
 
     const [selectState, setSelectState] = useState(0);
     const playerRef = React.useRef(null);
-
 
     useEffect(() => {
             dispatch(selectThumbnail(selectState));
@@ -112,32 +110,31 @@ function HLSPlayer() {
     // function increase() {
     //     startTime = addSeconds(startTime, 1);
     // }
-    function playVideo(e) {
-        // e.view.play();
-        // console.log(playerRef);
-        // playerRef.current.play();
-        // let status = 0;
-        // setStatus(status);
-      }
 
-  function pauseVideo() {
-    // e.view.pause();
-    // console.log(playerRef);
-    // playerRef.current.pause();
-    // let status = 1;
-    // setStatus(status);
-  }
+    function playVideo(e) {
+        playerRef.current.play();
+        let status = 0;
+        setStatus(status);
+    }
+
+    function pauseVideo() {
+        playerRef.current.pause();
+        let status = 1;
+        setStatus(status);
+    }
 
 return (
     <div>
         <div className="videoview">
             <div className="Modetext">{mode === "LIVE" ? "Live Video Mode" : "Vod Video Mode"}</div>
             <ReactHlsPlayer
+                key={`${selected}`+ `${startTime}`}
                 src={mode === "VOD" ? video : ""}
                 autoPlay={true}
                 controls={false}
                 width="50%"
                 height="auto"
+                playerRef={playerRef}
             />
         </div>          
         <AppBar position="static" className="playcontrols">
@@ -162,10 +159,11 @@ return (
             </Grid>
             <Grid item xs={3}>
                 <Button variant="contained" color="success" onClick={GoLiveVideo}>Live Video</Button>
-            </Grid></Grid>:<Grid container spacing={0}>
+            </Grid></Grid>
+            :<Grid container spacing={0}>
             <Grid item xs={5}>
                 <Typography variant="h12" sx={{ maxWidth: "25%"}}>
-                {DateTime(Datetime)}
+                {DateTime(new Date())}
                 </Typography>
             </Grid>
             <Grid item xs={4}>
