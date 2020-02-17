@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import {
@@ -19,7 +19,19 @@ export default function SearchFilter() {
   const [startTime, setstartTime] = useState(new Date());
   const video = useSelector((state) => state.video); 
   const [duration, setDuration] = useState(5);
+  const [cameraID, setCameraID] = useState(0);
   const dispatch = useDispatch();
+
+  useEffect(()=>{
+      if(thumbnails.length){
+        let start = thumbnails[0][0].time
+      let end = thumbnails[thumbnails.length-1][thumbnails[thumbnails.length-1].length - 2].time
+      dispatch(GetVodVideo(cameraID, start, end));
+      let startTime = start;
+      setstartTime(startTime);
+      dispatch({type: START_TIME_GROUP, payload: startTime});
+      }
+  },[thumbnails]);
 
   const DateTime = (Date) => {
     let result,
@@ -55,16 +67,7 @@ export default function SearchFilter() {
   const [endtime, setEndtime] = useState(`${DateTime(new Date())}`);
 
   const getdefaultVod = (camera_id) => {
-    if(video.mode === "VOD"){
-      let start = thumbnails[0][0].time
-      let end = thumbnails[thumbnails.length-1][thumbnails[thumbnails.length-1].length - 2].time
-      if (video.video){
-        dispatch(GetVodVideo(camera_id, start, end));
-        let startTime = start;
-        setstartTime(startTime);
-        dispatch({type: START_TIME_GROUP, payload: startTime});
-      } 
-    }
+      setCameraID(camera_id);
   }  
 
   const handleChange = (e) => {
@@ -72,15 +75,17 @@ export default function SearchFilter() {
     dispatch(getThumbnail(camera.id, starttime, endtime, e.target.value));
     getdefaultVod(camera.id) 
   };
+
   const setStarttimeChange = (e) => {
     setStarttime(e.target.value);
     dispatch(getThumbnail(camera.id, e.target.value, endtime, duration));
-    getdefaultVod(camera.id)
+    getdefaultVod(camera.id);
   };
+
   const setEndtimeChange = (e) => {
     setEndtime(e.target.value);
     dispatch(getThumbnail(camera.id, starttime, e.target.value, duration));
-    getdefaultVod(camera.id)
+    getdefaultVod(camera.id);
   };
 
 
