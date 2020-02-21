@@ -87,7 +87,6 @@ export default function SearchFilter() {
   };
 
   const setStarttimeChange = (e) => {
-    console.log("-----starttime-------", e.target.value, endtime);
     setStarttime(e.target.value);
     if (e.target.value <= endtime) {
       dispatch(getThumbnail(camera.id, e.target.value, endtime, duration));
@@ -99,7 +98,6 @@ export default function SearchFilter() {
   };
 
   const setEndtimeChange = (e) => {
-    console.log("-----endtime-------",starttime,  e.target.value);
     setEndtime(e.target.value);
     if (e.target.value >= starttime) {
       dispatch(getThumbnail(camera.id, starttime, e.target.value, duration));

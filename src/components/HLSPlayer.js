@@ -20,6 +20,7 @@ import {
 
 import ReactHlsPlayer from "react-hls-player";
 import { useDispatch, useSelector } from "react-redux";
+import { START_TIME_GROUP } from "../redux/types";
 import { GetVodVideo, selectThumbnail, GetLiveVideo } from "../actions/action";
 
 import "../public/App.css";
@@ -62,11 +63,10 @@ function HLSPlayer() {
     const dispatch = useDispatch();
     const [status, setStatus] = useState(0);
     const [timerID, setTimerID] = useState(0);
-    // const [timestatus, settimestatus] = useState(1);
     const [selectState, setSelectState] = useState(0);
-    const [playerTime, setPlayerTime] = useState(new Date());
     const playerRef = React.useRef(null);
     const [time, setTime] = useState(new Date());
+    let started = new Date(startTime);
 
     useEffect(() => {
         dispatch(selectThumbnail(selectState));
@@ -74,16 +74,13 @@ function HLSPlayer() {
 
     useEffect(() => {
         if (startTime) {
-            setPlayerTime(new Date(startTime));
-
             if (timerID > 0) {
                 clearInterval(timerID);
             }
             let timer_id = setInterval(increase, 1000)
             setTimerID(timer_id);
         }
-
-    }, [startTime])
+    }, [startTime]);
 
     const GoLiveVideo = () => {
         dispatch(GetLiveVideo(camera.id))
@@ -94,6 +91,7 @@ function HLSPlayer() {
             if (selected && selected > 0) {
                 let start = thumbnails[selected - 1][0].time
                 let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
+                dispatch({ type: START_TIME_GROUP, payload: start });
                 dispatch(GetVodVideo(camera.id, start, end));
                 dispatch(selectThumbnail(selected - 1));
             }
@@ -105,8 +103,8 @@ function HLSPlayer() {
             if (parseInt(selected) < thumbnails.length - 1) {
                 let start = thumbnails[parseInt(selected) + 1][0].time;
                 let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time;
+                dispatch({ type: START_TIME_GROUP, payload: start });
                 dispatch(GetVodVideo(camera.id, start, end));
-
                 setSelectState(parseInt(selected) + 1);
             }
         }
@@ -118,22 +116,17 @@ function HLSPlayer() {
     }
 
     function increase() {
-        // if (timestatus==1)
-        // console.log('--------increase----------', new Date(addSeconds(playerTime, 1)));
-        setTime(new Date(addSeconds(playerTime, 1)));
-        // setPlayerTime(new Date(addSeconds(playerTime, 1)));
+        setTime(new Date(addSeconds(started, 1)));
     }
 
 
-    function playVideo(e) {
-        // settimestatus(1);
+    function playVideo() {
         playerRef.current.play();
         let status = 0;
         setStatus(status);
     }
 
     function pauseVideo() {
-        // settimestatus(0);
         playerRef.current.pause();
         let status = 1;
         setStatus(status);
