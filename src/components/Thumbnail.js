@@ -8,7 +8,7 @@ import { GetVodVideo, selectThumbnail } from "../actions/action";
 
 export default function Thumbnail({ id, selected, url, time, camera_id }) {
 
-  const thumbnails = useSelector((state) => state.thumbnail.thumbnails);  
+  const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
   const thumbnail = thumbnails[id]
   const over = useSelector((state) => state.thumbnail.overed);
   const [sub_URL, setSubURL] = useState(url);
@@ -37,14 +37,14 @@ export default function Thumbnail({ id, selected, url, time, camera_id }) {
 
   const handleMouseover = (e) => {
     let over = e.target.id;
-    dispatch({type: OVER_THUMBNAIL_GROUP, payload: over});
+    dispatch({ type: OVER_THUMBNAIL_GROUP, payload: over });
   }
 
   const getSelectedVodVideo = (id) => {
-    if(id){
-      let end = thumbnails[thumbnails.length-1][thumbnails[thumbnails.length-1].length - 2].time
+    if (id) {
+      let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
       dispatch(GetVodVideo(camera_id, startTime, end));
-      dispatch({type: START_TIME_GROUP, payload: startTime});
+      dispatch({ type: START_TIME_GROUP, payload: startTime });
       dispatch(selectThumbnail(id));
     }
   };
@@ -55,9 +55,9 @@ export default function Thumbnail({ id, selected, url, time, camera_id }) {
     );
     if (number < 0)
       number = 0;
-    if(number > thumbnail.length-1)
-      number = thumbnail.length-1;
-    let arrow = e.nativeEvent.offsetX/e.target.width*100;
+    if (number > thumbnail.length - 1)
+      number = thumbnail.length - 1;
+    let arrow = e.nativeEvent.offsetX / e.target.width * 100;
     let subURL = thumbnail ? thumbnail[number].path : url;
     let subTime = thumbnail ? thumbnail[number].time : time;
     setSubURL(subURL);
@@ -72,12 +72,12 @@ export default function Thumbnail({ id, selected, url, time, camera_id }) {
       sx={
         id.toString() === selected.toString()
           ? {
-              width: "90%",
-              height: 124,
-              border: "2px solid rgb(2, 151, 253)",
-              marginTop: 1,
-              marginLeft: 1,
-            }
+            width: "90%",
+            height: 124,
+            border: "2px solid rgb(2, 151, 253)",
+            marginTop: 1,
+            marginLeft: 1,
+          }
           : { width: "90%", height: 124, marginTop: 1, marginLeft: 1 }
       }
     >
@@ -93,21 +93,21 @@ export default function Thumbnail({ id, selected, url, time, camera_id }) {
             width="100%"
             height={120}
           />
-            <div className="viewline" style={{ marginLeft: `${arrow}%` }}>
-              <img
-                src={line}
-                alt="img"
-                id={id}
-                prop="prop"
-                style={
-                  over.toString() !== id.toString()
-                    ? { display: "none" }
-                    : { display: "" }
-                }
-                height= {120}
-                onClick={(e) => getSelectedVodVideo(e.target.id)}
-              />
-            </div>
+          <div className="viewline" style={{ marginLeft: `${arrow}%` }}>
+            <img
+              src={line}
+              alt="img"
+              id={id}
+              prop="prop"
+              style={
+                over.toString() !== id.toString()
+                  ? { display: "none" }
+                  : { display: "" }
+              }
+              height={120}
+              onClick={(e) => getSelectedVodVideo(e.target.id)}
+            />
+          </div>
           {id.toString() === selected.toString() ? (
             <div className="viewtag" style={{ marginTop: "8%" }}>
               ▶️Viewing

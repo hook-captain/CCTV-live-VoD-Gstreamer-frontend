@@ -17,21 +17,21 @@ export default function SearchFilter() {
   const { camera } = useSelector((state) => state.camera);
   const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
   const [startTime, setstartTime] = useState(new Date());
-  const video = useSelector((state) => state.video); 
+  const video = useSelector((state) => state.video);
   const [duration, setDuration] = useState(5);
   const [cameraID, setCameraID] = useState(0);
   const dispatch = useDispatch();
 
-  useEffect(()=>{
-      if(thumbnails.length){
-        let start = thumbnails[0][0].time
-      let end = thumbnails[thumbnails.length-1][thumbnails[thumbnails.length-1].length - 2].time
+  useEffect(() => {
+    if (thumbnails.length) {
+      let start = thumbnails[0][0].time
+      let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
       dispatch(GetVodVideo(cameraID, start, end));
       let startTime = start;
       setstartTime(startTime);
-      dispatch({type: START_TIME_GROUP, payload: startTime});
-      }
-  },[thumbnails]);
+      dispatch({ type: START_TIME_GROUP, payload: startTime });
+    }
+  }, [thumbnails]);
 
   const DateTime = (Date) => {
     let result,
@@ -40,7 +40,7 @@ export default function SearchFilter() {
       Hour,
       Min,
       CurrentTime = Date;
-      
+
     if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
     else Month = `${CurrentTime.getMonth() + 1}`;
 
@@ -67,13 +67,13 @@ export default function SearchFilter() {
   const [endtime, setEndtime] = useState(`${DateTime(new Date())}`);
 
   const getdefaultVod = (camera_id) => {
-      setCameraID(camera_id);
-  }  
+    setCameraID(camera_id);
+  }
 
   const handleChange = (e) => {
     setDuration(e.target.value);
     dispatch(getThumbnail(camera.id, starttime, endtime, e.target.value));
-    getdefaultVod(camera.id) 
+    getdefaultVod(camera.id)
   };
 
   const setStarttimeChange = (e) => {

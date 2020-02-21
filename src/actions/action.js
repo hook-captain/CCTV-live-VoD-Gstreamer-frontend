@@ -11,12 +11,12 @@ import {
 export const getCameras = (keyword) => (dispatch) => {
   keyword === ""
     ? axios.get(`/api/cameras`).then((res) => {
-        dispatch({ type: GET_CAMERA_LIST, payload: res.data });
-        dispatch({ type: VIDEO_LIVE_MODE, payload: res.data[0] });
-      })
+      dispatch({ type: GET_CAMERA_LIST, payload: res.data });
+      dispatch({ type: VIDEO_LIVE_MODE, payload: res.data[0] });
+    })
     : axios.get(`/api/cameras/search/${keyword}`).then((res) => {
-        dispatch({ type: GET_CAMERA_LIST, payload: res.data });
-      });
+      dispatch({ type: GET_CAMERA_LIST, payload: res.data });
+    });
 };
 
 export const setCamera = (obj) => (dispatch) => {

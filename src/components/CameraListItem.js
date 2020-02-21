@@ -39,16 +39,16 @@ export default function ComplexGrid({
             sx={
               selected.toString() === self.toString()
                 ? {
-                    width: "100%",
-                    height: 80,
-                    border: "3px solid rgb(2, 151, 253)",
-                  }
+                  width: "100%",
+                  height: 80,
+                  border: "3px solid rgb(2, 151, 253)",
+                }
                 : { width: "96.5%", height: 80 }
             }
           >
             <div className="container">
               <Img
-                id={id}              
+                id={id}
                 alt="complex"
                 sx={{ width: "100%", height: 80 }}
                 src={image}
