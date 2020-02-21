@@ -18,17 +18,17 @@ export default function Thumbnail({ id, selected, url, time, camera_id }) {
   const dispatch = useDispatch();
 
 
-  const timefromat = (date) => {
+  const timeformat = (date) => {
     let Hour, Min, Second, result;
     let time = new Date(date);
-    if (time.getHours() < 9) Hour = `0${time.getHours() + 1}`;
-    else Hour = `${time.getHours() + 1}`;
+    if (time.getHours() < 9) Hour = `0${time.getHours()}`;
+    else Hour = `${time.getHours()}`;
 
-    if (time.getMinutes() < 9) Min = `0${time.getMinutes() + 1}`;
-    else Min = `${time.getMinutes() + 1}`;
+    if (time.getMinutes() < 9) Min = `0${time.getMinutes()}`;
+    else Min = `${time.getMinutes()}`;
 
-    if (time.getSeconds() < 9) Second = `0${time.getSeconds() + 1}`;
-    else Second = `${time.getSeconds() + 1}`;
+    if (time.getSeconds() < 9) Second = `0${time.getSeconds()}`;
+    else Second = `${time.getSeconds()}`;
 
     result = `${Hour}:${Min}:${Second}`;
     return result;
@@ -119,7 +119,7 @@ export default function Thumbnail({ id, selected, url, time, camera_id }) {
             className="viewtime"
             style={{ marginTop: "8%", marginLeft: "60%" }}
           >
-            {timefromat(sub_Time)}
+            {timeformat(sub_Time)}
           </div>
         </li>
       </div>

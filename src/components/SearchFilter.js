@@ -8,7 +8,9 @@ import {
   Select,
   InputLabel,
   FormControl,
-  Grid
+  Grid,
+  Alert,
+  Snackbar
 } from "@mui/material";
 import { getThumbnail, GetVodVideo } from "../actions/action";
 import { START_TIME_GROUP } from "../redux/types";
@@ -17,7 +19,8 @@ export default function SearchFilter() {
   const { camera } = useSelector((state) => state.camera);
   const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
   const [startTime, setstartTime] = useState(new Date());
-  const video = useSelector((state) => state.video);
+  const [open, setOpen] = React.useState(false);
+  // const video = useSelector((state) => state.video);
   const [duration, setDuration] = useState(5);
   const [cameraID, setCameraID] = useState(0);
   const dispatch = useDispatch();
@@ -57,6 +60,13 @@ export default function SearchFilter() {
     return result;
   };
 
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
   const getDatetime = () => {
     let CurrentTime = new Date();
     CurrentTime.setDate(CurrentTime.getDate() - 3);
@@ -77,20 +87,37 @@ export default function SearchFilter() {
   };
 
   const setStarttimeChange = (e) => {
+    console.log("-----starttime-------", e.target.value, endtime);
     setStarttime(e.target.value);
-    dispatch(getThumbnail(camera.id, e.target.value, endtime, duration));
-    getdefaultVod(camera.id);
+    if (e.target.value <= endtime) {
+      dispatch(getThumbnail(camera.id, e.target.value, endtime, duration));
+      getdefaultVod(camera.id);
+    }
+    else {
+      setOpen(true);
+    }
   };
 
   const setEndtimeChange = (e) => {
+    console.log("-----endtime-------",starttime,  e.target.value);
     setEndtime(e.target.value);
-    dispatch(getThumbnail(camera.id, starttime, e.target.value, duration));
-    getdefaultVod(camera.id);
+    if (e.target.value >= starttime) {
+      dispatch(getThumbnail(camera.id, starttime, e.target.value, duration));
+      getdefaultVod(camera.id);
+    }
+    else {
+      setOpen(true);
+    }
   };
 
 
   return (
     <Grid style={{ marginTop: 15 }} container spacing={2}>
+      <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'right' }} open={open} autoHideDuration={4000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
+          StartTime or EndTime is not correct!
+        </Alert>
+      </Snackbar>
       <Grid item xs={3}>
         <TextField
           id="datetime-local"

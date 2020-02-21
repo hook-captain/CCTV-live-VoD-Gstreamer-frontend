@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Thumbnail from "./Thumbnail";
 import "../public/Thumbnail.css";
 import { Divider, Grid } from "@mui/material";
@@ -12,7 +12,8 @@ export default function Thumbnails() {
       Month,
       Day,
       Hour,
-      Min,
+      Hour1,
+      // Min,
       CurrentTime = Dates;
 
     if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
@@ -24,13 +25,18 @@ export default function Thumbnails() {
     if (CurrentTime.getHours() < 10) Hour = `0${CurrentTime.getHours()}`;
     else Hour = `${CurrentTime.getHours()}`;
 
+    Dates.setHours(Dates.getHours() + 1);
+    Hour1 = Dates.getHours();
+
+    if(Hour1 < 10) Hour1 = `0${Hour1}`;
+
     // if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes() - CurrentTime.getMinutes() % 2}`;
     // else Min = `${CurrentTime.getMinutes() - CurrentTime.getMinutes() % 2}`;
 
     // if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
     // else Min = `${CurrentTime.getMinutes()}`;
 
-    result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}:00 ~`;
+    result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}:00~${Hour1}:00`;
     return result;
   };
 

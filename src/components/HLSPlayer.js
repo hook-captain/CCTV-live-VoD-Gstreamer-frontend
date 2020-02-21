@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
     AppBar,
-    Toolbar,
     Typography,
     Grid,
     Button
@@ -13,7 +12,7 @@ import {
     PauseCircleOutlineOutlined,
     PlayCircleOutlineOutlined,
     VolumeOffOutlined,
-    VolumeUpOutlined,
+    // VolumeUpOutlined,
     AddAPhotoOutlined,
     ShareOutlined,
     FullscreenOutlined
@@ -63,10 +62,11 @@ function HLSPlayer() {
     const dispatch = useDispatch();
     const [status, setStatus] = useState(0);
     const [timerID, setTimerID] = useState(0);
-    const [timestatus, settimestatus] = useState(1);
+    // const [timestatus, settimestatus] = useState(1);
     const [selectState, setSelectState] = useState(0);
     const [playerTime, setPlayerTime] = useState(new Date());
     const playerRef = React.useRef(null);
+    const [time, setTime] = useState(new Date());
 
     useEffect(() => {
         dispatch(selectThumbnail(selectState));
@@ -84,7 +84,6 @@ function HLSPlayer() {
         }
 
     }, [startTime])
-
 
     const GoLiveVideo = () => {
         dispatch(GetLiveVideo(camera.id))
@@ -120,19 +119,21 @@ function HLSPlayer() {
 
     function increase() {
         // if (timestatus==1)
-        setPlayerTime(new Date(addSeconds(playerTime, 1)));
+        // console.log('--------increase----------', new Date(addSeconds(playerTime, 1)));
+        setTime(new Date(addSeconds(playerTime, 1)));
+        // setPlayerTime(new Date(addSeconds(playerTime, 1)));
     }
 
 
     function playVideo(e) {
-        settimestatus(1);
+        // settimestatus(1);
         playerRef.current.play();
         let status = 0;
         setStatus(status);
     }
 
     function pauseVideo() {
-        settimestatus(0);
+        // settimestatus(0);
         playerRef.current.pause();
         let status = 1;
         setStatus(status);
@@ -157,7 +158,7 @@ function HLSPlayer() {
                     <Grid container spacing={0}>
                         <Grid item xs={4}>
                             <Typography variant="h12" sx={{ maxWidth: "25%" }}>
-                                {DateTime(playerTime)}
+                                {DateTime(time)}
                             </Typography>
                         </Grid>
                         <Grid item xs={2}>
@@ -178,7 +179,7 @@ function HLSPlayer() {
                     : <Grid container spacing={0}>
                         <Grid item xs={5}>
                             <Typography variant="h12" sx={{ maxWidth: "25%" }}>
-                                {DateTime(new Date())}
+                                {/* {DateTime(new Date())} */}
                             </Typography>
                         </Grid>
                         <Grid item xs={4}>
