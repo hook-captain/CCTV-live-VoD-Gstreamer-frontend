@@ -89,7 +89,7 @@ export default function SearchFilter() {
   const setStarttimeChange = (e) => {
     setStarttime(e.target.value);
     if (e.target.value <= endtime) {
-      dispatch(getThumbnail(camera.id, e.target.value, endtime, duration));
+      dispatch(getThumbnail(camera.id, e.target.value, endtime, 0.2));
       getdefaultVod(camera.id);
     }
     else {
@@ -132,7 +132,7 @@ export default function SearchFilter() {
       <Grid item xs={1}>
         <ArrowForwardIcon
           fontSize="large"
-          style={{ color: "rgb(2, 151, 253)", marginTop: 10 }}
+          style={{ color: "#888888", marginTop: 10 }}
         />
       </Grid>
       <Grid item xs={3}>

@@ -7,10 +7,10 @@
     position: absolute;
     left: 0px;
     top: 0px;
-    width: 40%;
+    width: 45%;
     height: 16%;
     z-index: 500;
-    background-color: rgba(2, 153, 253, 0.419);
+    background-color: rgba(185, 193, 199, 0.5);
     color: rgb(255 255 255);
     font-weight: bold;
     margin-left: 5%;
@@ -44,9 +44,9 @@
     left: -9999px;
   }
 li:hover .large {
-    left: 40px;
-    z-index: 1000;
-    top: 70px;
+    left: -40px;
+    z-index: 2000;
+    top: -170px;
 }
 .large-image {
     border-radius: 4px;
@@ -55,8 +55,8 @@ li:hover .large {
 }
 li {
     list-style-type: none;
-    /* padding: 10px; */
-    /* position: relative; */
+    /* padding: 10px;
+    position: relative; */
 }
 
 .viewline {
@@ -83,3 +83,19 @@ li {
     flex: 50%;
     padding: 0 4px;
   }
+
+  .datetime {
+    font-size: xx-large;
+    font-style: italic;
+    inline-size: max-content;
+}
+
+.time {
+    font-size: larger;
+    inline-size: max-content;
+    font-family: cursive;
+    margin-left: 20%;
+}
+.imageTop{
+    margin-top: auto;
+}

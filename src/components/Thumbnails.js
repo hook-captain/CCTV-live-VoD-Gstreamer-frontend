@@ -13,7 +13,7 @@ export default function Thumbnails() {
       Day,
       Hour,
       Hour1,
-      // Min,
+      Min,
       CurrentTime = Dates;
 
     if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
@@ -28,15 +28,15 @@ export default function Thumbnails() {
     Dates.setHours(Dates.getHours() + 1);
     Hour1 = Dates.getHours();
 
-    if(Hour1 < 10) Hour1 = `0${Hour1}`;
+    if (Hour1 < 10) Hour1 = `0${Hour1}`;
 
     // if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes() - CurrentTime.getMinutes() % 2}`;
     // else Min = `${CurrentTime.getMinutes() - CurrentTime.getMinutes() % 2}`;
 
-    // if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
-    // else Min = `${CurrentTime.getMinutes()}`;
+    if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
+    else Min = `${CurrentTime.getMinutes()}`;
 
-    result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}:00~${Hour1}:00`;
+    result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}:00~${Hour1}:00${Min}`;
     return result;
   };
 
@@ -45,7 +45,7 @@ export default function Thumbnails() {
   if (thumbnails && thumbnails[0]) {
     for (let i = 0; i < thumbnails.length; i++) {
       let time = new Date(thumbnails[i][0].time);
-      time.setMinutes(0);
+      // time.setMinutes(0);
       time.setSeconds(0);
       time.setMilliseconds(0);
 
@@ -58,11 +58,32 @@ export default function Thumbnails() {
     }
   }
 
-  let indexs = 0;
+  let indexs = 0, dateCount = 0;
+  let clipArray = [];
+
+  if (Object.keys(timeArray).length) {
+    let flag = timeArray[Object.keys(timeArray)[0]].length, count = 0;
+    for (let i = 1; i < Object.keys(timeArray).length; i++) {
+      if (Object.keys(timeArray)[i].split(" ")[0].localeCompare(Object.keys(timeArray)[i - 1].split(" ")[0]) === 0) {
+        flag = flag + timeArray[Object.keys(timeArray)[i]].length;
+      }
+      else {
+        clipArray[count] = flag;
+        flag = timeArray[Object.keys(timeArray)[i]].length;
+        count = count + 1;
+      }
+      if (i === (Object.keys(timeArray).length - 1)) {
+        clipArray[count] = flag;
+      }
+    }
+  }
+  console.log(clipArray)
+  
+
 
   return mode === "VOD" ? (
     <div>
-      <font size={30} color="blue">
+      <font size={30} color="#888888">
         {thumbnails ? thumbnails.length : 0}
       </font>{" "}
       <b>Clip Segments</b>
@@ -74,9 +95,21 @@ export default function Thumbnails() {
               {
                 timeArray[key].map((items, index) => {
                   indexs = indexs + 1;
+                  dateCount = dateCount + 1;
                   let item = items[0];
-                  return <Grid item xs={2} key={index} >
-                    {index === 0 ? <div style={{ color: "blue" }}>{key}</div> : <div style={{ marginBottom: 20 }}></div>}
+                  let trues = 1;
+                  if (count > 0) {
+                    if(Object.keys(timeArray)[count].split(" ")[0].localeCompare(key.split(" ")[0]) === 0){
+                      trues = 0;
+                    }
+                  }
+                  return <Grid item xs={2} key={index} style={{ marginTop: 'auto' }}>
+                    {index === 0 ?
+                      <div>
+                        {trues !== 0 ? <div className="datetime">{key.split(" ")[0]} <font color="#888888" size={5}>({clipArray[dateCount-1]}Clips)</font></div> : <br />}
+                        <div className="time">{key.split(" ")[1]}</div>
+                      </div> :
+                      <div style={{ marginBottom: 48 }}></div>}
                     <Thumbnail
                       id={indexs - 1}
                       thumbnails={items}

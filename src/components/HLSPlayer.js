@@ -3,14 +3,16 @@ import {
     AppBar,
     Typography,
     Grid,
-    Button
+    Button,
+    createTheme,
+    ThemeProvider
 } from "@mui/material";
 
 import {
-    SkipPreviousOutlined,
-    SkipNextOutlined,
-    PauseCircleOutlineOutlined,
-    PlayCircleOutlineOutlined,
+    SkipPreviousRounded,
+    SkipNextRounded,
+    PauseCircleOutlineRounded,
+    PlayCircleOutlineRounded,
     VolumeOffOutlined,
     // VolumeUpOutlined,
     AddAPhotoOutlined,
@@ -24,6 +26,14 @@ import { START_TIME_GROUP } from "../redux/types";
 import { GetVodVideo, selectThumbnail, GetLiveVideo } from "../actions/action";
 
 import "../public/App.css";
+
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: '#D9D9D9',
+        },
+    },
+});
 
 function HLSPlayer() {
 
@@ -66,7 +76,6 @@ function HLSPlayer() {
     const [selectState, setSelectState] = useState(0);
     const playerRef = React.useRef(null);
     const [time, setTime] = useState(new Date());
-    let started = new Date(startTime);
 
     useEffect(() => {
         dispatch(selectThumbnail(selectState));
@@ -115,6 +124,8 @@ function HLSPlayer() {
         return date;
     }
 
+
+    let started = new Date(startTime);
     function increase() {
         setTime(new Date(addSeconds(started, 1)));
     }
@@ -136,59 +147,46 @@ function HLSPlayer() {
         <div>
             <div className="videoview">
                 <div className="Modetext">{mode === "LIVE" ? "Live Video Mode" : "Vod Video Mode"}</div>
+                {mode === "VOD" ?
+                    <div className="liveButton">
+                        <ThemeProvider theme={theme}>
+                            <Button variant="contained" onClick={GoLiveVideo}>Go To Live</Button>
+                        </ThemeProvider>
+                    </div> : <></>}
                 <ReactHlsPlayer
                     key={`${selected}` + `${startTime}`}
                     src={mode === "VOD" ? video : ""}
                     autoPlay={true}
                     controls={false}
-                    width="50%"
+                    width="85%"
                     height="auto"
                     playerRef={playerRef}
                 />
             </div>
-            <AppBar position="static" className="playcontrols">
-                {mode === "VOD" ?
-                    <Grid container spacing={0}>
-                        <Grid item xs={4}>
-                            <Typography variant="h12" sx={{ maxWidth: "25%" }}>
-                                {DateTime(time)}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={2}>
-                            <SkipPreviousOutlined onClick={() => previousClick()} />
-                            {status === 1 ? <PlayCircleOutlineOutlined onClick={() => playVideo()} />
-                                : <PauseCircleOutlineOutlined onClick={pauseVideo} />}
-                            <SkipNextOutlined onClick={() => nextClick()} />
-                        </Grid>
-                        <Grid item xs={3}>
-                            <VolumeOffOutlined />
-                            <AddAPhotoOutlined />
-                            <ShareOutlined />
-                            <FullscreenOutlined />
-                        </Grid>
-                        <Grid item xs={3}>
-                            <Button variant="contained" color="success" onClick={GoLiveVideo}>Live Video</Button>
-                        </Grid></Grid>
-                    : <Grid container spacing={0}>
-                        <Grid item xs={5}>
-                            <Typography variant="h12" sx={{ maxWidth: "25%" }}>
-                                {/* {DateTime(new Date())} */}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <SkipPreviousOutlined onClick={() => previousClick()} />
-                            {status === 1 ? <PlayCircleOutlineOutlined onClick={playVideo} />
-                                : <PauseCircleOutlineOutlined onClick={pauseVideo} />}
-                            <SkipNextOutlined onClick={() => nextClick()} />
-                        </Grid>
-                        <Grid item xs={3}>
-                            <VolumeOffOutlined />
-                            <AddAPhotoOutlined />
-                            <ShareOutlined />
-                            <FullscreenOutlined />
-                        </Grid>
-                    </Grid>}
-            </AppBar>
+            {mode === "VOD" ?
+                <ThemeProvider theme={theme}>
+                    <AppBar position="static" className="playcontrols" color="primary">
+
+                        <Grid container spacing={0} sx={{ marginTop: "5px" }}>
+                            <Grid item xs={7} className="nextdate">
+                                <SkipPreviousRounded sx={{ marginLeft: 2 }} fontSize="large" onClick={() => previousClick()} />
+                                {status === 1 ? <PlayCircleOutlineRounded fontSize="large" onClick={() => playVideo()} />
+                                    : <PauseCircleOutlineRounded fontSize="large" onClick={pauseVideo} />}
+                                <SkipNextRounded fontSize="large" onClick={() => nextClick()} />
+                                <font size="2" style={{ marginLeft: 10, maxWidth: "5%" }}>
+                                    {DateTime(time)}
+                                </font>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <VolumeOffOutlined />
+                                <AddAPhotoOutlined />
+                                <ShareOutlined />
+                                <FullscreenOutlined />
+                            </Grid></Grid>
+
+                    </AppBar>
+                </ThemeProvider>
+                : <></>}
         </div>
     );
 }

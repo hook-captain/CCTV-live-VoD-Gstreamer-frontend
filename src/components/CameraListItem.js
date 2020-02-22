@@ -1,9 +1,5 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import ButtonBase from "@mui/material/ButtonBase";
+import { styled, Grid, Card, Typography, ButtonBase } from "@mui/material";
 
 import online from "../public/badge.png";
 import offline from "../public/badge-off.png";
@@ -25,36 +21,37 @@ export default function ComplexGrid({
   image,
 }) {
   return (
-    <Paper
+    <Card
       sx={{
         p: 2,
         maxWidth: "85%",
-        maxHeight: 100,
-        backgroundColor: (theme) => "#fff",
+        maxHeight: 65,
+        marginTop: 1,
+        backgroundColor: (theme) => "#EDE5E5",
       }}
     >
-      <Grid container spacing={2}>
-        <Grid item>
+      <Grid container spacing={2} >
+        <Grid item >
           <ButtonBase
             sx={
               selected.toString() === self.toString()
                 ? {
                   width: "100%",
-                  height: 80,
-                  border: "3px solid rgb(2, 151, 253)",
+                  height: 70,
+                  border: "3px solid rgb(0, 0, 0)",
                 }
-                : { width: "96.5%", height: 80 }
+                : { width: "96.5%", height: 70 }
             }
           >
             <div className="container">
               <Img
                 id={id}
                 alt="complex"
-                sx={{ width: "100%", height: 80 }}
+                sx={{ width: "100%", height: 70 }}
                 src={image}
               />
               {selected.toString() === self.toString() ? (
-                <div className="tag" style={{ marginTop: "37.5%" }}>
+                <div className="tag" style={{ marginTop: "40%" }}>
                   {" "}
                   ✓ Selected
                 </div>
@@ -64,18 +61,14 @@ export default function ComplexGrid({
             </div>
           </ButtonBase>
         </Grid>
-        <Grid item xs={12} sm container>
+        <Grid item xs={12} sm container >
           <Grid item xs container direction="column" spacing={2}>
-            <Grid item xs>
-              <Typography gutterBottom variant="subtitle1" component="div">
-                <b>{name}</b>
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                <font size={3} color="#33cc33">
-                  {location}
-                </font>
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
+            <Grid item >
+              <Typography variant="body1" gutterBottom component="div">
+                <b>{name} </b>
+                <font size={2} color="#33cc33">
+                  ({location})
+                </font><br />
                 <b>
                   <img
                     alt="alt"
@@ -85,9 +78,9 @@ export default function ComplexGrid({
                     height={10}
                   ></img>{" "}
                   {conn === "YES" ? (
-                    <font color="#33cc33">Online</font>
+                    <font size={2} color="#33cc33">Online</font>
                   ) : (
-                    <font color="grey">Offline</font>
+                    <font size={2} color="grey">Offline</font>
                   )}
                 </b>
               </Typography>
@@ -95,6 +88,6 @@ export default function ComplexGrid({
           </Grid>
         </Grid>
       </Grid>
-    </Paper>
+    </Card>
   );
 }

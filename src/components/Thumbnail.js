@@ -74,11 +74,11 @@ export default function Thumbnail({ id, selected, url, time, camera_id }) {
           ? {
             width: "90%",
             height: 124,
-            border: "2px solid rgb(2, 151, 253)",
+            border: "2px solid rgb(0, 0, 0)",
             marginTop: 1,
-            marginLeft: 1,
+            marginLeft: "20%",
           }
-          : { width: "90%", height: 124, marginTop: 1, marginLeft: 1 }
+          : { width: "90%", height: 124, marginTop: 1, marginLeft: "20%" }
       }
     >
       <div className="thumbnail">
@@ -93,6 +93,18 @@ export default function Thumbnail({ id, selected, url, time, camera_id }) {
             width="100%"
             height={120}
           />
+          <span className="large">
+          <img className="large-image"
+            onMouseMove={(e) => handleMouseMove(e)}
+            onMouseOver={(e) => handleMouseover(e)}
+            id={id}
+            alt="alt"
+            prop="prop"
+            src={sub_URL}
+            width="110%"
+            height={150}
+          />
+          </span>
           <div className="viewline" style={{ marginLeft: `${arrow}%` }}>
             <img
               src={line}
