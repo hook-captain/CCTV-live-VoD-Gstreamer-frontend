@@ -41,11 +41,12 @@ export default function Thumbnails() {
   };
 
   let timeArray = new Object();
+  let datetimeArray = new Object();
 
   if (thumbnails && thumbnails[0]) {
     for (let i = 0; i < thumbnails.length; i++) {
       let time = new Date(thumbnails[i][0].time);
-      // time.setMinutes(0);
+      time.setMinutes(0);
       time.setSeconds(0);
       time.setMilliseconds(0);
 
@@ -64,7 +65,6 @@ export default function Thumbnails() {
   if (Object.keys(timeArray).length) {
     let flag = timeArray[Object.keys(timeArray)[0]].length, count = 0;
     for (let i = 1; i < Object.keys(timeArray).length; i++) {
-      console.log('----')
       if (Object.keys(timeArray)[i].split(" ")[0].localeCompare(Object.keys(timeArray)[i - 1].split(" ")[0]) === 0) {
         flag = flag + timeArray[Object.keys(timeArray)[i]].length;
       }
@@ -77,6 +77,12 @@ export default function Thumbnails() {
     clipArray[count] = flag;
   }
 
+  for (let i=0; i<Object.keys(timeArray).length; i++){
+    datetimeArray[Object.keys(timeArray)[Object.keys(timeArray).length-1-i]] = Object.values(timeArray)[Object.keys(timeArray).length-1-i]
+  }
+
+
+
   return mode === "VOD" ? (
     <div>
       <font size={30} color="#888888">
@@ -84,18 +90,18 @@ export default function Thumbnails() {
       </font>{" "}
       <b>Clip Segments</b>
       <Divider sx={{ marginBottom: 1, width: "98%" }} />
-      {Object.keys(timeArray).map((key, count) => {
+      {Object.keys(datetimeArray).map((key, count) => {
         return (
           <Grid container spacing={2} key={key}>
             <Grid item xs={12} sm container>
               {
-                timeArray[key].map((items, index) => {
+                datetimeArray[key].map((items, index) => {
                   indexs = indexs + 1;
                   dateCount = dateCount + 1;
                   let item = items[0];
                   let trues = 1;
                   if (count > 0) {
-                    if (Object.keys(timeArray)[count].split(" ")[0].localeCompare(key.split(" ")[0]) === 0) {
+                    if (Object.keys(datetimeArray)[count].split(" ")[0].localeCompare(key.split(" ")[0]) === 0) {
                       trues = 0;
                     }
                   }
