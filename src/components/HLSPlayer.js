@@ -23,7 +23,6 @@ import ReactHlsPlayer from "react-hls-player";
 import { useDispatch, useSelector } from "react-redux";
 import { START_TIME_GROUP } from "../redux/types";
 import { GetVodVideo, selectThumbnail, GetLiveVideo } from "../actions/action";
-
 import "../public/App.css";
 
 const theme = createTheme({
@@ -160,6 +159,15 @@ function HLSPlayer() {
                     width="85%"
                     height="auto"
                     playerRef={playerRef}
+                // hlsConfig={{
+                //     // autoStartLoad: true,
+                //     // maxLoadingDelay: 4,
+                //     // minAutoBitrate: 0,
+                //     // lowLatencyMode: true,
+                //     // timelineController: TimelineController,
+                //     startPosition: 5,
+                //     // debug: false,
+                // }}
                 />
             </div>
             {mode === "VOD" ?

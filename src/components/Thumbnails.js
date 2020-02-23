@@ -22,13 +22,29 @@ export default function Thumbnails() {
     if (CurrentTime.getDate() < 10) Day = `0${CurrentTime.getDate()}`;
     else Day = `${CurrentTime.getDate()}`;
 
-    if (CurrentTime.getHours() < 10) Hour = `0${CurrentTime.getHours()}`;
-    else Hour = `${CurrentTime.getHours()}`;
+    if (CurrentTime.getHours() > 12) {
+      Hour = `${CurrentTime.getHours() - 12}:00`;
+    }
+    else {
+      if (CurrentTime.getHours() < 10) {
+        Hour = `0${CurrentTime.getHours()}:00`;
+      }
+      else {
+        Hour = `${CurrentTime.getHours()}:00`;
+      }
+    }
 
-    Dates.setHours(Dates.getHours() + 1);
-    Hour1 = Dates.getHours();
-
-    if (Hour1 < 10) Hour1 = `0${Hour1}`;
+    if (CurrentTime.getHours() > 11) {
+      Hour1 = `${CurrentTime.getHours() - 11}:00PM`;
+    }
+    else {
+      if (CurrentTime.getHours() < 9) {
+        Hour1 = `0${CurrentTime.getHours() + 1}:00AM`;
+      }
+      else {
+        Hour1 = `${CurrentTime.getHours() + 1}:00AM`;
+      }
+    }
 
     // if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes() - CurrentTime.getMinutes() % 2}`;
     // else Min = `${CurrentTime.getMinutes() - CurrentTime.getMinutes() % 2}`;
@@ -36,12 +52,12 @@ export default function Thumbnails() {
     // if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
     // else Min = `${CurrentTime.getMinutes()}`;
 
-    result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}:00~${Hour1}:00`;
+    result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}-${Hour1}`;
     return result;
   };
 
-  let timeArray = new Object();
-  let datetimeArray = new Object();
+  let timeArray = Object.create(null);
+  let datetimeArray = Object.create(null);
 
   if (thumbnails && thumbnails[0]) {
     for (let i = 0; i < thumbnails.length; i++) {
@@ -77,8 +93,8 @@ export default function Thumbnails() {
     clipArray[count] = flag;
   }
 
-  for (let i=0; i<Object.keys(timeArray).length; i++){
-    datetimeArray[Object.keys(timeArray)[Object.keys(timeArray).length-1-i]] = Object.values(timeArray)[Object.keys(timeArray).length-1-i]
+  for (let i = 0; i < Object.keys(timeArray).length; i++) {
+    datetimeArray[Object.keys(timeArray)[Object.keys(timeArray).length - 1 - i]] = Object.values(timeArray)[Object.keys(timeArray).length - 1 - i]
   }
 
 

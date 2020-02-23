@@ -93,7 +93,7 @@ li {
 .time {
     font-size: larger;
     inline-size: max-content;
-    font-family: cursive;
+    font-family: system-ui;
     margin-left: 20%;
 }
 .imageTop{
