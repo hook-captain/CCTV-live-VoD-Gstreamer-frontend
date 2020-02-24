@@ -25,7 +25,6 @@ import "../public/App.css";
 import { findDOMNode } from "react-dom";
 import screenfull from 'screenfull';
 import captureVideoFrame from 'capture-video-frame';
-import { toPng } from 'html-to-image';
 
 const theme = createTheme({
     palette: {
@@ -37,33 +36,34 @@ const theme = createTheme({
 
 function HLSPlayer() {
 
-    const DateTime = (Dates) => {
-        let result,
-            Month,
-            Day,
-            Hour,
-            Min,
-            second,
-            CurrentTime = Dates;
+    // const DateTime = (Dates) => {
+    //     let result,
+    //         Month,
+    //         Day,
+    //         Hour,
+    //         Min,
+    //         second,
+    //         CurrentTime = Dates;
 
-        if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
-        else Month = `${CurrentTime.getMonth() + 1}`;
+    //     if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
+    //     else Month = `${CurrentTime.getMonth() + 1}`;
 
-        if (CurrentTime.getDate() < 10) Day = `0${CurrentTime.getDate()}`;
-        else Day = `${CurrentTime.getDate()}`;
+    //     if (CurrentTime.getDate() < 10) Day = `0${CurrentTime.getDate()}`;
+    //     else Day = `${CurrentTime.getDate()}`;
 
-        if (CurrentTime.getHours() < 10) Hour = `0${CurrentTime.getHours()}`;
-        else Hour = `${CurrentTime.getHours()}`;
+    //     if (CurrentTime.getHours() < 10) Hour = `0${CurrentTime.getHours()}`;
+    //     else Hour = `${CurrentTime.getHours()}`;
 
-        if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
-        else Min = `${CurrentTime.getMinutes()}`;
+    //     if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
+    //     else Min = `${CurrentTime.getMinutes()}`;
 
-        if (CurrentTime.getSeconds() < 10) second = `0${CurrentTime.getSeconds()}`;
-        else second = `${CurrentTime.getSeconds()}`;
+    //     if (CurrentTime.getSeconds() < 10) second = `0${CurrentTime.getSeconds()}`;
+    //     else second = `${CurrentTime.getSeconds()}`;
 
-        result = `${CurrentTime.getFullYear()}/${Month}/${Day} ${Hour}:${Min}:${second}`;
-        return result;
-    };
+    //     result = `${CurrentTime.getFullYear()}/${Month}/${Day} ${Hour}:${Min}:${second}`;
+    //     return result;
+    // };
+
     const camera = useSelector((state) => state.camera.camera);
     const mode = useSelector((state) => state.video.mode);
     const video = useSelector((state) => state.video.video);
@@ -75,7 +75,9 @@ function HLSPlayer() {
     const [timerID, setTimerID] = useState(0);
     const [selectState, setSelectState] = useState(0);
     const playerRef = React.useRef(null);
-    const [time, setTime] = useState(new Date());
+    // const [time, setTime] = useState(new Date());
+    const [currentTime, setCurrentTime] = useState("00:00");
+    const [durationTime, setDurationTime] = useState("00:00");
 
     useEffect(() => {
         dispatch(selectThumbnail(selectState));
@@ -90,6 +92,7 @@ function HLSPlayer() {
             setTimerID(timer_id);
         }
     }, [startTime]);
+
 
     const GoLiveVideo = () => {
         dispatch(GetLiveVideo(camera.id))
@@ -127,7 +130,6 @@ function HLSPlayer() {
 
     const onClickDownload = () => {
         const a = document.createElement('a');
-
         a.setAttribute('download', 'playlist.m3u8');
         a.setAttribute('href', "http://localhost:5000/share/playlist.m3u8");
         a.click();
@@ -135,45 +137,55 @@ function HLSPlayer() {
 
     const onClickScreenShot = () => {
         const frame = captureVideoFrame(playerRef.current);
-        toPng(document.querySelector('.react-flow'), {
-            filter: (node) => {
-                if (
-                    node?.classList?.contains('react-flow__minimap') ||
-                    node?.classList?.contains('react-flow__controls')
-                ) {
-                    return false;
-                }
-                return true;
-            },
-        }).then(downloadImage(frame.dataUri));
+        downloadImage(frame.dataUri)
     };
 
-
-
-    function downloadImage(dataUrl) {
+    function downloadImage(dataUri) {
         const a = document.createElement('a');
-
         a.setAttribute('download', 'reactflow.png');
-        a.setAttribute('href', dataUrl);
+        a.setAttribute('href', dataUri);
         a.click();
     }
 
-    function addSeconds(date, seconds) {
-        date.setSeconds(date.getSeconds() + seconds);
-        return date;
-    }
+    // function addSeconds(date, seconds) {
+    //     date.setSeconds(date.getSeconds() + seconds);
+    //     return date;
+    // }
 
+    // let started = new Date(startTime);
 
-    let started = new Date(startTime);
     function increase() {
-        setTime(new Date(addSeconds(started, 1)));
+        timeUpdate()
+        timeDuration()
+        // setTime(new Date(addSeconds(started, 1)));
     }
-
 
     function playVideo() {
         playerRef.current.play();
         let status = 0;
         setStatus(status);
+    }
+
+    const timeUpdate = () => {
+        const minutes = Math.floor(playerRef.current.currentTime / 60);
+        const seconds = Math.floor(playerRef.current.currentTime - minutes * 60);
+        const currentTime = str_pad_left(minutes,'0',2) + ':' + str_pad_left(seconds,'0',2);
+        setCurrentTime(currentTime);
+    }
+
+    const timeDuration = () => {
+        const minutes = Math.floor(playerRef.current.duration / 60);
+        const seconds = Math.floor(playerRef.current.duration - minutes * 60);
+        const currentTime = str_pad_left(minutes,'0',2) + ':' + str_pad_left(seconds,'0',2);
+        if(playerRef.current.duration){
+            setDurationTime(currentTime);
+        }else{
+            setDurationTime("00:00");
+        }            
+    }
+
+    const str_pad_left = (string,pad,length) => {
+        return (new Array(length+1).join(pad)+string).slice(-length);
     }
 
     function pauseVideo() {
@@ -212,8 +224,9 @@ function HLSPlayer() {
                                 {status === 1 ? <PlayCircleOutlineRounded cursor="pointer" fontSize="large" onClick={() => playVideo()} />
                                     : <PauseCircleOutlineRounded cursor="pointer" fontSize="large" onClick={pauseVideo} />}
                                 <SkipNextRounded cursor="pointer" fontSize="large" onClick={() => nextClick()} />
-                                <font size="2" style={{ marginLeft: 10, maxWidth: "5%" }}>
-                                    {DateTime(time)}
+                                <font size="3" style={{ marginLeft: 10, marginTop : 9 }}>
+                                    {/* {DateTime(time)} */}
+                                    <b>{`${currentTime}`+"/"+`${durationTime}`}</b>
                                 </font>
                             </Grid>
                             <Grid item xs={1} >
