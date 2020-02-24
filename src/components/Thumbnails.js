@@ -56,6 +56,11 @@ export default function Thumbnails() {
     return result;
   };
 
+  // function autoRefresh() {
+  //   window.location = window.location.href;
+  // }
+  // setInterval(autoRefresh(), 55000);
+
   let timeArray = Object.create(null);
   let datetimeArray = Object.create(null);
 
@@ -117,7 +122,7 @@ export default function Thumbnails() {
                   let item = items[0];
                   let trues = 1;
                   if (count > 0) {
-                    if (Object.keys(datetimeArray)[count].split(" ")[0].localeCompare(key.split(" ")[0]) === 0) {
+                    if (Object.keys(datetimeArray)[count-1].split(" ")[0].localeCompare(Object.keys(datetimeArray)[count].split(" ")[0]) === 0) {
                       trues = 0;
                     }
                   }

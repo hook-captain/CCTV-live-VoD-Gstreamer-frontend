@@ -12,10 +12,8 @@ import {
     SkipNextRounded,
     PauseCircleOutlineRounded,
     PlayCircleOutlineRounded,
-    VolumeOffOutlined,
-    // VolumeUpOutlined,
+    FileDownloadOutlined,
     AddAPhotoOutlined,
-    ShareOutlined,
     FullscreenOutlined
 } from "@mui/icons-material";
 
@@ -24,6 +22,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { START_TIME_GROUP } from "../redux/types";
 import { GetVodVideo, selectThumbnail, GetLiveVideo } from "../actions/action";
 import "../public/App.css";
+import { findDOMNode } from "react-dom";
+import screenfull from 'screenfull';
+import captureVideoFrame from 'capture-video-frame';
+import { toPng } from 'html-to-image';
 
 const theme = createTheme({
     palette: {
@@ -117,6 +119,45 @@ function HLSPlayer() {
         }
     }
 
+    const onClickFullScreen = () => {
+        if (screenfull.isEnabled) {
+            screenfull.request(findDOMNode(playerRef.current))
+        }
+    }
+
+    const onClickDownload = () => {
+        const a = document.createElement('a');
+
+        a.setAttribute('download', 'playlist.m3u8');
+        a.setAttribute('href', "http://localhost:5000/share/playlist.m3u8");
+        a.click();
+    }
+
+    const onClickScreenShot = () => {
+        const frame = captureVideoFrame(playerRef.current);
+        toPng(document.querySelector('.react-flow'), {
+            filter: (node) => {
+                if (
+                    node?.classList?.contains('react-flow__minimap') ||
+                    node?.classList?.contains('react-flow__controls')
+                ) {
+                    return false;
+                }
+                return true;
+            },
+        }).then(downloadImage(frame.dataUri));
+    };
+
+
+
+    function downloadImage(dataUrl) {
+        const a = document.createElement('a');
+
+        a.setAttribute('download', 'reactflow.png');
+        a.setAttribute('href', dataUrl);
+        a.click();
+    }
+
     function addSeconds(date, seconds) {
         date.setSeconds(date.getSeconds() + seconds);
         return date;
@@ -152,22 +193,13 @@ function HLSPlayer() {
                         </ThemeProvider>
                     </div> : <></>}
                 <ReactHlsPlayer
-                    key={`${selected}` + `${startTime}`}
+                    key={`${selected}${startTime}`}
                     src={mode === "VOD" ? video : ""}
                     autoPlay={true}
                     controls={false}
                     width="85%"
                     height="auto"
                     playerRef={playerRef}
-                // hlsConfig={{
-                //     // autoStartLoad: true,
-                //     // maxLoadingDelay: 4,
-                //     // minAutoBitrate: 0,
-                //     // lowLatencyMode: true,
-                //     // timelineController: TimelineController,
-                //     startPosition: 5,
-                //     // debug: false,
-                // }}
                 />
             </div>
             {mode === "VOD" ?
@@ -175,22 +207,25 @@ function HLSPlayer() {
                     <AppBar position="static" className="playcontrols" color="primary">
 
                         <Grid container spacing={0} sx={{ marginTop: "5px" }}>
-                            <Grid item xs={7} className="nextdate">
-                                <SkipPreviousRounded sx={{ marginLeft: 2 }} fontSize="large" onClick={() => previousClick()} />
-                                {status === 1 ? <PlayCircleOutlineRounded fontSize="large" onClick={() => playVideo()} />
-                                    : <PauseCircleOutlineRounded fontSize="large" onClick={pauseVideo} />}
-                                <SkipNextRounded fontSize="large" onClick={() => nextClick()} />
+                            <Grid item xs={9.3} className="nextdate">
+                                <SkipPreviousRounded cursor="pointer" sx={{ marginLeft: 2 }} fontSize="large" onClick={() => previousClick()} />
+                                {status === 1 ? <PlayCircleOutlineRounded cursor="pointer" fontSize="large" onClick={() => playVideo()} />
+                                    : <PauseCircleOutlineRounded cursor="pointer" fontSize="large" onClick={pauseVideo} />}
+                                <SkipNextRounded cursor="pointer" fontSize="large" onClick={() => nextClick()} />
                                 <font size="2" style={{ marginLeft: 10, maxWidth: "5%" }}>
                                     {DateTime(time)}
                                 </font>
                             </Grid>
-                            <Grid item xs={3}>
-                                <VolumeOffOutlined />
-                                <AddAPhotoOutlined />
-                                <ShareOutlined />
-                                <FullscreenOutlined />
-                            </Grid></Grid>
-
+                            <Grid item xs={1} >
+                                <AddAPhotoOutlined cursor="pointer" fontSize="large" onClick={() => onClickScreenShot()} />
+                            </Grid>
+                            <Grid item xs={1}>
+                                <FileDownloadOutlined cursor="pointer" fontSize="large" onClick={() => onClickDownload()} />
+                            </Grid>
+                            <Grid item xs={0.7}>
+                                <FullscreenOutlined cursor="pointer" fontSize="large" onClick={() => onClickFullScreen()} />
+                            </Grid>
+                        </Grid>
                     </AppBar>
                 </ThemeProvider>
                 : <></>}
