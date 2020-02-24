@@ -4,7 +4,8 @@ import {
     Grid,
     Button,
     createTheme,
-    ThemeProvider
+    ThemeProvider,
+    Slider
 } from "@mui/material";
 
 import {
@@ -14,7 +15,9 @@ import {
     PlayCircleOutlineRounded,
     FileDownloadOutlined,
     AddAPhotoOutlined,
-    FullscreenOutlined
+    FullscreenOutlined,
+    FastRewindRounded,
+    FastForwardRounded
 } from "@mui/icons-material";
 
 import ReactHlsPlayer from "react-hls-player";
@@ -30,6 +33,14 @@ const theme = createTheme({
     palette: {
         primary: {
             main: '#D9D9D9',
+        },
+    },
+});
+
+const themeSlider = createTheme({
+    palette: {
+        primary: {
+            main: '#575774',
         },
     },
 });
@@ -92,6 +103,11 @@ function HLSPlayer() {
             setTimerID(timer_id);
         }
     }, [startTime]);
+
+    const handleChange = (e) =>{
+        playerRef.current.currentTime = e.target.value/100*playerRef.current.duration;
+        playVideo();
+    }
 
 
     const GoLiveVideo = () => {
@@ -188,6 +204,24 @@ function HLSPlayer() {
         return (new Array(length+1).join(pad)+string).slice(-length);
     }
 
+    const onClickFastRewind = () => {
+         if(playerRef.current.currentTime > 10){
+            playerRef.current.currentTime = playerRef.current.currentTime - 10;
+         }
+         else{
+            playerRef.current.currentTime = 0;
+         }
+    }
+
+    const onClickFastForward = () => {
+        if((playerRef.current.duration - playerRef.current.currentTime) > 10){
+            playerRef.current.currentTime = playerRef.current.currentTime + 10;
+         }
+         else{
+            playerRef.current.currentTime = playerRef.current.duration;
+         }
+    }
+
     function pauseVideo() {
         playerRef.current.pause();
         let status = 1;
@@ -217,17 +251,31 @@ function HLSPlayer() {
             {mode === "VOD" ?
                 <ThemeProvider theme={theme}>
                     <AppBar position="static" className="playcontrols" color="primary">
-
-                        <Grid container spacing={0} sx={{ marginTop: "5px" }}>
-                            <Grid item xs={9.3} className="nextdate">
+                        <ThemeProvider theme={themeSlider}>
+                            <Slider
+                                aria-label="Temperature"
+                                value={playerRef.current.currentTime/playerRef.current.duration*100}
+                                onChange={(e) => handleChange(e)}
+                                sx={{marginLeft : '3%', width: '94%'}}
+                                color="primary"
+                            />
+                        </ThemeProvider>
+                        <Grid container spacing={0} >
+                            <Grid item xs={5.3} className="nextdate">
                                 <SkipPreviousRounded cursor="pointer" sx={{ marginLeft: 2 }} fontSize="large" onClick={() => previousClick()} />
                                 {status === 1 ? <PlayCircleOutlineRounded cursor="pointer" fontSize="large" onClick={() => playVideo()} />
                                     : <PauseCircleOutlineRounded cursor="pointer" fontSize="large" onClick={pauseVideo} />}
                                 <SkipNextRounded cursor="pointer" fontSize="large" onClick={() => nextClick()} />
+                                
                                 <font size="3" style={{ marginLeft: 10, marginTop : 9 }}>
                                     {/* {DateTime(time)} */}
                                     <b>{`${currentTime}`+"/"+`${durationTime}`}</b>
                                 </font>
+                            </Grid>
+                            <Grid item xs={4} >
+                                <FastRewindRounded cursor="pointer" fontSize="large" onClick={() => onClickFastRewind()}/>
+                                    {" "}
+                                <FastForwardRounded cursor="pointer" fontSize="large" onClick={() => onClickFastForward()}/>                                
                             </Grid>
                             <Grid item xs={1} >
                                 <AddAPhotoOutlined cursor="pointer" fontSize="large" onClick={() => onClickScreenShot()} />
