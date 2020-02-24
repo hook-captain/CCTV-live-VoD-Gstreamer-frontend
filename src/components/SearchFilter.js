@@ -60,6 +60,22 @@ export default function SearchFilter() {
     return result;
   };
 
+  const [timerID, setTimerID] = useState(0);
+
+  useEffect(() => {
+    if (startTime) {
+        if (timerID > 0) {
+            clearInterval(timerID);
+        }
+        let timer_id = setInterval(increase, 300000)
+        setTimerID(timer_id);
+    }
+}, [startTime]);
+
+ function increase(){
+    dispatch(getThumbnail(camera.id, starttime, endtime, duration));
+}
+
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -79,6 +95,8 @@ export default function SearchFilter() {
   const getdefaultVod = (camera_id) => {
     setCameraID(camera_id);
   }
+
+
 
   const handleChange = (e) => {
     setDuration(e.target.value);
