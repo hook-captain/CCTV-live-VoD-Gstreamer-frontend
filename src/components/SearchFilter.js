@@ -107,7 +107,7 @@ export default function SearchFilter() {
   const setStarttimeChange = (e) => {
     setStarttime(e.target.value);
     if (e.target.value <= endtime) {
-      dispatch(getThumbnail(camera.id, e.target.value, endtime, 0.2));
+      dispatch(getThumbnail(camera.id, e.target.value, endtime, duration));
       getdefaultVod(camera.id);
     }
     else {

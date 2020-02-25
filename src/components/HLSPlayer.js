@@ -91,8 +91,6 @@ function HLSPlayer() {
     // const [time, setTime] = useState(new Date());
     const [currentTime, setCurrentTime] = useState("00:00");
     const [durationTime, setDurationTime] = useState("00:00");
-    // console.log("------sub---", subThumb)
-    // console.log("------thum---", thumbnails)
 
     useEffect(() => {
         dispatch(selectThumbnail(selectState));

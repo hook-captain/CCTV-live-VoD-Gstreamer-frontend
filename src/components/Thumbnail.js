@@ -28,13 +28,16 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
     if (time.getMinutes() < 9) Min = `0${time.getMinutes()}`;
     else Min = `${time.getMinutes()}`;
 
-    if (time.getHours > 12) {
-      if ((time.getHours() - 3) < 0) Hour = `0${time.getHours() - 12}:${Min}PM`;
-      else Hour = `${time.getHours() - 12}:${Min}PM`;
+    if (time.getHours() > 12) {
+      Hour = `${time.getHours() - 12}:${Min}PM`;
     }
     else {
-      if (time.getHours() < 9) Hour = `0${time.getHours()}:${Min}AM`;
-      else Hour = `${time.getHours()}:${Min}AM`;
+      if (time.getHours() < 10) {
+        Hour = `0${time.getHours()}:${Min}AM`;
+      }
+      else {
+        Hour = `${time.getHours()}:${Min}AM`;
+      }
     }
 
     result = `${Hour}`;
@@ -73,12 +76,12 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
     setstartTime(startTime);
   };
 
-  // const handleMouseOut = (e) => {
-  //   if(over === e.target.id){
-  //     let subTime = thumbnails[e.target.id][0].
-  //     setSubTime(subTime);
-  //   }  
-  // }
+  const handleMouseOut = (e) => {
+    if(over === e.target.id){
+      let subTime = thumbnails[e.target.id][0].time
+      setSubTime(subTime);
+    }  
+  }
 
   return (
     <ButtonBase
@@ -95,13 +98,11 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
       }
     >
       
-      <div className="thumbnail" >
-        <li >
+      <div className="thumbnail">
+        <li  onMouseLeave={(e)=>handleMouseOut(e)}>
           <img
             onMouseMove={(e) => handleMouseMove(e)}
-            onMouseOver={(e) => handleMouseover(e)}
-            // onMouseOut={(e) => handleMouseOut(e)}
-            
+            onMouseOver={(e) => handleMouseover(e)}           
             id={id}
             alt="alt"
             prop="prop"
@@ -134,6 +135,7 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
               }
               height={120}
               onClick={(e) => getSelectedVodVideo(e.target.id)}
+              onMouseLeave={(e)=>handleMouseOut(e)}
             />
           </div>
           {id.toString() === selected.toString() ? (
