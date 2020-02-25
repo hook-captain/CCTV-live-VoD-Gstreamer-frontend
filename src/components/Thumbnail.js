@@ -10,9 +10,9 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
 
   const thumbnail = thumbnails[id]
   const over = useSelector((state) => state.thumbnail.overed);
-  const [sub_URL, setSubURL] = useState(url);
+  const [sub_URL, setSubURL] = useState('');
   const [startTime, setstartTime] = useState(new Date());
-  const [sub_Time, setSubTime] = useState(time);
+  const [sub_Time, setSubTime] = useState('');
   const [arrow, setarrow] = useState(0);
   const dispatch = useDispatch();
 
@@ -20,6 +20,14 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
     dispatch({ type: GET_SUBTHUMBNAILS_LIST, payload: thumbnails });
     dispatch({ type: SET_ENDTIME, payload: endTime });
   },[]);
+
+  useEffect(() => {
+    setSubURL(url);
+  }, [url]);
+
+  useEffect(() => {
+    setSubTime(time);
+  }, [time]);
   
   const timeformat = (date) => {
     let Hour, Min, result;
@@ -81,6 +89,7 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
       let subTime = thumbnails[e.target.id][0].time
       setSubTime(subTime);
     }  
+    setSubURL(url);
   }
 
   return (
@@ -102,7 +111,7 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
         <li  onMouseLeave={(e)=>handleMouseOut(e)}>
           <img
             onMouseMove={(e) => handleMouseMove(e)}
-            onMouseOver={(e) => handleMouseover(e)}           
+            onMouseOver={(e) => handleMouseover(e)}       
             id={id}
             alt="alt"
             prop="prop"
