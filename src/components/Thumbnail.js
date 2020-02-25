@@ -1,14 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ButtonBase } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import "../public/Thumbnail.css";
 import line from "../public/line.png";
-import { OVER_THUMBNAIL_GROUP, START_TIME_GROUP } from "../redux/types";
+import { OVER_THUMBNAIL_GROUP, START_TIME_GROUP, GET_SUBTHUMBNAILS_LIST, SET_ENDTIME } from "../redux/types";
 import { GetVodVideo, selectThumbnail } from "../actions/action";
 
-export default function Thumbnail({ id, selected, url, time, camera_id }) {
+export default function Thumbnail({ id, thumbnails, selected, url, time, camera_id, endTime }) {
 
-  const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
   const thumbnail = thumbnails[id]
   const over = useSelector((state) => state.thumbnail.overed);
   const [sub_URL, setSubURL] = useState(url);
@@ -17,23 +16,30 @@ export default function Thumbnail({ id, selected, url, time, camera_id }) {
   const [arrow, setarrow] = useState(0);
   const dispatch = useDispatch();
 
-
+  useEffect(()=>{
+    dispatch({ type: GET_SUBTHUMBNAILS_LIST, payload: thumbnails });
+    dispatch({ type: SET_ENDTIME, payload: endTime });
+  },[]);
+  
   const timeformat = (date) => {
-    let Hour, Min, Second, result;
+    let Hour, Min, result;
     let time = new Date(date);
-    if (time.getHours() < 9) Hour = `0${time.getHours()}`;
-    else Hour = `${time.getHours()}`;
 
     if (time.getMinutes() < 9) Min = `0${time.getMinutes()}`;
     else Min = `${time.getMinutes()}`;
 
-    if (time.getSeconds() < 9) Second = `0${time.getSeconds()}`;
-    else Second = `${time.getSeconds()}`;
+    if (time.getHours > 12) {
+      if ((time.getHours() - 3) < 0) Hour = `0${time.getHours() - 12}:${Min}PM`;
+      else Hour = `${time.getHours() - 12}:${Min}PM`;
+    }
+    else {
+      if (time.getHours() < 9) Hour = `0${time.getHours()}:${Min}AM`;
+      else Hour = `${time.getHours()}:${Min}AM`;
+    }
 
-    result = `${Hour}:${Min}:${Second}`;
+    result = `${Hour}`;
     return result;
   };
-
 
   const handleMouseover = (e) => {
     let over = e.target.id;
@@ -42,8 +48,8 @@ export default function Thumbnail({ id, selected, url, time, camera_id }) {
 
   const getSelectedVodVideo = (id) => {
     if (id) {
-      let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
-      dispatch(GetVodVideo(camera_id, startTime, end));
+      // let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
+      dispatch(GetVodVideo(camera_id, startTime, endTime));
       dispatch({ type: START_TIME_GROUP, payload: startTime });
       dispatch(selectThumbnail(id));
     }
@@ -67,6 +73,13 @@ export default function Thumbnail({ id, selected, url, time, camera_id }) {
     setstartTime(startTime);
   };
 
+  // const handleMouseOut = (e) => {
+  //   if(over === e.target.id){
+  //     let subTime = thumbnails[e.target.id][0].
+  //     setSubTime(subTime);
+  //   }  
+  // }
+
   return (
     <ButtonBase
       sx={
@@ -81,11 +94,14 @@ export default function Thumbnail({ id, selected, url, time, camera_id }) {
           : { width: "90%", height: 124, marginTop: 1, marginLeft: "20%" }
       }
     >
-      <div className="thumbnail">
-        <li>
+      
+      <div className="thumbnail" >
+        <li >
           <img
             onMouseMove={(e) => handleMouseMove(e)}
             onMouseOver={(e) => handleMouseover(e)}
+            // onMouseOut={(e) => handleMouseOut(e)}
+            
             id={id}
             alt="alt"
             prop="prop"
@@ -94,16 +110,16 @@ export default function Thumbnail({ id, selected, url, time, camera_id }) {
             height={120}
           />
           <span className="large">
-          <img className="large-image"
-            onMouseMove={(e) => handleMouseMove(e)}
-            onMouseOver={(e) => handleMouseover(e)}
-            id={id}
-            alt="alt"
-            prop="prop"
-            src={sub_URL}
-            width="110%"
-            height={150}
-          />
+            <img className="large-image"
+              onMouseMove={(e) => handleMouseMove(e)}
+              onMouseOver={(e) => handleMouseover(e)}
+              id={id}
+              alt="alt"
+              prop="prop"
+              src={sub_URL}
+              width="110%"
+              height={150}
+            />
           </span>
           <div className="viewline" style={{ marginLeft: `${arrow}%` }}>
             <img

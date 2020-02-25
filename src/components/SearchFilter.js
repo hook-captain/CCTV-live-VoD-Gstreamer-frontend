@@ -60,21 +60,21 @@ export default function SearchFilter() {
     return result;
   };
 
-  const [timerID, setTimerID] = useState(0);
+  // const [timerID, setTimerID] = useState(0);
 
-  useEffect(() => {
-    if (startTime) {
-        if (timerID > 0) {
-            clearInterval(timerID);
-        }
-        let timer_id = setInterval(increase, 300000)
-        setTimerID(timer_id);
-    }
-}, [startTime]);
+  // useEffect(() => {
+  //   if (startTime) {
+  //     if (timerID > 0) {
+  //       clearInterval(timerID);
+  //     }
+  //     let timer_id = setInterval(increase, 300000)
+  //     setTimerID(timer_id);
+  //   }
+  // }, [startTime]);
 
- function increase(){
-    dispatch(getThumbnail(camera.id, starttime, endtime, duration));
-}
+  // function increase() {
+  //   dispatch(getThumbnail(camera.id, starttime, endtime, duration));
+  // }
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -107,7 +107,7 @@ export default function SearchFilter() {
   const setStarttimeChange = (e) => {
     setStarttime(e.target.value);
     if (e.target.value <= endtime) {
-      dispatch(getThumbnail(camera.id, e.target.value, endtime, duration));
+      dispatch(getThumbnail(camera.id, e.target.value, endtime, 0.2));
       getdefaultVod(camera.id);
     }
     else {

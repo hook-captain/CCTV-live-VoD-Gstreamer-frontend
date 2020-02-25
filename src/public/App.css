@@ -3,6 +3,7 @@
   height: 100%;
   position: relative;
 }
+
 .tag {
   position: absolute;
   left: 0px;
@@ -19,12 +20,12 @@
   display: flex;
 }
 
-.videoview{
-    margin-left: 15%;
-    margin-top: 1%;
+.videoview {
+  margin-left: 15%;
+  margin-top: 1%;
 }
 
-.Modetext{
+.Modetext {
   font-size: 25px;
   font-weight: bold;
   margin-left: 4%;
@@ -46,10 +47,11 @@
 }
 
 
-.nextdate{
+.nextdate {
   display: flex;
 }
-.liveButton{
+
+.liveButton {
   position: absolute;
   margin-left: 45%;
   margin-top: 1%;

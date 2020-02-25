@@ -80,6 +80,8 @@ function HLSPlayer() {
     const video = useSelector((state) => state.video.video);
     const selected = useSelector((state) => state.thumbnail.selected)
     const startTime = useSelector((state) => state.thumbnail.startTime)
+    const endTime = useSelector((state) => state.thumbnail.endTime)
+    const subThumb = useSelector((state) => state.thumbnail.subThumbnails)
     const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
     const dispatch = useDispatch();
     const [status, setStatus] = useState(0);
@@ -89,6 +91,8 @@ function HLSPlayer() {
     // const [time, setTime] = useState(new Date());
     const [currentTime, setCurrentTime] = useState("00:00");
     const [durationTime, setDurationTime] = useState("00:00");
+    // console.log("------sub---", subThumb)
+    // console.log("------thum---", thumbnails)
 
     useEffect(() => {
         dispatch(selectThumbnail(selectState));
@@ -104,8 +108,8 @@ function HLSPlayer() {
         }
     }, [startTime]);
 
-    const handleChange = (e) =>{
-        playerRef.current.currentTime = e.target.value/100*playerRef.current.duration;
+    const handleChange = (e) => {
+        playerRef.current.currentTime = e.target.value / 100 * playerRef.current.duration;
         playVideo();
     }
 
@@ -117,22 +121,22 @@ function HLSPlayer() {
     const previousClick = () => {
         if (mode === "VOD") {
             if (selected && selected > 0) {
-                let start = thumbnails[selected - 1][0].time
-                let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
+                let start = subThumb[parseInt(selected) - 1][0].time
+                // let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
                 dispatch({ type: START_TIME_GROUP, payload: start });
-                dispatch(GetVodVideo(camera.id, start, end));
-                dispatch(selectThumbnail(selected - 1));
+                dispatch(GetVodVideo(camera.id, start, endTime));
+                dispatch(selectThumbnail(parseInt(selected) - 1));
             }
         }
     }
 
     const nextClick = () => {
         if (mode === "VOD") {
-            if (parseInt(selected) < thumbnails.length - 1) {
-                let start = thumbnails[parseInt(selected) + 1][0].time;
-                let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time;
+            if (parseInt(selected) < subThumb.length - 1) {
+                let start = subThumb[parseInt(selected) + 1][0].time;
+                // let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time;
                 dispatch({ type: START_TIME_GROUP, payload: start });
-                dispatch(GetVodVideo(camera.id, start, end));
+                dispatch(GetVodVideo(camera.id, start, endTime));
                 setSelectState(parseInt(selected) + 1);
             }
         }
@@ -185,41 +189,41 @@ function HLSPlayer() {
     const timeUpdate = () => {
         const minutes = Math.floor(playerRef.current.currentTime / 60);
         const seconds = Math.floor(playerRef.current.currentTime - minutes * 60);
-        const currentTime = str_pad_left(minutes,'0',2) + ':' + str_pad_left(seconds,'0',2);
+        const currentTime = str_pad_left(minutes, '0', 2) + ':' + str_pad_left(seconds, '0', 2);
         setCurrentTime(currentTime);
     }
 
     const timeDuration = () => {
         const minutes = Math.floor(playerRef.current.duration / 60);
         const seconds = Math.floor(playerRef.current.duration - minutes * 60);
-        const currentTime = str_pad_left(minutes,'0',2) + ':' + str_pad_left(seconds,'0',2);
-        if(playerRef.current.duration){
+        const currentTime = str_pad_left(minutes, '0', 2) + ':' + str_pad_left(seconds, '0', 2);
+        if (playerRef.current.duration) {
             setDurationTime(currentTime);
-        }else{
+        } else {
             setDurationTime("00:00");
-        }            
+        }
     }
 
-    const str_pad_left = (string,pad,length) => {
-        return (new Array(length+1).join(pad)+string).slice(-length);
+    const str_pad_left = (string, pad, length) => {
+        return (new Array(length + 1).join(pad) + string).slice(-length);
     }
 
     const onClickFastRewind = () => {
-         if(playerRef.current.currentTime > 10){
+        if (playerRef.current.currentTime > 10) {
             playerRef.current.currentTime = playerRef.current.currentTime - 10;
-         }
-         else{
+        }
+        else {
             playerRef.current.currentTime = 0;
-         }
+        }
     }
 
     const onClickFastForward = () => {
-        if((playerRef.current.duration - playerRef.current.currentTime) > 10){
+        if ((playerRef.current.duration - playerRef.current.currentTime) > 10) {
             playerRef.current.currentTime = playerRef.current.currentTime + 10;
-         }
-         else{
+        }
+        else {
             playerRef.current.currentTime = playerRef.current.duration;
-         }
+        }
     }
 
     function pauseVideo() {
@@ -254,9 +258,9 @@ function HLSPlayer() {
                         <ThemeProvider theme={themeSlider}>
                             <Slider
                                 aria-label="Temperature"
-                                value={playerRef.current.currentTime/playerRef.current.duration*100}
+                                value={playerRef.current.currentTime / playerRef.current.duration * 100}
                                 onChange={(e) => handleChange(e)}
-                                sx={{marginLeft : '3%', width: '94%'}}
+                                sx={{ marginLeft: '3%', width: '94%' }}
                                 color="primary"
                             />
                         </ThemeProvider>
@@ -266,16 +270,16 @@ function HLSPlayer() {
                                 {status === 1 ? <PlayCircleOutlineRounded cursor="pointer" fontSize="large" onClick={() => playVideo()} />
                                     : <PauseCircleOutlineRounded cursor="pointer" fontSize="large" onClick={pauseVideo} />}
                                 <SkipNextRounded cursor="pointer" fontSize="large" onClick={() => nextClick()} />
-                                
-                                <font size="3" style={{ marginLeft: 10, marginTop : 9 }}>
+
+                                <font size="3" style={{ marginLeft: 10, marginTop: 9 }}>
                                     {/* {DateTime(time)} */}
-                                    <b>{`${currentTime}`+"/"+`${durationTime}`}</b>
+                                    <b>{`${currentTime}` + "/" + `${durationTime}`}</b>
                                 </font>
                             </Grid>
                             <Grid item xs={4} >
-                                <FastRewindRounded cursor="pointer" fontSize="large" onClick={() => onClickFastRewind()}/>
-                                    {" "}
-                                <FastForwardRounded cursor="pointer" fontSize="large" onClick={() => onClickFastForward()}/>                                
+                                <FastRewindRounded cursor="pointer" fontSize="large" onClick={() => onClickFastRewind()} />
+                                {" "}
+                                <FastForwardRounded cursor="pointer" fontSize="large" onClick={() => onClickFastForward()} />
                             </Grid>
                             <Grid item xs={1} >
                                 <AddAPhotoOutlined cursor="pointer" fontSize="large" onClick={() => onClickScreenShot()} />

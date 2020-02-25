@@ -53,7 +53,7 @@ function App() {
               onChange={(e) => searchCameras(e.target.value)}
             />{" "}
           </Paper>
-          <Divider sx={{width: "94%"}}/>
+          <Divider sx={{ width: "94%" }} />
           <ImageList sx={{ width: "100%", maxHeight: "100%" }} cols={1}>
             {cameras.map((item, index) => {
               return (
@@ -78,7 +78,7 @@ function App() {
           </ImageList>
         </Grid>
         <Grid item xs={9}>
-        <Typography variant="h3" sx={{marginTop:4, marginLeft:3}}>What are you Looking For</Typography>
+          <Typography variant="h3" sx={{ marginTop: 4, marginLeft: 3 }}>What are you Looking For</Typography>
           <SearchFilter />
           <HLSPlayer />
           <Thumbnails />
