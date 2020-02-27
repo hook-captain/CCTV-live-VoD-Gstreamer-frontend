@@ -116,8 +116,7 @@ export default function Thumbnails() {
       }
       subThumb[cnt] = timeArray[Object.keys(timeArray)[i]][j];
       if (i === 0 && j === (timeArray[Object.keys(timeArray)[i]].length-1)){
-      endTime = timeArray[Object.keys(timeArray)[i]][j][timeArray[Object.keys(timeArray)[i]][j].length-1].time
-        
+      endTime = timeArray[Object.keys(timeArray)[i]][0][timeArray[Object.keys(timeArray)[i]][0].length-1].time
       }
     }
     subThumb['length'] = cnt+1;
