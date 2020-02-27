@@ -48,27 +48,28 @@ export const getThumbnail =
       .get(`/api/thumbnails/${cameraid}/${starttime}/${endtime}/${duration}`)
       .then((res) => {
         if (res.data.length > 0) {
-          let first = new Date(res.data[0].time);
-          let thumbnails = [],
-            sub_Thumbnails = [];
+          // let first = new Date(res.data[0].time);
+          let initTime = parseInt(new Date(res.data[0].time).getTime()/(duration*60*1000))*duration*60*1000; 
+          let first = initTime;
+          let thumbnails = [], sub_Thumbnails = [];
           let _duration = duration * 60;
           let flag = 0;
           Promise.all(
             res.data.map(async (item) => {
-              let second = new Date(item.time);              
-              if ((second - first) / 1000 <= _duration) {
+              let second = new Date(item.time).getTime();
+              if((second - first) / 1000 < _duration){
                 if (item.path.indexOf("gray") < 0) {
                   flag = 1;
                 }
                 sub_Thumbnails.push(item);
-              } else {
-                first = second;
+              }else{
+                first = first + _duration*1000;
                 if (flag === 1) {
                   thumbnails.push(sub_Thumbnails);
                 }
-                flag = 0
+                flag = 0;
                 sub_Thumbnails = [];
-                sub_Thumbnails.push(item);
+                sub_Thumbnails.push(item);                
               }
             })
           );
