@@ -19,7 +19,8 @@ export default function SearchFilter() {
   const { camera } = useSelector((state) => state.camera);
   const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
   const [startTime, setstartTime] = useState(new Date());
-  const [open, setOpen] = React.useState(false);
+  const [open1, setOpen1] = React.useState(false);
+  const [open2, setOpen2] = React.useState(false);
   // const video = useSelector((state) => state.video);
   const [duration, setDuration] = useState(5);
   const [cameraID, setCameraID] = useState(0);
@@ -80,7 +81,8 @@ export default function SearchFilter() {
     if (reason === 'clickaway') {
       return;
     }
-    setOpen(false);
+    setOpen1(false);
+    setOpen2(false);
   };
 
   const getDatetime = () => {
@@ -106,32 +108,37 @@ export default function SearchFilter() {
 
   const setStarttimeChange = (e) => {
     setStarttime(e.target.value);
-    if (e.target.value <= endtime) {
+    if (e.target.value < endtime) {
       dispatch(getThumbnail(camera.id, e.target.value, endtime, duration));
       getdefaultVod(camera.id);
     }
     else {
-      setOpen(true);
+      setOpen1(true);
     }
   };
 
   const setEndtimeChange = (e) => {
     setEndtime(e.target.value);
-    if (e.target.value >= starttime) {
+    if (e.target.value > starttime) {
       dispatch(getThumbnail(camera.id, starttime, e.target.value, duration));
       getdefaultVod(camera.id);
     }
     else {
-      setOpen(true);
+      setOpen2(true);
     }
   };
 
 
   return (
     <Grid style={{ marginTop: 15 }} container spacing={2}>
-      <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'right' }} open={open} autoHideDuration={4000} onClose={handleClose}>
+      <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'right' }} open={open1} autoHideDuration={4000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
-          StartTime or EndTime is not correct!
+          {'From time should be <= To time or Current time!'}
+        </Alert>
+      </Snackbar>
+      <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'right' }} open={open2} autoHideDuration={4000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
+        {'To time should be >= From time!'}
         </Alert>
       </Snackbar>
       <Grid item xs={3}>
