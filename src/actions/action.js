@@ -52,26 +52,35 @@ export const getThumbnail =
           let thumbnails = [],
             sub_Thumbnails = [];
           let _duration = duration * 60;
+          let flag = 0;
           Promise.all(
             res.data.map(async (item) => {
-              let second = new Date(item.time);
+              let second = new Date(item.time);              
               if ((second - first) / 1000 <= _duration) {
+                if (item.path.indexOf("gray") < 0) {
+                  flag = 1;
+                }
                 sub_Thumbnails.push(item);
               } else {
                 first = second;
-                thumbnails.push(sub_Thumbnails);
+                if (flag === 1) {
+                  thumbnails.push(sub_Thumbnails);
+                }
+                flag = 0
                 sub_Thumbnails = [];
                 sub_Thumbnails.push(item);
               }
             })
           );
-          thumbnails.push(sub_Thumbnails);
+          if (flag === 1) {
+            thumbnails.push(sub_Thumbnails);
+          }
           dispatch({ type: GET_THUMBNAIL_LIST, payload: thumbnails });
           dispatch({ type: VIDEO_VOD_MODE, payload: {} });
         } else {
           dispatch({ type: GET_THUMBNAIL_LIST, payload: [] });
           dispatch({ type: VIDEO_VOD_MODE, payload: {} });
         }
-        dispatch({ type: GET_SEARCH_TIME, payload: count/1000 });
+        dispatch({ type: GET_SEARCH_TIME, payload: count / 1000 });
       });
   };

@@ -223,7 +223,6 @@ function HLSPlayer() {
             playerRef.current.currentTime = playerRef.current.duration;
         }
     }
-    
     function pauseVideo() {
         playerRef.current.pause();
         let status = 1;
