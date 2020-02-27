@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 export default function Thumbnails() {
   const { mode } = useSelector((state) => state.video);
-  const { selected, thumbnails } = useSelector((state) => state.thumbnail);
+  const { selected, thumbnails, searchTime } = useSelector((state) => state.thumbnail);
   const getDateTime = (Dates) => {
     let result,
       Month,
@@ -67,7 +67,7 @@ export default function Thumbnails() {
   if (thumbnails && thumbnails[0]) {
     for (let i = 0; i < thumbnails.length; i++) {
       let time = new Date(thumbnails[i][0].time);
-      time.setMinutes(0);
+      // time.setMinutes(0);
       time.setSeconds(0);
       time.setMilliseconds(0);
 
@@ -96,9 +96,8 @@ export default function Thumbnails() {
         flag = flag + datetimeArray[Object.keys(datetimeArray)[i]].length;
       }
       else {
-        flag = datetimeArray[Object.keys(datetimeArray)[i]].length;
-        clipArray[count] = flag;
         count = count + 1;
+        flag = datetimeArray[Object.keys(datetimeArray)[i]].length;
       }
     }
     clipArray[count] = flag;
@@ -125,7 +124,8 @@ export default function Thumbnails() {
       <font size={30} color="#888888">
         {thumbnails ? thumbnails.length : 0}
       </font>{" "}
-      <b>Clip Segments</b>
+      <b >Clip Segments</b>
+      <font color="#888888" size={2}>(Search Time : {searchTime} s)</font>
       <Divider sx={{ marginBottom: 1, width: "98%" }} />
       {Object.keys(datetimeArray).map((key, count) => {
         return (

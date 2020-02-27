@@ -118,7 +118,7 @@ function HLSPlayer() {
 
     const previousClick = () => {
         if (mode === "VOD") {
-            if (selected && selected > 0) {
+            if (parseInt(selected) && parseInt(selected) > 0) {
                 let start = subThumb[parseInt(selected) - 1][0].time
                 // let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
                 dispatch({ type: START_TIME_GROUP, payload: start });
@@ -223,7 +223,7 @@ function HLSPlayer() {
             playerRef.current.currentTime = playerRef.current.duration;
         }
     }
-
+    
     function pauseVideo() {
         playerRef.current.pause();
         let status = 1;

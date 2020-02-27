@@ -6,6 +6,7 @@ import {
   VIDEO_LIVE_MODE,
   VIDEO_VOD_MODE,
   SELECT_THUMBNAIL_GROUP,
+  GET_SEARCH_TIME,
 } from "../redux/types";
 
 export const getCameras = (keyword) => (dispatch) => {
@@ -41,6 +42,8 @@ export const GetLiveVideo = (ID) => (dispatch) => {
 
 export const getThumbnail =
   (cameraid, starttime, endtime, duration) => (dispatch) => {
+    let count = 0;
+    setInterval(() => { count++ }, 1)
     axios
       .get(`/api/thumbnails/${cameraid}/${starttime}/${endtime}/${duration}`)
       .then((res) => {
@@ -69,5 +72,6 @@ export const getThumbnail =
           dispatch({ type: GET_THUMBNAIL_LIST, payload: [] });
           dispatch({ type: VIDEO_VOD_MODE, payload: {} });
         }
+        dispatch({ type: GET_SEARCH_TIME, payload: count/1000 });
       });
   };
