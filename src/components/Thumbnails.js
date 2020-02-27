@@ -13,7 +13,7 @@ export default function Thumbnails() {
       Day,
       Hour,
       Hour1,
-      Min,
+      // Min,
       CurrentTime = Dates;
 
     if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
@@ -53,10 +53,10 @@ export default function Thumbnails() {
     // if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes() - CurrentTime.getMinutes() % 2}`;
     // else Min = `${CurrentTime.getMinutes() - CurrentTime.getMinutes() % 2}`;
 
-    if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
-    else Min = `${CurrentTime.getMinutes()}`;
+    // if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
+    // else Min = `${CurrentTime.getMinutes()}`;
 
-    result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}-${Hour1}${Min}`;
+    result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}-${Hour1}`;
     return result;
   };
 
@@ -72,7 +72,7 @@ export default function Thumbnails() {
     for (let i = thumbnails.length-1; i >= 0; i--) {
       let time = new Date(thumbnails[i][0].time);
       
-      // time.setMinutes(0);
+      time.setMinutes(0);
       time.setSeconds(0);
       time.setMilliseconds(0);
 
