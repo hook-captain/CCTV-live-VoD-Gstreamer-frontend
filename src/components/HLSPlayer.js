@@ -82,7 +82,7 @@ function HLSPlayer() {
     const startTime = useSelector((state) => state.thumbnail.startTime)
     const endTime = useSelector((state) => state.thumbnail.endTime)
     const subThumb = useSelector((state) => state.thumbnail.subThumbnails)
-    const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
+    // const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
     const dispatch = useDispatch();
     const [status, setStatus] = useState(0);
     const [timerID, setTimerID] = useState(0);
@@ -244,7 +244,7 @@ function HLSPlayer() {
                     key={`${selected}${startTime}`}
                     src={mode === "VOD" ? video : ""}
                     autoPlay={true}
-                    controls={false}
+                    controls={true}
                     width="85%"
                     height="auto"
                     playerRef={playerRef}
