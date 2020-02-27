@@ -245,7 +245,7 @@ function HLSPlayer() {
                     autoPlay={true}
                     controls={true}
                     width="85%"
-                    height="auto"
+                    height= "auto"
                     playerRef={playerRef}
                 />
             </div>

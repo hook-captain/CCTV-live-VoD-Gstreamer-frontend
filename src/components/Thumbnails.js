@@ -67,7 +67,7 @@ export default function Thumbnails() {
   if (thumbnails && thumbnails[0]) {
     for (let i = 0; i < thumbnails.length; i++) {
       let time = new Date(thumbnails[i][0].time);
-      // time.setMinutes(0);
+      time.setMinutes(0);
       time.setSeconds(0);
       time.setMilliseconds(0);
 
@@ -133,8 +133,7 @@ export default function Thumbnails() {
             <Grid item xs={12} sm container>
               {
                 datetimeArray[key].map((items, index) => {
-                  indexs = indexs + 1;
-                  dateCount = dateCount + 1;
+                  indexs = indexs + 1;        
                   let item = items[0];
                   let trues = 1;
                   if (count > 0) {
@@ -142,6 +141,10 @@ export default function Thumbnails() {
                       trues = 0;
                     }
                   }
+                  if(trues === 1){
+                    dateCount = dateCount + 1;
+                  }
+                  console.log(dateCount);
                   return <Grid item xs={2} key={index} style={{ marginTop: 'auto' }}>
                     {index === 0 ?
                       <div>
