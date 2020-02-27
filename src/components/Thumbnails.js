@@ -13,7 +13,7 @@ export default function Thumbnails() {
       Day,
       Hour,
       Hour1,
-      // Min,
+      Min,
       CurrentTime = Dates;
 
     if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
@@ -42,17 +42,21 @@ export default function Thumbnails() {
         Hour1 = `0${CurrentTime.getHours() + 1}:00AM`;
       }
       else {
-        Hour1 = `${CurrentTime.getHours() + 1}:00AM`;
+        if(CurrentTime.getHours() === 11){
+          Hour1 = `${CurrentTime.getHours() + 1}:00PM`;
+        }else{
+          Hour1 = `${CurrentTime.getHours() + 1}:00AM`;
+        }        
       }
     }
 
     // if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes() - CurrentTime.getMinutes() % 2}`;
     // else Min = `${CurrentTime.getMinutes() - CurrentTime.getMinutes() % 2}`;
 
-    // if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
-    // else Min = `${CurrentTime.getMinutes()}`;
+    if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
+    else Min = `${CurrentTime.getMinutes()}`;
 
-    result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}-${Hour1}`;
+    result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}-${Hour1}${Min}`;
     return result;
   };
 
@@ -62,12 +66,13 @@ export default function Thumbnails() {
   // setInterval(autoRefresh(), 55000);
 
   let timeArray = Object.create(null);
-  let datetimeArray = Object.create(null);
+  // let datetimeArray = Object.create(null);
   
   if (thumbnails && thumbnails[0]) {
-    for (let i = 0; i < thumbnails.length; i++) {
+    for (let i = thumbnails.length-1; i >= 0; i--) {
       let time = new Date(thumbnails[i][0].time);
-      time.setMinutes(0);
+      
+      // time.setMinutes(0);
       time.setSeconds(0);
       time.setMilliseconds(0);
 
@@ -75,7 +80,6 @@ export default function Thumbnails() {
       if (!timeArray[timeGroup]) {
         timeArray[timeGroup] = [];
       }
-
       timeArray[timeGroup].push(thumbnails[i]);
     }
   }
@@ -85,39 +89,41 @@ export default function Thumbnails() {
   let subThumb = Object.create(null);
 
   
-  for (let i = 0; i < Object.keys(timeArray).length; i++) {
-    datetimeArray[Object.keys(timeArray)[Object.keys(timeArray).length - 1 - i]] = Object.values(timeArray)[Object.keys(timeArray).length - 1 - i]
-  }
+  // for (let i = 0; i < Object.keys(timeArray).length; i++) {
+  //   datetimeArray[Object.keys(timeArray)[Object.keys(timeArray).length - 1 - i]] = Object.values(timeArray)[Object.keys(timeArray).length - 1 - i]
+  // }
 
-  if (Object.keys(datetimeArray).length) {
-    let flag = datetimeArray[Object.keys(datetimeArray)[0]].length, count = 0;
-    for (let i = 1; i < Object.keys(datetimeArray).length; i++) {
-      if (Object.keys(datetimeArray)[i].split(" ")[0].localeCompare(Object.keys(datetimeArray)[i - 1].split(" ")[0]) === 0) {
-        flag = flag + datetimeArray[Object.keys(datetimeArray)[i]].length;
+  if (Object.keys(timeArray).length) {
+    let flag = timeArray[Object.keys(timeArray)[0]].length, count = 0;
+    for (let i = 1; i < Object.keys(timeArray).length; i++) {
+      if (Object.keys(timeArray)[i].split(" ")[0].localeCompare(Object.keys(timeArray)[i - 1].split(" ")[0]) === 0) {
+        flag = flag + timeArray[Object.keys(timeArray)[i]].length;
       }
       else {
         count = count + 1;
-        flag = datetimeArray[Object.keys(datetimeArray)[i]].length;
+        flag = timeArray[Object.keys(timeArray)[i]].length;
       }
     }
     clipArray[count] = flag;
   }
 
 
-  for (let i = 0; i < Object.keys(datetimeArray).length; i++) {
-    for (let j = 0; j < datetimeArray[Object.keys(datetimeArray)[i]].length; j++) {
+  for (let i = 0; i < Object.keys(timeArray).length; i++) {
+    for (let j = 0; j < timeArray[Object.keys(timeArray)[i]].length; j++) {
       cnt = cnt + 1;
       if (!subThumb[cnt]) {
         subThumb[cnt] = [];
       }
-      subThumb[cnt] = datetimeArray[Object.keys(datetimeArray)[i]][j];
-      if (i === 0 && j === (datetimeArray[Object.keys(datetimeArray)[i]].length-1)){
-      endTime = datetimeArray[Object.keys(datetimeArray)[i]][j][datetimeArray[Object.keys(datetimeArray)[i]][j].length-1].time
+      subThumb[cnt] = timeArray[Object.keys(timeArray)[i]][j];
+      if (i === 0 && j === (timeArray[Object.keys(timeArray)[i]].length-1)){
+      endTime = timeArray[Object.keys(timeArray)[i]][j][timeArray[Object.keys(timeArray)[i]][j].length-1].time
         
       }
     }
     subThumb['length'] = cnt+1;
   }
+
+
 
   return mode === "VOD" ? (
     <div>
@@ -127,24 +133,23 @@ export default function Thumbnails() {
       <b >Clip Segments</b>
       <font color="#888888" size={2}>(Search Time : {searchTime} s)</font>
       <Divider sx={{ marginBottom: 1, width: "98%" }} />
-      {Object.keys(datetimeArray).map((key, count) => {
+      {Object.keys(timeArray).map((key, count) => {
         return (
           <Grid container spacing={2} key={key}>
             <Grid item xs={12} sm container>
               {
-                datetimeArray[key].map((items, index) => {
+                timeArray[key].map((items, index) => {
                   indexs = indexs + 1;        
                   let item = items[0];
                   let trues = 1;
                   if (count > 0) {
-                    if (Object.keys(datetimeArray)[count - 1].split(" ")[0].localeCompare(Object.keys(datetimeArray)[count].split(" ")[0]) === 0) {
+                    if (Object.keys(timeArray)[count - 1].split(" ")[0].localeCompare(Object.keys(timeArray)[count].split(" ")[0]) === 0) {
                       trues = 0;
                     }
                   }
                   if(trues === 1){
                     dateCount = dateCount + 1;
                   }
-                  console.log(dateCount);
                   return <Grid item xs={2} key={index} style={{ marginTop: 'auto' }}>
                     {index === 0 ?
                       <div>

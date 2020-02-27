@@ -47,33 +47,33 @@ const themeSlider = createTheme({
 
 function HLSPlayer() {
 
-    // const DateTime = (Dates) => {
-    //     let result,
-    //         Month,
-    //         Day,
-    //         Hour,
-    //         Min,
-    //         second,
-    //         CurrentTime = Dates;
+    const DateTime = (Dates) => {
+        let result,
+            Month,
+            Day,
+            Hour,
+            Min,
+            second,
+            CurrentTime = Dates;
 
-    //     if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
-    //     else Month = `${CurrentTime.getMonth() + 1}`;
+        if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
+        else Month = `${CurrentTime.getMonth() + 1}`;
 
-    //     if (CurrentTime.getDate() < 10) Day = `0${CurrentTime.getDate()}`;
-    //     else Day = `${CurrentTime.getDate()}`;
+        if (CurrentTime.getDate() < 10) Day = `0${CurrentTime.getDate()}`;
+        else Day = `${CurrentTime.getDate()}`;
 
-    //     if (CurrentTime.getHours() < 10) Hour = `0${CurrentTime.getHours()}`;
-    //     else Hour = `${CurrentTime.getHours()}`;
+        if (CurrentTime.getHours() < 10) Hour = `0${CurrentTime.getHours()}`;
+        else Hour = `${CurrentTime.getHours()}`;
 
-    //     if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
-    //     else Min = `${CurrentTime.getMinutes()}`;
+        if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
+        else Min = `${CurrentTime.getMinutes()}`;
 
-    //     if (CurrentTime.getSeconds() < 10) second = `0${CurrentTime.getSeconds()}`;
-    //     else second = `${CurrentTime.getSeconds()}`;
+        if (CurrentTime.getSeconds() < 10) second = `0${CurrentTime.getSeconds()}`;
+        else second = `${CurrentTime.getSeconds()}`;
 
-    //     result = `${CurrentTime.getFullYear()}/${Month}/${Day} ${Hour}:${Min}:${second}`;
-    //     return result;
-    // };
+        result = `${CurrentTime.getFullYear()}/${Month}/${Day} ${Hour}:${Min}:${second}`;
+        return result;
+    };
 
     const camera = useSelector((state) => state.camera.camera);
     const mode = useSelector((state) => state.video.mode);
@@ -88,9 +88,10 @@ function HLSPlayer() {
     const [timerID, setTimerID] = useState(0);
     const [selectState, setSelectState] = useState(0);
     const playerRef = React.useRef(null);
-    // const [time, setTime] = useState(new Date());
-    const [currentTime, setCurrentTime] = useState("00:00");
-    const [durationTime, setDurationTime] = useState("00:00");
+    const [time, setTime] = useState(new Date());
+    // const [currentTime, setCurrentTime] = useState("00:00");
+    // const [durationTime, setDurationTime] = useState("00:00");
+    // let started = new Date(startTime);
 
     useEffect(() => {
         dispatch(selectThumbnail(selectState));
@@ -104,6 +105,8 @@ function HLSPlayer() {
             let timer_id = setInterval(increase, 1000)
             setTimerID(timer_id);
         }
+        let status = 0;
+        setStatus(status);
     }, [startTime]);
 
     const handleChange = (e) => {
@@ -116,7 +119,7 @@ function HLSPlayer() {
         dispatch(GetLiveVideo(camera.id))
     }
 
-    const previousClick = () => {
+    const nextClick = () => {
         if (mode === "VOD") {
             if (parseInt(selected) && parseInt(selected) > 0) {
                 let start = subThumb[parseInt(selected) - 1][0].time
@@ -125,10 +128,12 @@ function HLSPlayer() {
                 dispatch(GetVodVideo(camera.id, start, endTime));
                 dispatch(selectThumbnail(parseInt(selected) - 1));
             }
+            let status = 0;
+            setStatus(status);
         }
     }
 
-    const nextClick = () => {
+    const previousClick = () => {
         if (mode === "VOD") {
             if (parseInt(selected) < subThumb.length - 1) {
                 let start = subThumb[parseInt(selected) + 1][0].time;
@@ -137,6 +142,8 @@ function HLSPlayer() {
                 dispatch(GetVodVideo(camera.id, start, endTime));
                 setSelectState(parseInt(selected) + 1);
             }
+            let status = 0;
+            setStatus(status);
         }
     }
 
@@ -165,17 +172,15 @@ function HLSPlayer() {
         a.click();
     }
 
-    // function addSeconds(date, seconds) {
-    //     date.setSeconds(date.getSeconds() + seconds);
-    //     return date;
-    // }
-
-    // let started = new Date(startTime);
-
+    function addSeconds(date) {
+        date.setSeconds(date.getSeconds() + playerRef.current.currentTime);
+        return date;
+    }
+    
     function increase() {
-        timeUpdate()
-        timeDuration()
-        // setTime(new Date(addSeconds(started, 1)));
+        // timeUpdate()
+        // timeDuration()    
+        setTime(new Date(addSeconds(new Date(startTime))));    
     }
 
     function playVideo() {
@@ -184,27 +189,27 @@ function HLSPlayer() {
         setStatus(status);
     }
 
-    const timeUpdate = () => {
-        const minutes = Math.floor(playerRef.current.currentTime / 60);
-        const seconds = Math.floor(playerRef.current.currentTime - minutes * 60);
-        const currentTime = str_pad_left(minutes, '0', 2) + ':' + str_pad_left(seconds, '0', 2);
-        setCurrentTime(currentTime);
-    }
+    // const timeUpdate = () => {
+    //     const minutes = Math.floor(playerRef.current.currentTime / 60);
+    //     const seconds = Math.floor(playerRef.current.currentTime - minutes * 60);
+    //     const currentTime = str_pad_left(minutes, '0', 2) + ':' + str_pad_left(seconds, '0', 2);
+    //     setCurrentTime(currentTime);
+    // }
 
-    const timeDuration = () => {
-        const minutes = Math.floor(playerRef.current.duration / 60);
-        const seconds = Math.floor(playerRef.current.duration - minutes * 60);
-        const currentTime = str_pad_left(minutes, '0', 2) + ':' + str_pad_left(seconds, '0', 2);
-        if (playerRef.current.duration) {
-            setDurationTime(currentTime);
-        } else {
-            setDurationTime("00:00");
-        }
-    }
+    // const timeDuration = () => {
+    //     const minutes = Math.floor(playerRef.current.duration / 60);
+    //     const seconds = Math.floor(playerRef.current.duration - minutes * 60);
+    //     const currentTime = str_pad_left(minutes, '0', 2) + ':' + str_pad_left(seconds, '0', 2);
+    //     if (playerRef.current.duration) {
+    //         setDurationTime(currentTime);
+    //     } else {
+    //         setDurationTime("00:00");
+    //     }
+    // }
 
-    const str_pad_left = (string, pad, length) => {
-        return (new Array(length + 1).join(pad) + string).slice(-length);
-    }
+    // const str_pad_left = (string, pad, length) => {
+    //     return (new Array(length + 1).join(pad) + string).slice(-length);
+    // }
 
     const onClickFastRewind = () => {
         if (playerRef.current.currentTime > 10) {
@@ -243,7 +248,7 @@ function HLSPlayer() {
                     key={`${selected}${startTime}`}
                     src={mode === "VOD" ? video : ""}
                     autoPlay={true}
-                    controls={true}
+                    controls={false}
                     width="85%"
                     height= "auto"
                     playerRef={playerRef}
@@ -269,8 +274,8 @@ function HLSPlayer() {
                                 <SkipNextRounded cursor="pointer" fontSize="large" onClick={() => nextClick()} />
 
                                 <font size="3" style={{ marginLeft: 10, marginTop: 9 }}>
-                                    {/* {DateTime(time)} */}
-                                    <b>{`${currentTime}` + "/" + `${durationTime}`}</b>
+                                    {DateTime(time)}
+                                    {/* <b>{`${currentTime}` + "/" + `${durationTime}`}</b> */}
                                 </font>
                             </Grid>
                             <Grid item xs={4} >

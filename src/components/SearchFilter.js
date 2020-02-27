@@ -27,7 +27,7 @@ export default function SearchFilter() {
 
   useEffect(() => {
     if (thumbnails.length) {
-      let start = thumbnails[0][0].time
+      let start = thumbnails[thumbnails.length - 1][0].time
       let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
       dispatch(GetVodVideo(cameraID, start, end));
       let startTime = start;
@@ -107,7 +107,7 @@ export default function SearchFilter() {
   const setStarttimeChange = (e) => {
     setStarttime(e.target.value);
     if (e.target.value <= endtime) {
-      dispatch(getThumbnail(camera.id, e.target.value, endtime, duration));
+      dispatch(getThumbnail(camera.id, e.target.value, endtime, 0.2));
       getdefaultVod(camera.id);
     }
     else {

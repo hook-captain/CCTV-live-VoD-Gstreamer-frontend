@@ -44,7 +44,11 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
         Hour = `0${time.getHours()}:${Min}AM`;
       }
       else {
-        Hour = `${time.getHours()}:${Min}AM`;
+        if (time.getHours() === 12){
+          Hour = `${time.getHours()}:${Min}PM`;
+        }else{
+          Hour = `${time.getHours()}:${Min}AM`;
+        }        
       }
     }
 
