@@ -111,7 +111,9 @@ function HLSPlayer() {
     }, [startTime]);
 
     const handleChange = (e) => {
-        playerRef.current.currentTime = e.target.value / 100 * playerRef.current.duration;
+        if (playerRef.current.duration){
+            playerRef.current.currentTime = e.target.value / 100 * playerRef.current.duration;
+        }
         playVideo();
     }
 
@@ -120,7 +122,7 @@ function HLSPlayer() {
         dispatch(GetLiveVideo(camera.id))
     }
 
-    const nextClick = () => {
+    const previousClick = () => {
         if (mode === "VOD") {
             if (parseInt(selected) && parseInt(selected) > 0) {
                 let start = subThumb[parseInt(selected) - 1][0].time
@@ -134,7 +136,7 @@ function HLSPlayer() {
         }
     }
 
-    const previousClick = () => {
+    const nextClick = () => {
         if (mode === "VOD") {
             if (parseInt(selected) < subThumb.length - 1) {
                 let start = subThumb[parseInt(selected) + 1][0].time;
@@ -185,7 +187,9 @@ function HLSPlayer() {
     }
 
     function playVideo() {
-        playerRef.current.play();
+        if (playerRef.current.duration){
+            playerRef.current.play();
+        }
         let status = 0;
         setStatus(status);
     }
@@ -226,13 +230,16 @@ function HLSPlayer() {
             playerRef.current.currentTime = playerRef.current.currentTime + 10;
         }
         else {
-            playerRef.current.currentTime = playerRef.current.duration;
+            if(playerRef.current.duration){
+                playerRef.current.currentTime = playerRef.current.duration;
+            }
         }
     }
 
-    // console.log(playerRef.current.off)
     function pauseVideo() {
-        playerRef.current.pause();
+        if (playerRef.current.duration){
+            playerRef.current.pause();
+        }
         let status = 1;
         setStatus(status);
     }
@@ -243,7 +250,7 @@ function HLSPlayer() {
     // }
     let width;
     if(document.getElementById('wrapper')){
-        width = (document.getElementById('wrapper').clientWidth)*0.9;
+        width = (document.getElementById('wrapper').clientWidth)*0.45;
     }
 
     return (
@@ -268,7 +275,7 @@ function HLSPlayer() {
                         autoPlay={true}
                         controls={false}
                         width="90%"
-                        height= {width/2}
+                        height= {width}
                         playerRef={playerRef}
                     />
                     </div>
@@ -280,7 +287,7 @@ function HLSPlayer() {
                         <ThemeProvider theme={themeSlider}>
                             <Slider
                                 aria-label="Temperature"
-                                value={playerRef.current.currentTime / playerRef.current.duration * 100}
+                                value={playerRef.current.currentTime / playerRef.current.duration * 100?playerRef.current.currentTime / playerRef.current.duration * 100:0}
                                 onChange={(e) => handleChange(e)}
                                 sx={{ marginLeft: '3%', width: '94%'}}
                                 color="primary"

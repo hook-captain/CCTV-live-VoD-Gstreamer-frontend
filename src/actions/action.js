@@ -9,14 +9,18 @@ import {
   GET_SEARCH_TIME,
 } from "../redux/types";
 
-export const getCameras = (keyword) => (dispatch) => {
+export const getCameras = (keyword, start, end) => (dispatch) => {
   keyword === ""
     ? axios.get(`/api/cameras`).then((res) => {
       dispatch({ type: GET_CAMERA_LIST, payload: res.data });
-      dispatch({ type: VIDEO_LIVE_MODE, payload: res.data[0] });
+      dispatch(getThumbnail(res.data[0].id, start, end, 5));
+      // dispatch({ type: VIDEO_LIVE_MODE, payload: res.data[0] });
     })
     : axios.get(`/api/cameras/search/${keyword}`).then((res) => {
       dispatch({ type: GET_CAMERA_LIST, payload: res.data });
+      if(res.data[0]){
+        dispatch(getThumbnail(res.data[0].id, start, end, 5));
+      }
     });
 };
 

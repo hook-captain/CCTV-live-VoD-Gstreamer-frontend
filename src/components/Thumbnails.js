@@ -129,7 +129,7 @@ export default function Thumbnails() {
         {thumbnails ? thumbnails.length : 0}
       </font>{" "}
       <b >Clip Segments</b>
-      <font color="#888888" size={2}>(Search Time : {searchTime} s)</font>
+      <font color="#888888" size={2}>(Search Time : {thumbnails[0] ? searchTime : 0} s)</font>
       <Divider sx={{ marginBottom: 1, width: "98%" }} />
       {Object.keys(timeArray).map((key, count) => {
         return (

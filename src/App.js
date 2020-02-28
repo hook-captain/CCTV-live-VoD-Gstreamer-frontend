@@ -11,24 +11,63 @@ import Thumbnails from "./components/Thumbnails";
 import Header from "./components/Header";
 import HLSPlayer from "./components/HLSPlayer";
 
-import { GetLiveVideo, getCameras, setCamera } from "./actions/action";
+import { getCameras, setCamera, getThumbnail } from "./actions/action";
 
 function App() {
   const dispatch = useDispatch();
   const { camera, cameras } = useSelector((state) => state.camera);
 
-  const searchCameras = (value) => {
-    dispatch(getCameras(value));
+  const DateTime = (Date) => {
+    let result,
+      Month,
+      Day,
+      Hour,
+      Min,
+      CurrentTime = Date;
+
+    if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
+    else Month = `${CurrentTime.getMonth() + 1}`;
+
+    if (CurrentTime.getDate() < 10) Day = `0${CurrentTime.getDate()}`;
+    else Day = `${CurrentTime.getDate()}`;
+
+    if (CurrentTime.getHours() < 10) Hour = `0${CurrentTime.getHours()}`;
+    else Hour = `${CurrentTime.getHours()}`;
+
+    if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
+    else Min = `${CurrentTime.getMinutes()}`;
+
+    result = `${CurrentTime.getFullYear()}-${Month}-${Day}T${Hour}:${Min}`;
+    return result;
   };
-  const getSelectedLiveVideo = (target) => {
+
+  const getDatetime = () => {
+    let CurrentTime = new Date();
+    CurrentTime.setDate(CurrentTime.getDate() - 3);
+    return DateTime(CurrentTime);
+  };
+
+  const searchCameras = (value) => {
+    let start = getDatetime();
+    let end = DateTime(new Date());
+    dispatch(getCameras(value, start, end));
+  };
+
+  const getSelectedVodVideo = (target) => {
     if (target.id) {
       dispatch(setCamera(cameras[target.id]));
-      dispatch(GetLiveVideo(camera.id));
+      // dispatch(GetLiveVideo(camera.id));
+      // let start = getDatetime();
+      let start = "2023-01-02T21:37"
+      let end = DateTime(new Date());
+      dispatch(getThumbnail(cameras[target.id].id, start, end, 5));
     }
   };
 
   useState(() => {
-    dispatch(getCameras(""));
+    let start = getDatetime();
+    let end = DateTime(new Date());
+    dispatch(getCameras("", start, end));
   }, []);
 
   return (
@@ -60,7 +99,7 @@ function App() {
                 <div
                   key={index}
                   onClick={(e) => {
-                    getSelectedLiveVideo(e.target);
+                    getSelectedVodVideo(e.target);
                   }}
                 >
                   <CameraListItem
