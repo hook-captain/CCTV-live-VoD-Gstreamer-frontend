@@ -29,6 +29,7 @@ export const setCamera = (obj) => (dispatch) => {
 };
 
 export const GetVodVideo = (ID, start, end) => (dispatch) => {
+  console.log(ID, start, end)
   axios.get(`/api/videos/play/${ID}/${start}/${end}`).then((res) => {
     dispatch({ type: VIDEO_VOD_MODE, payload: res.data });
   });

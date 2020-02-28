@@ -30,7 +30,7 @@ export default function SearchFilter() {
     if (thumbnails.length) {
       let start = thumbnails[thumbnails.length - 1][0].time
       let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
-      dispatch(GetVodVideo(cameraID, start, end));
+      dispatch(GetVodVideo(camera.id, start, end));
       let startTime = start;
       setstartTime(startTime);
       dispatch({ type: START_TIME_GROUP, payload: startTime });

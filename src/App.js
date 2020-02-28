@@ -11,7 +11,7 @@ import Thumbnails from "./components/Thumbnails";
 import Header from "./components/Header";
 import HLSPlayer from "./components/HLSPlayer";
 
-import { getCameras, setCamera, getThumbnail } from "./actions/action";
+import { getCameras, setCamera, getThumbnail, GetVodVideo } from "./actions/action";
 
 function App() {
   const dispatch = useDispatch();
@@ -61,6 +61,7 @@ function App() {
       // let start = "2023-01-02T21:37"
       let end = DateTime(new Date());
       dispatch(getThumbnail(cameras[target.id].id, start, end, 5));
+      // dispatch(GetVodVideo(cameras[target.id].id, start, end))
     }
   };
 
