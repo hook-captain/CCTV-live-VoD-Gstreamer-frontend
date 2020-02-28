@@ -57,8 +57,8 @@ function App() {
     if (target.id) {
       dispatch(setCamera(cameras[target.id]));
       // dispatch(GetLiveVideo(camera.id));
-      // let start = getDatetime();
-      let start = "2023-01-02T21:37"
+      let start = getDatetime();
+      // let start = "2023-01-02T21:37"
       let end = DateTime(new Date());
       dispatch(getThumbnail(cameras[target.id].id, start, end, 5));
     }
