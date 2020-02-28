@@ -18,12 +18,9 @@ import { START_TIME_GROUP } from "../redux/types";
 export default function SearchFilter() {
   const { camera } = useSelector((state) => state.camera);
   const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
-  const [startTime, setstartTime] = useState(new Date());
   const [open1, setOpen1] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
-  // const video = useSelector((state) => state.video);
   const [duration, setDuration] = useState(5);
-  const [cameraID, setCameraID] = useState(0);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -31,10 +28,9 @@ export default function SearchFilter() {
       let start = thumbnails[thumbnails.length - 1][0].time
       let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
       dispatch(GetVodVideo(camera.id, start, end));
-      let startTime = start;
-      setstartTime(startTime);
-      dispatch({ type: START_TIME_GROUP, payload: startTime });
+      dispatch({ type: START_TIME_GROUP, payload: start });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [thumbnails]);
 
   const DateTime = (Date) => {
@@ -94,23 +90,23 @@ export default function SearchFilter() {
   const [starttime, setStarttime] = useState(`${getDatetime()}`);
   const [endtime, setEndtime] = useState(`${DateTime(new Date())}`);
 
-  const getdefaultVod = (camera_id) => {
-    setCameraID(camera_id);
-  }
+  // const getdefaultVod = (camera_id) => {
+  //   setCameraID(camera_id);
+  // }
 
 
 
   const handleChange = (e) => {
     setDuration(e.target.value);
     dispatch(getThumbnail(camera.id, starttime, endtime, e.target.value));
-    getdefaultVod(camera.id)
+    // getdefaultVod(camera.id)
   };
 
   const setStarttimeChange = (e) => {
     setStarttime(e.target.value);
     if (e.target.value < endtime) {
       dispatch(getThumbnail(camera.id, e.target.value, endtime, duration));
-      getdefaultVod(camera.id);
+      // getdefaultVod(camera.id);
     }
     else {
       setOpen1(true);
@@ -121,7 +117,7 @@ export default function SearchFilter() {
     setEndtime(e.target.value);
     if (e.target.value > starttime) {
       dispatch(getThumbnail(camera.id, starttime, e.target.value, duration));
-      getdefaultVod(camera.id);
+      // getdefaultVod(camera.id);
     }
     else {
       setOpen2(true);

@@ -29,7 +29,6 @@ import { findDOMNode } from "react-dom";
 import screenfull from 'screenfull';
 import captureVideoFrame from 'capture-video-frame';
 import grey from "../public/grey.jpg";
-import Thumbnails from "./Thumbnails";
 
 const theme = createTheme({
     palette: {
@@ -97,6 +96,7 @@ function HLSPlayer() {
 
     useEffect(() => {
         dispatch(selectThumbnail(selectState));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectState]);
     
     useEffect(() => {
@@ -109,6 +109,7 @@ function HLSPlayer() {
         }
         let status = 0;
         setStatus(status);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [startTime]);
 
     const handleChange = (e) => {
