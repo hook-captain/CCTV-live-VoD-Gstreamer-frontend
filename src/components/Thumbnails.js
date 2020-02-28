@@ -70,8 +70,7 @@ export default function Thumbnails() {
   
   if (thumbnails && thumbnails[0]) {
     for (let i = thumbnails.length-1; i >= 0; i--) {
-      let time = new Date(thumbnails[i][0].time);
-      
+      let time = new Date(thumbnails[i][0].time);      
       time.setMinutes(0);
       time.setSeconds(0);
       time.setMilliseconds(0);

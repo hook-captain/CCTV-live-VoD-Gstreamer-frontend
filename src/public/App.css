@@ -4,6 +4,11 @@
   position: relative;
 }
 
+.player-wrapper {
+  position: relative;
+  padding-top: 50%; /* 720 / 1280 = 0.5625 */
+}
+
 .tag {
   position: absolute;
   left: 0px;
@@ -21,8 +26,11 @@
 }
 
 .videoview {
-  margin-left: 15%;
+  margin-left: 12%;
   margin-top: 1%;
+}
+.show{
+  transform-style: preserve-3d;
 }
 
 .Modetext {
@@ -31,10 +39,15 @@
   margin-left: 4%;
 }
 
+.grey{
+  width: 52.6%;
+  position: absolute;
+  margin-left: 3.3%;
+}
 
 .playcontrols {
-  max-width: 72.2%;
-  margin-left: 15%;
+  margin-left: 16.5%;
+  max-width: 70.5%;
   height: 60px;
 }
 

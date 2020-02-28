@@ -28,6 +28,7 @@ import "../public/App.css";
 import { findDOMNode } from "react-dom";
 import screenfull from 'screenfull';
 import captureVideoFrame from 'capture-video-frame';
+import grey from "../public/grey.jpg";
 
 const theme = createTheme({
     palette: {
@@ -228,10 +229,21 @@ function HLSPlayer() {
             playerRef.current.currentTime = playerRef.current.duration;
         }
     }
+
+    // console.log(playerRef.current.off)
     function pauseVideo() {
         playerRef.current.pause();
         let status = 1;
         setStatus(status);
+    }
+    
+    // let width;
+    // if(document.getElementById('wrapper').clientWidth){
+    //     width = (document.getElementById('wrapper').clientWidth)*0.85;
+    // }
+    let width;
+    if(document.getElementById('wrapper')){
+        width = (document.getElementById('wrapper').clientWidth)*0.9;
     }
 
     return (
@@ -244,15 +256,23 @@ function HLSPlayer() {
                             <Button variant="contained" onClick={GoLiveVideo}>Go To Live</Button>
                         </ThemeProvider>
                     </div> : <></>}
-                <ReactHlsPlayer
-                    key={`${selected}${startTime}`}
-                    src={mode === "VOD" ? video : ""}
-                    autoPlay={true}
-                    controls={false}
-                    width="85%"
-                    height= "auto"
-                    playerRef={playerRef}
-                />
+                    <div id="wrapper" sx={{width: "auto"}}>
+                    <img src={grey}
+                        alt="img"
+                        prop="prop"
+                        className="grey"></img>
+                    <div className="show">
+                    <ReactHlsPlayer
+                        key={`${selected}${startTime}`}
+                        src={mode === "VOD" ? video : ""}
+                        autoPlay={true}
+                        controls={false}
+                        width="90%"
+                        height= {width/2}
+                        playerRef={playerRef}
+                    />
+                    </div>
+                </div>
             </div>
             {mode === "VOD" ?
                 <ThemeProvider theme={theme}>
@@ -262,7 +282,7 @@ function HLSPlayer() {
                                 aria-label="Temperature"
                                 value={playerRef.current.currentTime / playerRef.current.duration * 100}
                                 onChange={(e) => handleChange(e)}
-                                sx={{ marginLeft: '3%', width: '94%' }}
+                                sx={{ marginLeft: '3%', width: '94%'}}
                                 color="primary"
                             />
                         </ThemeProvider>
@@ -273,8 +293,8 @@ function HLSPlayer() {
                                     : <PauseCircleOutlineRounded cursor="pointer" fontSize="large" onClick={pauseVideo} />}
                                 <SkipNextRounded cursor="pointer" fontSize="large" onClick={() => nextClick()} />
 
-                                <font size="3" style={{ marginLeft: 10, marginTop: 9 }}>
-                                    {DateTime(time)}
+                                <font size="2" style={{ marginLeft: 10, width : "10%"}}>
+                                    <b>{DateTime(time)}</b>
                                     {/* <b>{`${currentTime}` + "/" + `${durationTime}`}</b> */}
                                 </font>
                             </Grid>
