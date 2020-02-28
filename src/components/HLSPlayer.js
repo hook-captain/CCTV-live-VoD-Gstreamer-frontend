@@ -29,6 +29,7 @@ import { findDOMNode } from "react-dom";
 import screenfull from 'screenfull';
 import captureVideoFrame from 'capture-video-frame';
 import grey from "../public/grey.jpg";
+import Thumbnails from "./Thumbnails";
 
 const theme = createTheme({
     palette: {
@@ -97,7 +98,7 @@ function HLSPlayer() {
     useEffect(() => {
         dispatch(selectThumbnail(selectState));
     }, [selectState]);
-
+    
     useEffect(() => {
         if (startTime) {
             if (timerID > 0) {
@@ -244,10 +245,6 @@ function HLSPlayer() {
         setStatus(status);
     }
     
-    // let width;
-    // if(document.getElementById('wrapper').clientWidth){
-    //     width = (document.getElementById('wrapper').clientWidth)*0.85;
-    // }
     let width;
     if(document.getElementById('wrapper')){
         width = (document.getElementById('wrapper').clientWidth)*0.45;
@@ -263,11 +260,15 @@ function HLSPlayer() {
                             <Button variant="contained" onClick={GoLiveVideo}>Go To Live</Button>
                         </ThemeProvider>
                     </div> : <></>}
-                    <div id="wrapper" sx={{width: "auto"}}>
-                    <img src={grey}
-                        alt="img"
-                        prop="prop"
-                        className="grey"></img>
+                    <div id="wrapper" >
+                        {
+                            subThumb[0]?
+                            <img src={grey}
+                            alt="img"
+                            prop="prop"
+                            className="grey"></img>:<div style={{marginTop : "20%", marginLeft : "30%"}}><font size={10} style={{color : "#888888"}}><b>No Data!</b></font></div>
+                        }
+                    
                     <div className="show">
                     <ReactHlsPlayer
                         key={`${selected}${startTime}`}
@@ -281,7 +282,7 @@ function HLSPlayer() {
                     </div>
                 </div>
             </div>
-            {mode === "VOD" ?
+            {(mode === "VOD")&&(subThumb[0]) ?
                 <ThemeProvider theme={theme}>
                     <AppBar position="static" className="playcontrols" color="primary">
                         <ThemeProvider theme={themeSlider}>
