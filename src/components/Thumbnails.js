@@ -99,6 +99,8 @@ export default function Thumbnails() {
         flag = flag + timeArray[Object.keys(timeArray)[i]].length;
       }
       else {
+        clipArray[count] = flag;
+        flag = 0;
         count = count + 1;
         flag = timeArray[Object.keys(timeArray)[i]].length;
       }

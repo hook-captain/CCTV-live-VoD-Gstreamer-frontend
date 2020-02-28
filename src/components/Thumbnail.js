@@ -19,6 +19,7 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
   useEffect(()=>{
     dispatch({ type: GET_SUBTHUMBNAILS_LIST, payload: thumbnails });
     dispatch({ type: SET_ENDTIME, payload: endTime });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
     let Hour, Min, result;
     let time = new Date(date);
 
-    if (time.getMinutes() < 9) Min = `0${time.getMinutes()}`;
+    if (time.getMinutes() < 10) Min = `0${time.getMinutes()}`;
     else Min = `${time.getMinutes()}`;
 
     if (time.getHours() > 12) {
