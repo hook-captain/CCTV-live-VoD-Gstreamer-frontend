@@ -42,11 +42,11 @@ export default function Thumbnails() {
         Hour1 = `0${CurrentTime.getHours() + 1}:00AM`;
       }
       else {
-        if(CurrentTime.getHours() === 11){
+        if (CurrentTime.getHours() === 11) {
           Hour1 = `${CurrentTime.getHours() + 1}:00PM`;
-        }else{
+        } else {
           Hour1 = `${CurrentTime.getHours() + 1}:00AM`;
-        }        
+        }
       }
     }
 
@@ -67,10 +67,10 @@ export default function Thumbnails() {
 
   let timeArray = Object.create(null);
   // let datetimeArray = Object.create(null);
-  
+
   if (thumbnails && thumbnails[0]) {
-    for (let i = thumbnails.length-1; i >= 0; i--) {
-      let time = new Date(thumbnails[i][0].time);      
+    for (let i = thumbnails.length - 1; i >= 0; i--) {
+      let time = new Date(thumbnails[i][0].time);
       time.setMinutes(0);
       time.setSeconds(0);
       time.setMilliseconds(0);
@@ -83,31 +83,30 @@ export default function Thumbnails() {
     }
   }
 
-  let indexs = 0, dateCount = 0, cnt = -1, endTime;
-  let clipArray = [];
+  let indexs = 0, cnt = -1, endTime;
+  let clipArray = Object.create(null);
   let subThumb = Object.create(null);
 
-  
+
   // for (let i = 0; i < Object.keys(timeArray).length; i++) {
   //   datetimeArray[Object.keys(timeArray)[Object.keys(timeArray).length - 1 - i]] = Object.values(timeArray)[Object.keys(timeArray).length - 1 - i]
   // }
 
+
   if (Object.keys(timeArray).length) {
-    let flag = timeArray[Object.keys(timeArray)[0]].length, count = 0;
-    for (let i = 1; i < Object.keys(timeArray).length; i++) {
+    let flag = timeArray[Object.keys(timeArray)[0]].length, i;
+    for (i = 1; i < Object.keys(timeArray).length; i++) {
       if (Object.keys(timeArray)[i].split(" ")[0].localeCompare(Object.keys(timeArray)[i - 1].split(" ")[0]) === 0) {
         flag = flag + timeArray[Object.keys(timeArray)[i]].length;
       }
       else {
-        clipArray[count] = flag;
+        clipArray[Object.keys(timeArray)[i - 1].split(" ")[0]] = flag;
         flag = 0;
-        count = count + 1;
         flag = timeArray[Object.keys(timeArray)[i]].length;
       }
     }
-    clipArray[count] = flag;
+    clipArray[Object.keys(timeArray)[i - 1].split(" ")[0]] = flag;
   }
-
 
   for (let i = 0; i < Object.keys(timeArray).length; i++) {
     for (let j = 0; j < timeArray[Object.keys(timeArray)[i]].length; j++) {
@@ -116,14 +115,12 @@ export default function Thumbnails() {
         subThumb[cnt] = [];
       }
       subThumb[cnt] = timeArray[Object.keys(timeArray)[i]][j];
-      if (i === 0 && j === (timeArray[Object.keys(timeArray)[i]].length-1)){
-      endTime = timeArray[Object.keys(timeArray)[i]][0][timeArray[Object.keys(timeArray)[i]][0].length-1].time
+      if (i === 0 && j === (timeArray[Object.keys(timeArray)[i]].length - 1)) {
+        endTime = timeArray[Object.keys(timeArray)[i]][0][timeArray[Object.keys(timeArray)[i]][0].length - 1].time
       }
     }
-    subThumb['length'] = cnt+1;
+    subThumb['length'] = cnt + 1;
   }
-
-
 
   return mode === "VOD" ? (
     <div>
@@ -139,7 +136,7 @@ export default function Thumbnails() {
             <Grid item xs={12} sm container>
               {
                 timeArray[key].map((items, index) => {
-                  indexs = indexs + 1;        
+                  indexs = indexs + 1;
                   let item = items[0];
                   let trues = 1;
                   if (count > 0) {
@@ -147,13 +144,10 @@ export default function Thumbnails() {
                       trues = 0;
                     }
                   }
-                  if(trues === 1){
-                    dateCount = dateCount + 1;
-                  }
                   return <Grid item xs={2} key={index} style={{ marginTop: 'auto' }}>
                     {index === 0 ?
                       <div>
-                        {trues !== 0 ? <div className="datetime">{key.split(" ")[0]} <font color="#888888" size={5}>({clipArray[dateCount - 1]}Clips)</font></div> : <br />}
+                        {trues !== 0 ? <div className="datetime">{key.split(" ")[0]} <font color="#888888" size={5}>({clipArray[Object.keys(timeArray)[count].split(" ")[0]]}Clips)</font></div> : <br />}
                         <div className="time">{key.split(" ")[1]}</div>
                       </div> :
                       <div style={{ marginBottom: 48 }}></div>}
