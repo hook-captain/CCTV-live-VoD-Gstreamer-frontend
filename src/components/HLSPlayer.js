@@ -22,13 +22,13 @@ import {
 
 import ReactHlsPlayer from "react-hls-player";
 import { useDispatch, useSelector } from "react-redux";
-import { START_TIME_GROUP } from "../redux/types";
+import { START_TIME_GROUP, GET_SUB_URL } from "../redux/types";
 import { GetVodVideo, selectThumbnail, GetLiveVideo } from "../actions/action";
 import "../public/App.css";
 import { findDOMNode } from "react-dom";
 import screenfull from 'screenfull';
 import captureVideoFrame from 'capture-video-frame';
-import grey from "../public/grey.jpg";
+// import grey from "../public/grey.jpg";
 
 const theme = createTheme({
     palette: {
@@ -79,26 +79,19 @@ function HLSPlayer() {
     const camera = useSelector((state) => state.camera.camera);
     const mode = useSelector((state) => state.video.mode);
     const video = useSelector((state) => state.video.video);
-    const selected = useSelector((state) => state.thumbnail.selected)
-    const startTime = useSelector((state) => state.thumbnail.startTime)
-    const endTime = useSelector((state) => state.thumbnail.endTime)
-    const subThumb = useSelector((state) => state.thumbnail.subThumbnails)
-    // const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
+    const { selected, startTime, endTime, subThumbnails, sub_Url, thumbnails} = useSelector((state) => state.thumbnail)
     const dispatch = useDispatch();
     const [status, setStatus] = useState(0);
     const [timerID, setTimerID] = useState(0);
     const [selectState, setSelectState] = useState(0);
     const playerRef = React.useRef(null);
     const [time, setTime] = useState(new Date());
-    // const [currentTime, setCurrentTime] = useState("00:00");
-    // const [durationTime, setDurationTime] = useState("00:00");
-    // let started = new Date(startTime);
 
     useEffect(() => {
         dispatch(selectThumbnail(selectState));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectState]);
-    
+
     useEffect(() => {
         if (startTime) {
             if (timerID > 0) {
@@ -113,7 +106,7 @@ function HLSPlayer() {
     }, [startTime]);
 
     const handleChange = (e) => {
-        if (playerRef.current.duration){
+        if (playerRef.current.duration) {
             playerRef.current.currentTime = e.target.value / 100 * playerRef.current.duration;
         }
         playVideo();
@@ -127,7 +120,8 @@ function HLSPlayer() {
     const previousClick = () => {
         if (mode === "VOD") {
             if (parseInt(selected) && parseInt(selected) > 0) {
-                let start = subThumb[parseInt(selected) - 1][0].time
+                let start = subThumbnails[parseInt(selected) - 1][0].time;
+                dispatch({ type: GET_SUB_URL, payload: subThumbnails[parseInt(selected) - 1][0].path });
                 // let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
                 dispatch({ type: START_TIME_GROUP, payload: start });
                 dispatch(GetVodVideo(camera.id, start, endTime));
@@ -140,8 +134,9 @@ function HLSPlayer() {
 
     const nextClick = () => {
         if (mode === "VOD") {
-            if (parseInt(selected) < subThumb.length - 1) {
-                let start = subThumb[parseInt(selected) + 1][0].time;
+            if (parseInt(selected) < subThumbnails.length - 1) {
+                let start = subThumbnails[parseInt(selected) + 1][0].time;
+                dispatch({ type: GET_SUB_URL, payload: subThumbnails[parseInt(selected) + 1][0].path });
                 // let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time;
                 dispatch({ type: START_TIME_GROUP, payload: start });
                 dispatch(GetVodVideo(camera.id, start, endTime));
@@ -178,18 +173,20 @@ function HLSPlayer() {
     }
 
     function addSeconds(date) {
-        date.setSeconds(date.getSeconds() + playerRef.current.currentTime);
+        if (playerRef.current){
+            date.setSeconds(date.getSeconds() + playerRef.current.currentTime);
+        }        
         return date;
     }
-    
+
     function increase() {
         // timeUpdate()
         // timeDuration()    
-        setTime(new Date(addSeconds(new Date(startTime))));    
+        setTime(new Date(addSeconds(new Date(startTime))));
     }
 
     function playVideo() {
-        if (playerRef.current.duration){
+        if (playerRef.current.duration) {
             playerRef.current.play();
         }
         let status = 0;
@@ -232,23 +229,23 @@ function HLSPlayer() {
             playerRef.current.currentTime = playerRef.current.currentTime + 10;
         }
         else {
-            if(playerRef.current.duration){
+            if (playerRef.current.duration) {
                 playerRef.current.currentTime = playerRef.current.duration;
             }
         }
     }
 
     function pauseVideo() {
-        if (playerRef.current.duration){
+        if (playerRef.current.duration) {
             playerRef.current.pause();
         }
         let status = 1;
         setStatus(status);
     }
-    
+
     let width;
-    if(document.getElementById('wrapper')){
-        width = (document.getElementById('wrapper').clientWidth)*0.45;
+    if (document.getElementById('wrapper')) {
+        width = (document.getElementById('wrapper').clientWidth) * 0.45;
     }
 
     return (
@@ -261,37 +258,37 @@ function HLSPlayer() {
                             <Button variant="contained" onClick={GoLiveVideo}>Go To Live</Button>
                         </ThemeProvider>
                     </div> : <></>}
-                    <div id="wrapper" >
-                        {
-                            subThumb[0]?
-                            <img src={grey}
-                            alt="img"
-                            prop="prop"
-                            className="grey"></img>:<div style={{marginTop : "20%", marginLeft : "30%"}}><font size={10} style={{color : "#888888"}}><b>No Data!</b></font></div>
-                        }
-                    
+                <div id="wrapper" >
+                    {
+                        thumbnails[0] ?
+                            <img src={sub_Url}
+                                alt="img"
+                                prop="prop"
+                                className="grey"></img> : <div style={{ marginTop: "20%", marginLeft: "30%" }}><font size={10} style={{ color: "#888888" }}><b>No Data!</b></font></div>
+                    }
+
                     <div className="show">
-                    <ReactHlsPlayer
-                        key={`${selected}${startTime}`}
-                        src={mode === "VOD" ? video : ""}
-                        autoPlay={true}
-                        controls={false}
-                        width="90%"
-                        height= {width}
-                        playerRef={playerRef}
-                    />
+                        <ReactHlsPlayer
+                            key={`${selected}${startTime}`}
+                            src={mode === "VOD" ? video : ""}
+                            autoPlay={true}
+                            controls={false}
+                            width="90%"
+                            height={width}
+                            playerRef={playerRef}
+                        />
                     </div>
                 </div>
             </div>
-            {(mode === "VOD")&&(subThumb[0]) ?
+            {(mode === "VOD") && (thumbnails[0]) ?
                 <ThemeProvider theme={theme}>
                     <AppBar position="static" className="playcontrols" color="primary">
                         <ThemeProvider theme={themeSlider}>
                             <Slider
                                 aria-label="Temperature"
-                                value={playerRef.current.currentTime / playerRef.current.duration * 100?playerRef.current.currentTime / playerRef.current.duration * 100:0}
+                                value={playerRef.current.currentTime / playerRef.current.duration * 100 ? playerRef.current.currentTime / playerRef.current.duration * 100 : 0}
                                 onChange={(e) => handleChange(e)}
-                                sx={{ marginLeft: '3%', width: '94%'}}
+                                sx={{ marginLeft: '3%', width: '94%' }}
                                 color="primary"
                             />
                         </ThemeProvider>
@@ -302,7 +299,7 @@ function HLSPlayer() {
                                     : <PauseCircleOutlineRounded cursor="pointer" fontSize="large" onClick={pauseVideo} />}
                                 <SkipNextRounded cursor="pointer" fontSize="large" onClick={() => nextClick()} />
 
-                                <font size="2" style={{ marginLeft: 10, width : "10%"}}>
+                                <font size="2" style={{ marginLeft: 10, width: "10%" }}>
                                     <b>{DateTime(time)}</b>
                                     {/* <b>{`${currentTime}` + "/" + `${durationTime}`}</b> */}
                                 </font>

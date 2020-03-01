@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Thumbnail from "./Thumbnail";
 import "../public/Thumbnail.css";
 import { Divider, Grid } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { GET_SUB_URL } from "../redux/types";
 
 export default function Thumbnails() {
   const { mode } = useSelector((state) => state.video);
   const { selected, thumbnails, searchTime } = useSelector((state) => state.thumbnail);
+  const dispatch = useDispatch();
   const getDateTime = (Dates) => {
     let result,
       Month,
@@ -60,6 +62,16 @@ export default function Thumbnails() {
     return result;
   };
 
+  let indexs = 0, cnt = -1, endTime;
+  let clipArray = Object.create(null);
+  let subThumb = Object.create(null);
+
+  useEffect(() => {
+    if (subThumb[0])
+      dispatch({ type: GET_SUB_URL, payload: subThumb[0][0].path });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [thumbnails]);
+
   // function autoRefresh() {
   //   window.location = window.location.href;
   // }
@@ -82,16 +94,6 @@ export default function Thumbnails() {
       timeArray[timeGroup].push(thumbnails[i]);
     }
   }
-
-  let indexs = 0, cnt = -1, endTime;
-  let clipArray = Object.create(null);
-  let subThumb = Object.create(null);
-
-
-  // for (let i = 0; i < Object.keys(timeArray).length; i++) {
-  //   datetimeArray[Object.keys(timeArray)[Object.keys(timeArray).length - 1 - i]] = Object.values(timeArray)[Object.keys(timeArray).length - 1 - i]
-  // }
-
 
   if (Object.keys(timeArray).length) {
     let flag = timeArray[Object.keys(timeArray)[0]].length, i;

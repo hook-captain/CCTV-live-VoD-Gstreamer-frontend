@@ -6,9 +6,9 @@ import {
     ThemeProvider 
   } from "@mui/material";
   
-  import "../public/App.css";
+import "../public/App.css";
 
-  const theme = createTheme({
+const theme = createTheme({
     palette: {
       primary: {
         main: '#8A90A5',

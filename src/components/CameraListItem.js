@@ -27,7 +27,7 @@ export default function ComplexGrid({
         maxWidth: "85%",
         maxHeight: 65,
         marginTop: 1,
-        backgroundColor: (theme) => "#EDE5E5",
+        backgroundColor: (_theme) => "#EDE5E5",
       }}
     >
       <Grid container spacing={2} >

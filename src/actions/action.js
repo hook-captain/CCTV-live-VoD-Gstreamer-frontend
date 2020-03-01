@@ -14,11 +14,10 @@ export const getCameras = (keyword, start, end) => (dispatch) => {
     ? axios.get(`/api/cameras`).then((res) => {
       dispatch({ type: GET_CAMERA_LIST, payload: res.data });
       dispatch(getThumbnail(res.data[0].id, start, end, 5));
-      // dispatch({ type: VIDEO_LIVE_MODE, payload: res.data[0] });
     })
     : axios.get(`/api/cameras/search/${keyword}`).then((res) => {
       dispatch({ type: GET_CAMERA_LIST, payload: res.data });
-      if(res.data[0]){
+      if (res.data[0]) {
         dispatch(getThumbnail(res.data[0].id, start, end, 5));
       }
     });
@@ -52,8 +51,7 @@ export const getThumbnail =
       .get(`/api/thumbnails/${cameraid}/${starttime}/${endtime}/${duration}`)
       .then((res) => {
         if (res.data.length > 0) {
-          // let first = new Date(res.data[0].time);
-          let initTime = parseInt(new Date(res.data[0].time).getTime()/(duration*60*1000))*duration*60*1000; 
+          let initTime = parseInt(new Date(res.data[0].time).getTime() / (duration * 60 * 1000)) * duration * 60 * 1000;
           let first = initTime;
           let thumbnails = [], sub_Thumbnails = [];
           let _duration = duration * 60;
@@ -61,19 +59,19 @@ export const getThumbnail =
           Promise.all(
             res.data.map(async (item) => {
               let second = new Date(item.time).getTime();
-              if((second - first) / 1000 < _duration){
+              if ((second - first) / 1000 < _duration) {
                 if (item.path.indexOf("gray") < 0) {
                   flag = 1;
                 }
                 sub_Thumbnails.push(item);
-              }else{
-                first = first + _duration*1000;
+              } else {
+                first = first + _duration * 1000;
                 if (flag === 1) {
                   thumbnails.push(sub_Thumbnails);
                 }
                 flag = 0;
                 sub_Thumbnails = [];
-                sub_Thumbnails.push(item);                
+                sub_Thumbnails.push(item);
               }
             })
           );

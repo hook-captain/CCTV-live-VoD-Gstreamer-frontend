@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { ButtonBase } from "@mui/material";
+import { OVER_THUMBNAIL_GROUP, START_TIME_GROUP, GET_SUBTHUMBNAILS_LIST, SET_ENDTIME, GET_SUB_URL } from "../redux/types";
 import { useDispatch, useSelector } from "react-redux";
+import { GetVodVideo, selectThumbnail } from "../actions/action";
 import "../public/Thumbnail.css";
 import line from "../public/line.png";
-import { OVER_THUMBNAIL_GROUP, START_TIME_GROUP, GET_SUBTHUMBNAILS_LIST, SET_ENDTIME } from "../redux/types";
-import { GetVodVideo, selectThumbnail } from "../actions/action";
 
 export default function Thumbnail({ id, thumbnails, selected, url, time, camera_id, endTime }) {
 
@@ -16,20 +16,22 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
   const [arrow, setarrow] = useState(0);
   const dispatch = useDispatch();
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch({ type: GET_SUBTHUMBNAILS_LIST, payload: thumbnails });
     dispatch({ type: SET_ENDTIME, payload: endTime });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[]);
+  }, []);
 
   useEffect(() => {
     setSubURL(url);
+    // dispatch({ type: GET_SUB_URL, payload: url });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url]);
 
   useEffect(() => {
     setSubTime(time);
   }, [time]);
-  
+
   const timeformat = (date) => {
     let Hour, Min, result;
     let time = new Date(date);
@@ -45,11 +47,11 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
         Hour = `0${time.getHours()}:${Min}AM`;
       }
       else {
-        if (time.getHours() === 12){
+        if (time.getHours() === 12) {
           Hour = `${time.getHours()}:${Min}PM`;
-        }else{
+        } else {
           Hour = `${time.getHours()}:${Min}AM`;
-        }        
+        }
       }
     }
 
@@ -83,6 +85,7 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
     let subURL = thumbnail ? thumbnail[number].path : url;
     let subTime = thumbnail ? thumbnail[number].time : time;
     setSubURL(subURL);
+    dispatch({ type: GET_SUB_URL, payload: subURL });
     setSubTime(subTime);
     setarrow(arrow);
     let startTime = subTime;
@@ -90,10 +93,10 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
   };
 
   const handleMouseOut = (e) => {
-    if(over === e.target.id){
+    if (over === e.target.id) {
       let subTime = thumbnails[e.target.id][0].time
       setSubTime(subTime);
-    }  
+    }
     setSubURL(url);
   }
 
@@ -111,12 +114,12 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
           : { width: "90%", height: 124, marginTop: 1, marginLeft: "20%" }
       }
     >
-      
+
       <div className="thumbnail">
-        <li  onMouseLeave={(e)=>handleMouseOut(e)}>
+        <li onMouseLeave={(e) => handleMouseOut(e)}>
           <img
             onMouseMove={(e) => handleMouseMove(e)}
-            onMouseOver={(e) => handleMouseover(e)}       
+            onMouseOver={(e) => handleMouseover(e)}
             id={id}
             alt="alt"
             prop="prop"
@@ -149,7 +152,7 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
               }
               height={120}
               onClick={(e) => getSelectedVodVideo(e.target.id)}
-              onMouseLeave={(e)=>handleMouseOut(e)}
+              onMouseLeave={(e) => handleMouseOut(e)}
             />
           </div>
           {id.toString() === selected.toString() ? (

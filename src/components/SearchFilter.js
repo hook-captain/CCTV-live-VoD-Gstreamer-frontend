@@ -73,7 +73,7 @@ export default function SearchFilter() {
   //   dispatch(getThumbnail(camera.id, starttime, endtime, duration));
   // }
 
-  const handleClose = (event, reason) => {
+  const handleClose = (_event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -89,24 +89,16 @@ export default function SearchFilter() {
 
   const [starttime, setStarttime] = useState(`${getDatetime()}`);
   const [endtime, setEndtime] = useState(`${DateTime(new Date())}`);
-
-  // const getdefaultVod = (camera_id) => {
-  //   setCameraID(camera_id);
-  // }
-
-
-
+  
   const handleChange = (e) => {
     setDuration(e.target.value);
     dispatch(getThumbnail(camera.id, starttime, endtime, e.target.value));
-    // getdefaultVod(camera.id)
   };
 
   const setStarttimeChange = (e) => {
     setStarttime(e.target.value);
     if (e.target.value < endtime) {
       dispatch(getThumbnail(camera.id, e.target.value, endtime, duration));
-      // getdefaultVod(camera.id);
     }
     else {
       setOpen1(true);
@@ -117,7 +109,6 @@ export default function SearchFilter() {
     setEndtime(e.target.value);
     if (e.target.value > starttime) {
       dispatch(getThumbnail(camera.id, starttime, e.target.value, duration));
-      // getdefaultVod(camera.id);
     }
     else {
       setOpen2(true);
@@ -134,7 +125,7 @@ export default function SearchFilter() {
       </Snackbar>
       <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'right' }} open={open2} autoHideDuration={4000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
-        {'To time should be >= From time!'}
+          {'To time should be >= From time!'}
         </Alert>
       </Snackbar>
       <Grid item xs={3}>
