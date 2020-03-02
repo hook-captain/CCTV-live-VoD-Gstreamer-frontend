@@ -48,7 +48,13 @@
 .playcontrols {
   margin-left: 16.5%;
   max-width: 70.5%;
-  height: 60px;
+  height: 65px;
+}
+.subPlaycontrol {
+  margin-left: 16.5%;
+  max-width: 70.5%;
+  height: 50px;
+  margin-top: 5px;
 }
 
 .box {

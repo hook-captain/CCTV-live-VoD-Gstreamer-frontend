@@ -3,7 +3,7 @@ import Thumbnail from "./Thumbnail";
 import "../public/Thumbnail.css";
 import { Divider, Grid } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { GET_SUB_URL } from "../redux/types";
+import { GET_SUB_URL, SET_ENDTIME, SELECT_THUMBNAIL_GROUP } from "../redux/types";
 
 export default function Thumbnails() {
   const { mode } = useSelector((state) => state.video);
@@ -66,13 +66,15 @@ export default function Thumbnails() {
     return result;
   };
 
-  let indexs = 0, cnt = -1, endTime, mflag = 0;
+  let indexs = 0, cnt = -1, endTime;
   let clipArray = Object.create(null);
   let subThumb = Object.create(null);
 
   useEffect(() => {
     if (subThumb[0])
       dispatch({ type: GET_SUB_URL, payload: subThumb[0][0].path });
+    dispatch({ type: SET_ENDTIME, payload: endTime });
+    dispatch({ type: SELECT_THUMBNAIL_GROUP, payload: 0 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [thumbnails]);
 
@@ -137,7 +139,8 @@ export default function Thumbnails() {
       <font color="#888888" size={2}>(Search Time : {thumbnails[0] ? searchTime : 0} s)</font>
       <Divider sx={{ marginBottom: 1, width: "98%" }} />
       {Object.keys(timeArray).map((key, count) => {
-        mflag = 0;
+        let mflag = 0;
+
         return (
           <Grid container spacing={2} key={key}>
             <Grid item xs={12} sm container>
@@ -150,16 +153,17 @@ export default function Thumbnails() {
                     if (Object.keys(timeArray)[count - 1].split(" ")[0].localeCompare(Object.keys(timeArray)[count].split(" ")[0]) === 0) {
                       trues = 0;
                     }
-                  }
-                  if (Object.keys(timeArray).length - 1 > count) {
-                    if (Object.keys(timeArray)[count].split(" ")[1].split("-")[0].localeCompare(Object.keys(timeArray)[count + 1].split(" ")[1].split("-")[1])) {
-                      console.log(Object.keys(timeArray)[count + 1], count)
+                    if (Object.keys(timeArray)[count - 1].split(" ")[1].split("-")[0].localeCompare(Object.keys(timeArray)[count].split(" ")[1].split("-")[1])) {
                       mflag = 1;
                     }
                   }
-                  return <Grid item xs={2} key={index} style={{ marginTop: 'auto' }}>
+
+
+                  return <Grid item xs={2} key={index} style={{ marginTop: 'auto', marginBottom: 25 }}>
+
                     {index === 0 ?
                       <div>
+                        {mflag === 1 ? <div className="offline"><b>{`From ${Object.keys(timeArray)[count].split(" ")[0]} ${Object.keys(timeArray)[count].split(" ")[1].split("-")[1]} to ${Object.keys(timeArray)[count - 1].split(" ")[0]} ${Object.keys(timeArray)[count - 1].split(" ")[1].split("-")[0]}, Camera was Offline.`}</b></div> : <></>}
                         {trues !== 0 ? <div className="datetime">{key.split(" ")[0]} <font color="#888888" size={5}>({clipArray[Object.keys(timeArray)[count].split(" ")[0]]}Clips)</font></div> : <br />}
                         <div className="time">{key.split(" ")[1]}</div>
                       </div> :
@@ -171,12 +175,10 @@ export default function Thumbnails() {
                       url={item.path}
                       time={item.time}
                       camera_id={item.camera_id}
-                      endTime={endTime}
                     />
                   </Grid>
                 })
               }
-              {mflag === 1 ? <div className="offline"><b>{`From ${Object.keys(timeArray)[count].split(" ")[0]} ${Object.keys(timeArray)[count].split(" ")[1].split("-")[1]} to ${Object.keys(timeArray)[count].split(" ")[0]} ${Object.keys(timeArray)[count].split(" ")[1].split("-")[0]}, Camera was Offline.`}</b></div> : <></>}
             </Grid>
           </Grid>
         );

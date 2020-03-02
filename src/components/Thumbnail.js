@@ -6,19 +6,19 @@ import { GetVodVideo, selectThumbnail } from "../actions/action";
 import "../public/Thumbnail.css";
 import line from "../public/line.png";
 
-export default function Thumbnail({ id, thumbnails, selected, url, time, camera_id, endTime }) {
+export default function Thumbnail({ id, thumbnails, selected, url, time, camera_id}) {
 
   const thumbnail = thumbnails[id]
   const over = useSelector((state) => state.thumbnail.overed);
   const [sub_URL, setSubURL] = useState('');
   const [startTime, setstartTime] = useState(new Date());
+  const [endTime, setEndTime] = useState(new Date());
   const [sub_Time, setSubTime] = useState('');
   const [arrow, setarrow] = useState(0);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch({ type: GET_SUBTHUMBNAILS_LIST, payload: thumbnails });
-    dispatch({ type: SET_ENDTIME, payload: endTime });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -69,6 +69,7 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
       // let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
       dispatch(GetVodVideo(camera_id, startTime, endTime));
       dispatch({ type: START_TIME_GROUP, payload: startTime });
+      dispatch({ type: SET_ENDTIME, payload: endTime });
       dispatch(selectThumbnail(id));
     }
   };
@@ -90,6 +91,7 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
     setarrow(arrow);
     let startTime = subTime;
     setstartTime(startTime);
+    setEndTime(thumbnail[thumbnail.length - 1].time);
   };
 
   const handleMouseOut = (e) => {

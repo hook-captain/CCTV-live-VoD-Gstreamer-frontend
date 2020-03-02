@@ -46,6 +46,14 @@ const themeSlider = createTheme({
     },
 });
 
+const themesubSlider = createTheme({
+    palette: {
+        primary: {
+            main: '#e7944d',
+        },
+    },
+});
+
 function HLSPlayer() {
 
     const DateTime = (Dates) => {
@@ -76,16 +84,94 @@ function HLSPlayer() {
         return result;
     };
 
+    const DateStartTime = (Dates) => {
+        let result,
+            Month,
+            Day,
+            Hour,
+            CurrentTime = Dates;
+
+        if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
+        else Month = `${CurrentTime.getMonth() + 1}`;
+
+        if (CurrentTime.getDate() < 10) Day = `0${CurrentTime.getDate()}`;
+        else Day = `${CurrentTime.getDate()}`;
+
+        if (CurrentTime.getHours() < 10) Hour = `0${CurrentTime.getHours()}`;
+        else Hour = `${CurrentTime.getHours()}`;
+
+        if (CurrentTime.getHours() > 12) {
+            Hour = `${CurrentTime.getHours() - 12}:00PM`;
+        }
+        else {
+            if (CurrentTime.getHours() < 10) {
+                Hour = `0${CurrentTime.getHours()}:00AM`;
+            }
+            else {
+                if (CurrentTime.getHours() === 12) {
+                    Hour = `${CurrentTime.getHours()}:00PM`;
+                } else {
+                    Hour = `${CurrentTime.getHours()}:00AM`;
+                }
+            }
+        }
+
+        result = `${CurrentTime.getFullYear()}/${Month}/${Day} ${Hour}`;
+        return result;
+    };
+
+    const TimeFormat = (Dates) => {
+        let result,
+            Hour,
+            CurrentTime = Dates;
+
+        if (CurrentTime.getHours() < 10) Hour = `0${CurrentTime.getHours()}`;
+        else Hour = `${CurrentTime.getHours()}`;
+
+        result = Hour;
+        return result;
+    };
+
+    const TimeFormatAdd = (Dates) => {
+        let result,
+            Hour,
+            CurrentTime = Dates;
+
+        if (CurrentTime.getHours() < 9) Hour = `0${CurrentTime.getHours() + 1}`;
+        else Hour = `${CurrentTime.getHours() + 1}`;
+
+        if (CurrentTime.getHours() === 23) {
+            Hour = `00`
+        }
+
+        result = `${Hour}`;
+        return result;
+    };
+
+    const GetMinute = (Dates) => {
+        let result,
+            Min,
+            CurrentTime = Dates;
+
+        if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
+        else Min = `${CurrentTime.getMinutes()}`;
+
+        result = `${Min}`;
+        return result;
+    };
+
     const camera = useSelector((state) => state.camera.camera);
     const mode = useSelector((state) => state.video.mode);
     const video = useSelector((state) => state.video.video);
-    const { selected, startTime, endTime, subThumbnails, sub_Url, thumbnails} = useSelector((state) => state.thumbnail)
+    const { selected, startTime, endTime, subThumbnails, sub_Url, thumbnails } = useSelector((state) => state.thumbnail)
     const dispatch = useDispatch();
     const [status, setStatus] = useState(0);
     const [timerID, setTimerID] = useState(0);
     const [selectState, setSelectState] = useState(0);
     const playerRef = React.useRef(null);
     const [time, setTime] = useState(new Date());
+    const [startFormat, setStartFormat] = useState(0);
+    const [endFormat, setEndFormat] = useState(0);
 
     useEffect(() => {
         dispatch(selectThumbnail(selectState));
@@ -99,6 +185,10 @@ function HLSPlayer() {
             }
             let timer_id = setInterval(increase, 1000)
             setTimerID(timer_id);
+            setStartFormat(parseInt(GetMinute(new Date(startTime))))
+            if (endTime) {
+                setEndFormat(parseInt(GetMinute(new Date(endTime))) + 1)
+            }
         }
         let status = 0;
         setStatus(status);
@@ -173,9 +263,9 @@ function HLSPlayer() {
     }
 
     function addSeconds(date) {
-        if (playerRef.current){
+        if (playerRef.current) {
             date.setSeconds(date.getSeconds() + playerRef.current.currentTime);
-        }        
+        }
         return date;
     }
 
@@ -246,6 +336,66 @@ function HLSPlayer() {
     let width;
     if (document.getElementById('wrapper')) {
         width = (document.getElementById('wrapper').clientWidth) * 0.45;
+    }
+
+    const marks = [
+        {
+            value: 0,
+            label: `${TimeFormat(new Date(startTime))}:00`,
+        },
+        {
+            value: 5,
+            label: `${TimeFormat(new Date(startTime))}:05`,
+        },
+        {
+            value: 10,
+            label: `${TimeFormat(new Date(startTime))}:10`,
+        },
+        {
+            value: 15,
+            label: `${TimeFormat(new Date(startTime))}:15`,
+        },
+        {
+            value: 20,
+            label: `${TimeFormat(new Date(startTime))}:20`,
+        },
+        {
+            value: 25,
+            label: `${TimeFormat(new Date(startTime))}:25`,
+        },
+        {
+            value: 30,
+            label: `${TimeFormat(new Date(startTime))}:30`,
+        },
+        {
+            value: 35,
+            label: `${TimeFormat(new Date(startTime))}:35`,
+        },
+        {
+            value: 40,
+            label: `${TimeFormat(new Date(startTime))}:40`,
+        },
+        {
+            value: 45,
+            label: `${TimeFormat(new Date(startTime))}:45`,
+        },
+        {
+            value: 50,
+            label: `${TimeFormat(new Date(startTime))}:50`,
+        },
+        {
+            value: 55,
+            label: `${TimeFormat(new Date(startTime))}:55`,
+        },
+        {
+            value: 60,
+            label: `${TimeFormatAdd(new Date(startTime))}:00`,
+        },
+
+    ];
+
+    function valuetext(value) {
+        return `${value}°C`;
     }
 
     return (
@@ -319,6 +469,32 @@ function HLSPlayer() {
                                 <FullscreenOutlined cursor="pointer" fontSize="large" onClick={() => onClickFullScreen()} />
                             </Grid>
                         </Grid>
+                    </AppBar>
+                    <AppBar position="static" className="subPlaycontrol" color="primary">
+                        <ThemeProvider theme={themesubSlider}>
+                            <Grid container spacing={0} >
+                                <Grid item xs={1} sx={{ marginLeft: 2, marginTop: 1 }}>
+                                    <font size="2" >
+                                        <b>{DateStartTime(new Date(startTime))}</b>
+                                    </font>
+                                </Grid>
+                                <Grid item xs={10.5}>
+                                    <Slider
+                                        key={`slider-${startFormat}-${endFormat}`}
+                                        // defaultValue={[startFormat, endFormat]}
+                                        value={[startFormat, endFormat]}
+                                        getAriaValueText={valuetext}
+                                        step={1}
+                                        marks={marks}
+                                        max={60}
+                                        sx={{ marginLeft: '3%', width: '96%' }}
+                                        color="primary"
+                                    // disabled = {true}
+                                    // size = "small"
+                                    />
+                                </Grid>
+                            </Grid>
+                        </ThemeProvider>
                     </AppBar>
                 </ThemeProvider>
                 : <></>}
