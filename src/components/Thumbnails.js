@@ -51,7 +51,11 @@ export default function Thumbnails() {
         if (CurrentTime.getHours() === 11) {
           Hour1 = `${CurrentTime.getHours() + 1}:00PM`;
         } else {
-          Hour1 = `${CurrentTime.getHours() + 1}:00AM`;
+          if (CurrentTime.getHours() === 23){
+            Hour1 = `00:00AM`;
+          }else{
+            Hour1 = `${CurrentTime.getHours() + 1}:00AM`;
+          }          
         }
       }
     }
