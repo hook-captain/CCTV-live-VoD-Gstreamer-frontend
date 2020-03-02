@@ -89,7 +89,7 @@ export default function SearchFilter() {
 
   const [starttime, setStarttime] = useState(`${getDatetime()}`);
   const [endtime, setEndtime] = useState(`${DateTime(new Date())}`);
-  
+
   const handleChange = (e) => {
     setDuration(e.target.value);
     dispatch(getThumbnail(camera.id, starttime, endtime, e.target.value));

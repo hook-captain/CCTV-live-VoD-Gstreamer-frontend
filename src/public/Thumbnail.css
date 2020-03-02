@@ -99,3 +99,12 @@ li {
 .imageTop{
     margin-top: auto;
 }
+
+.offline{
+    white-space: pre;
+    font-size: x-large;
+    font-family: monospace;
+    color: darkcyan;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}

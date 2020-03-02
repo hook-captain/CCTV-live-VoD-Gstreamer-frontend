@@ -25,14 +25,18 @@ export default function Thumbnails() {
     else Day = `${CurrentTime.getDate()}`;
 
     if (CurrentTime.getHours() > 12) {
-      Hour = `${CurrentTime.getHours() - 12}:00`;
+      Hour = `${CurrentTime.getHours() - 12}:00PM`;
     }
     else {
       if (CurrentTime.getHours() < 10) {
-        Hour = `0${CurrentTime.getHours()}:00`;
+        Hour = `0${CurrentTime.getHours()}:00AM`;
       }
       else {
-        Hour = `${CurrentTime.getHours()}:00`;
+        if (CurrentTime.getHours() === 12) {
+          Hour = `${CurrentTime.getHours()}:00PM`;
+        } else {
+          Hour = `${CurrentTime.getHours()}:00AM`;
+        }
       }
     }
 
@@ -58,11 +62,11 @@ export default function Thumbnails() {
     // if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes()}`;
     // else Min = `${CurrentTime.getMinutes()}`;
 
-    result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}-${Hour1}`;
+    result = `${CurrentTime.getFullYear()}/${Month}/${Day} ${Hour}-${Hour1}`;
     return result;
   };
 
-  let indexs = 0, cnt = -1, endTime;
+  let indexs = 0, cnt = -1, endTime, mflag = 0;
   let clipArray = Object.create(null);
   let subThumb = Object.create(null);
 
@@ -133,6 +137,7 @@ export default function Thumbnails() {
       <font color="#888888" size={2}>(Search Time : {thumbnails[0] ? searchTime : 0} s)</font>
       <Divider sx={{ marginBottom: 1, width: "98%" }} />
       {Object.keys(timeArray).map((key, count) => {
+        mflag = 0;
         return (
           <Grid container spacing={2} key={key}>
             <Grid item xs={12} sm container>
@@ -144,6 +149,12 @@ export default function Thumbnails() {
                   if (count > 0) {
                     if (Object.keys(timeArray)[count - 1].split(" ")[0].localeCompare(Object.keys(timeArray)[count].split(" ")[0]) === 0) {
                       trues = 0;
+                    }
+                  }
+                  if (Object.keys(timeArray).length - 1 > count) {
+                    if (Object.keys(timeArray)[count].split(" ")[1].split("-")[0].localeCompare(Object.keys(timeArray)[count + 1].split(" ")[1].split("-")[1])) {
+                      console.log(Object.keys(timeArray)[count + 1], count)
+                      mflag = 1;
                     }
                   }
                   return <Grid item xs={2} key={index} style={{ marginTop: 'auto' }}>
@@ -165,6 +176,7 @@ export default function Thumbnails() {
                   </Grid>
                 })
               }
+              {mflag === 1 ? <div className="offline"><b>{`From ${Object.keys(timeArray)[count].split(" ")[0]} ${Object.keys(timeArray)[count].split(" ")[1].split("-")[1]} to ${Object.keys(timeArray)[count].split(" ")[0]} ${Object.keys(timeArray)[count].split(" ")[1].split("-")[0]}, Camera was Offline.`}</b></div> : <></>}
             </Grid>
           </Grid>
         );
