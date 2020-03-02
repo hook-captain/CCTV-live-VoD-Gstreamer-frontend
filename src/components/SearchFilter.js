@@ -82,10 +82,6 @@ export default function SearchFilter() {
 
   useEffect(() => {    
     dispatch({ type: GET_SEARCH_KEY, payload: {starttime, endtime, duration} });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {    
     if (thumbnails.length) {
       let start = thumbnails[thumbnails.length - 1][0].time
       let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
