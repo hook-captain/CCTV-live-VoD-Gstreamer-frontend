@@ -318,7 +318,7 @@ function HLSPlayer() {
     const onClickDownload = () => {
         const a = document.createElement('a');
         a.setAttribute('download', 'playlist.m3u8');
-        a.setAttribute('href', "http://localhost:5000/share/playlist.m3u8");
+        a.setAttribute('href', "/share/playlist.m3u8");
         a.click();
     }
 

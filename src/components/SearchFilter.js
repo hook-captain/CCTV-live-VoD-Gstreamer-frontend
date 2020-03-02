@@ -13,7 +13,7 @@ import {
   Snackbar
 } from "@mui/material";
 import { getThumbnail, GetVodVideo } from "../actions/action";
-import { START_TIME_GROUP, START_CLIPTIME_GROUP } from "../redux/types";
+import { START_TIME_GROUP, START_CLIPTIME_GROUP, GET_SEARCH_KEY } from "../redux/types";
 
 export default function SearchFilter() {
   const { camera } = useSelector((state) => state.camera);
@@ -22,17 +22,6 @@ export default function SearchFilter() {
   const [open2, setOpen2] = React.useState(false);
   const [duration, setDuration] = useState(5);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (thumbnails.length) {
-      let start = thumbnails[thumbnails.length - 1][0].time
-      let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
-      dispatch(GetVodVideo(camera.id, start, end));
-      dispatch({ type: START_TIME_GROUP, payload: start });
-      dispatch({ type: START_CLIPTIME_GROUP, payload: start });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [thumbnails]);
 
   const DateTime = (Date) => {
     let result,
@@ -90,6 +79,23 @@ export default function SearchFilter() {
 
   const [starttime, setStarttime] = useState(`${getDatetime()}`);
   const [endtime, setEndtime] = useState(`${DateTime(new Date())}`);
+
+  useEffect(() => {    
+    dispatch({ type: GET_SEARCH_KEY, payload: {starttime, endtime, duration} });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {    
+    if (thumbnails.length) {
+      let start = thumbnails[thumbnails.length - 1][0].time
+      let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
+      dispatch(GetVodVideo(camera.id, start, end));
+      dispatch({ type: START_TIME_GROUP, payload: start });
+      dispatch({ type: START_CLIPTIME_GROUP, payload: start });
+
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [thumbnails]);
 
   const handleChange = (e) => {
     setDuration(e.target.value);

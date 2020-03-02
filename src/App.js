@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { ImageList, Grid, Input, Paper, Typography, Divider } from "@mui/material";
+import { ImageList, Grid, Input, Paper, Typography, Divider} from "@mui/material";
 
 import "./public/App.css";
 
@@ -16,6 +16,7 @@ import { getCameras, setCamera, getThumbnail } from "./actions/action";
 function App() {
   const dispatch = useDispatch();
   const { camera, cameras } = useSelector((state) => state.camera);
+  const { searchKey } = useSelector((state) => state.thumbnail);
 
   const DateTime = (Date) => {
     let result,
@@ -56,11 +57,7 @@ function App() {
   const getSelectedVodVideo = (target) => {
     if (target.id) {
       dispatch(setCamera(cameras[target.id]));
-      // dispatch(GetLiveVideo(camera.id));
-      let start = getDatetime();
-      // let start = "2023-01-02T21:37"
-      let end = DateTime(new Date());
-      dispatch(getThumbnail(cameras[target.id].id, start, end, 5));
+      dispatch(getThumbnail(cameras[target.id].id, searchKey['starttime'], searchKey['endtime'], searchKey['duration']));
       // dispatch(GetVodVideo(cameras[target.id].id, start, end))
     }
   };
