@@ -1,9 +1,10 @@
-import { GET_THUMBNAIL_LIST, SELECT_THUMBNAIL_GROUP, OVER_THUMBNAIL_GROUP, START_TIME_GROUP, GET_SUBTHUMBNAILS_LIST, SET_ENDTIME, GET_SEARCH_TIME, GET_SUB_URL } from "../types";
+import { GET_THUMBNAIL_LIST, SELECT_THUMBNAIL_GROUP, OVER_THUMBNAIL_GROUP, START_TIME_GROUP, GET_SUBTHUMBNAILS_LIST, SET_ENDTIME, GET_SEARCH_TIME, GET_SUB_URL, START_CLIPTIME_GROUP } from "../types";
 
 const initialState = {
   selected: 0,
   overed: -1,
   startTime: 0,
+  startClipTime: 0,
   endTime: 0,
   searchTime: 0,
   sub_Url: "",
@@ -43,6 +44,11 @@ const thumbnail = (state = initialState, action) => {
       return {
         ...state,
         startTime: action.payload
+      }
+    case START_CLIPTIME_GROUP:
+      return {
+        ...state,
+        startClipTime: action.payload
       }
     case SET_ENDTIME:
       return {

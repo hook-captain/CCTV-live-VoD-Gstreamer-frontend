@@ -13,7 +13,7 @@ import {
   Snackbar
 } from "@mui/material";
 import { getThumbnail, GetVodVideo } from "../actions/action";
-import { START_TIME_GROUP } from "../redux/types";
+import { START_TIME_GROUP, START_CLIPTIME_GROUP } from "../redux/types";
 
 export default function SearchFilter() {
   const { camera } = useSelector((state) => state.camera);
@@ -29,6 +29,7 @@ export default function SearchFilter() {
       let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
       dispatch(GetVodVideo(camera.id, start, end));
       dispatch({ type: START_TIME_GROUP, payload: start });
+      dispatch({ type: START_CLIPTIME_GROUP, payload: start });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [thumbnails]);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ButtonBase } from "@mui/material";
-import { OVER_THUMBNAIL_GROUP, START_TIME_GROUP, GET_SUBTHUMBNAILS_LIST, SET_ENDTIME, GET_SUB_URL } from "../redux/types";
+import { OVER_THUMBNAIL_GROUP, START_TIME_GROUP, GET_SUBTHUMBNAILS_LIST, SET_ENDTIME, GET_SUB_URL, START_CLIPTIME_GROUP } from "../redux/types";
 import { useDispatch, useSelector } from "react-redux";
 import { GetVodVideo, selectThumbnail } from "../actions/action";
 import "../public/Thumbnail.css";
@@ -12,6 +12,7 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
   const over = useSelector((state) => state.thumbnail.overed);
   const [sub_URL, setSubURL] = useState('');
   const [startTime, setstartTime] = useState(new Date());
+  const [startClipTime, setstartClipTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
   const [sub_Time, setSubTime] = useState('');
   const [arrow, setarrow] = useState(0);
@@ -20,7 +21,7 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
   useEffect(() => {
     dispatch({ type: GET_SUBTHUMBNAILS_LIST, payload: thumbnails });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [thumbnail]);
 
   useEffect(() => {
     setSubURL(url);
@@ -67,8 +68,9 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
   const getSelectedVodVideo = (id) => {
     if (id) {
       // let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
-      dispatch(GetVodVideo(camera_id, startTime, endTime));
       dispatch({ type: START_TIME_GROUP, payload: startTime });
+      dispatch({ type: START_CLIPTIME_GROUP, payload: startClipTime });
+      dispatch(GetVodVideo(camera_id, startClipTime, endTime));
       dispatch({ type: SET_ENDTIME, payload: endTime });
       dispatch(selectThumbnail(id));
     }
@@ -85,12 +87,14 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
     let arrow = e.nativeEvent.offsetX / e.target.width * 100;
     let subURL = thumbnail ? thumbnail[number].path : url;
     let subTime = thumbnail ? thumbnail[number].time : time;
+    let ClipTime = thumbnail ? thumbnail[0].time : time;
     setSubURL(subURL);
     dispatch({ type: GET_SUB_URL, payload: subURL });
     setSubTime(subTime);
     setarrow(arrow);
     let startTime = subTime;
     setstartTime(startTime);
+    setstartClipTime(ClipTime);
     setEndTime(thumbnail[thumbnail.length - 1].time);
   };
 

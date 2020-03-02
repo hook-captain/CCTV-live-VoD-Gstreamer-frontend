@@ -22,7 +22,7 @@ import {
 
 import ReactHlsPlayer from "react-hls-player";
 import { useDispatch, useSelector } from "react-redux";
-import { START_TIME_GROUP, GET_SUB_URL } from "../redux/types";
+import { START_TIME_GROUP, GET_SUB_URL, SET_ENDTIME, START_CLIPTIME_GROUP } from "../redux/types";
 import { GetVodVideo, selectThumbnail, GetLiveVideo } from "../actions/action";
 import "../public/App.css";
 import { findDOMNode } from "react-dom";
@@ -160,10 +160,72 @@ function HLSPlayer() {
         return result;
     };
 
+    const TimelineFormat1 = (Dates) => {
+        let Hour, Min, result;
+        let time = new Date(Dates);
+
+        if (time.getMinutes() < 10) Min = `0${time.getMinutes()}`;
+        else Min = `${time.getMinutes()}`;
+
+        if (time.getHours() > 12) {
+            Hour = `${time.getHours() - 12}:${Min}PM`;
+        }
+        else {
+            if (time.getHours() < 10) {
+                Hour = `0${time.getHours()}:${Min}AM`;
+            }
+            else {
+                if (time.getHours() === 12) {
+                    Hour = `${time.getHours()}:${Min}PM`;
+                } else {
+                    Hour = `${time.getHours()}:${Min}AM`;
+                }
+            }
+        }
+
+        result = `${Hour}`;
+        return result;
+    };
+
+    const TimelineFormat2 = (Dates) => {
+        let Hour, Min, result;
+        let time = new Date(Dates);
+
+        if (time.getMinutes() < 9) Min = `0${time.getMinutes() + 1}`;
+        else Min = `${time.getMinutes() + 1}`;
+
+        if (time.getMinutes() === 59) {
+            Min = `00`;
+        }
+
+        if (time.getHours() > 12) {
+            Hour = `${time.getHours() - 12}:${Min}PM`;
+        }
+        else {
+            if (time.getHours() < 10) {
+                Hour = `0${time.getHours()}:${Min}AM`;
+            }
+            else {
+                if (time.getHours() === 12) {
+                    Hour = `${time.getHours()}:${Min}PM`;
+                } else {
+                    Hour = `${time.getHours()}:${Min}AM`;
+                }
+            }
+        }
+
+        result = `${Hour}`;
+        return result;
+    };
+
+    const getBetweenDate = (Date1, Date2) => {
+        return parseInt((new Date(Date2).getTime() - new Date(Date1).getTime()) / 1000)
+    }
+
     const camera = useSelector((state) => state.camera.camera);
     const mode = useSelector((state) => state.video.mode);
     const video = useSelector((state) => state.video.video);
-    const { selected, startTime, endTime, subThumbnails, sub_Url, thumbnails } = useSelector((state) => state.thumbnail)
+    const { selected, startTime, startClipTime, endTime, subThumbnails, sub_Url, thumbnails } = useSelector((state) => state.thumbnail)
     const dispatch = useDispatch();
     const [status, setStatus] = useState(0);
     const [timerID, setTimerID] = useState(0);
@@ -172,6 +234,7 @@ function HLSPlayer() {
     const [time, setTime] = useState(new Date());
     const [startFormat, setStartFormat] = useState(0);
     const [endFormat, setEndFormat] = useState(0);
+    const [startClipFormat, setStartClipFormat] = useState(0);
 
     useEffect(() => {
         dispatch(selectThumbnail(selectState));
@@ -186,8 +249,12 @@ function HLSPlayer() {
             let timer_id = setInterval(increase, 1000)
             setTimerID(timer_id);
             setStartFormat(parseInt(GetMinute(new Date(startTime))))
+            setStartClipFormat(parseInt(GetMinute(new Date(startClipTime))))
             if (endTime) {
                 setEndFormat(parseInt(GetMinute(new Date(endTime))) + 1)
+            }
+            if (playerRef.current) {
+                playerRef.current.currentTime = playerRef.current.currentTime + getBetweenDate(startClipTime, startTime);
             }
         }
         let status = 0;
@@ -199,6 +266,7 @@ function HLSPlayer() {
         if (playerRef.current.duration) {
             playerRef.current.currentTime = e.target.value / 100 * playerRef.current.duration;
         }
+
         playVideo();
     }
 
@@ -212,9 +280,11 @@ function HLSPlayer() {
             if (parseInt(selected) && parseInt(selected) > 0) {
                 let start = subThumbnails[parseInt(selected) - 1][0].time;
                 dispatch({ type: GET_SUB_URL, payload: subThumbnails[parseInt(selected) - 1][0].path });
-                // let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
+                let end = subThumbnails[parseInt(selected) - 1][subThumbnails[parseInt(selected) - 1].length - 1].time
                 dispatch({ type: START_TIME_GROUP, payload: start });
-                dispatch(GetVodVideo(camera.id, start, endTime));
+                dispatch({ type: START_CLIPTIME_GROUP, payload: start });
+                dispatch({ type: SET_ENDTIME, payload: end });
+                dispatch(GetVodVideo(camera.id, start, end));
                 dispatch(selectThumbnail(parseInt(selected) - 1));
             }
             let status = 0;
@@ -227,9 +297,11 @@ function HLSPlayer() {
             if (parseInt(selected) < subThumbnails.length - 1) {
                 let start = subThumbnails[parseInt(selected) + 1][0].time;
                 dispatch({ type: GET_SUB_URL, payload: subThumbnails[parseInt(selected) + 1][0].path });
-                // let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time;
+                let end = subThumbnails[parseInt(selected) + 1][subThumbnails[parseInt(selected) + 1].length - 1].time
                 dispatch({ type: START_TIME_GROUP, payload: start });
-                dispatch(GetVodVideo(camera.id, start, endTime));
+                dispatch({ type: START_CLIPTIME_GROUP, payload: start });
+                dispatch({ type: SET_ENDTIME, payload: end });
+                dispatch(GetVodVideo(camera.id, start, end));
                 setSelectState(parseInt(selected) + 1);
             }
             let status = 0;
@@ -394,10 +466,6 @@ function HLSPlayer() {
 
     ];
 
-    function valuetext(value) {
-        return `${value}°C`;
-    }
-
     return (
         <div>
             <div className="videoview">
@@ -433,15 +501,29 @@ function HLSPlayer() {
             {(mode === "VOD") && (thumbnails[0]) ?
                 <ThemeProvider theme={theme}>
                     <AppBar position="static" className="playcontrols" color="primary">
-                        <ThemeProvider theme={themeSlider}>
-                            <Slider
-                                aria-label="Temperature"
-                                value={playerRef.current.currentTime / playerRef.current.duration * 100 ? playerRef.current.currentTime / playerRef.current.duration * 100 : 0}
-                                onChange={(e) => handleChange(e)}
-                                sx={{ marginLeft: '3%', width: '94%' }}
-                                color="primary"
-                            />
-                        </ThemeProvider>
+                        <Grid container spacing={0} >
+                            <Grid item xs={1} >
+                                <div style={{ marginTop: 5, marginLeft: 10 }}>
+                                    {`${TimelineFormat1(new Date(startClipTime))}`}
+                                </div>
+                            </Grid>
+                            <Grid item xs={10} >
+                                <ThemeProvider theme={themeSlider}>
+                                    <Slider
+                                        aria-label= "Temp"
+                                        value={playerRef.current.currentTime / playerRef.current.duration * 100 ? playerRef.current.currentTime / playerRef.current.duration * 100 : 0}
+                                        onChange={(e) => handleChange(e)}
+                                        sx={{ marginLeft: '4%', width: '92%' }}
+                                        color="primary"
+                                    />
+                                </ThemeProvider>
+                            </Grid>
+                            <Grid item xs={1} >
+                                <div style={{ marginTop: 5, marginRight: 10 }}>
+                                    {`${TimelineFormat2(new Date(endTime))}`}
+                                </div>
+                            </Grid>
+                        </Grid>
                         <Grid container spacing={0} >
                             <Grid item xs={5.3} className="nextdate">
                                 <SkipPreviousRounded cursor="pointer" sx={{ marginLeft: 2 }} fontSize="large" onClick={() => previousClick()} />
@@ -480,17 +562,16 @@ function HLSPlayer() {
                                 </Grid>
                                 <Grid item xs={10.5}>
                                     <Slider
-                                        key={`slider-${startFormat}-${endFormat}`}
+                                        key={`slider-${startClipFormat}-${startFormat}-${endFormat}`}
                                         // defaultValue={[startFormat, endFormat]}
-                                        value={[startFormat, endFormat]}
-                                        getAriaValueText={valuetext}
+                                        value={[startClipFormat, startFormat, endFormat]}
                                         step={1}
                                         marks={marks}
                                         max={60}
                                         sx={{ marginLeft: '3%', width: '96%' }}
                                         color="primary"
-                                    // disabled = {true}
-                                    // size = "small"
+                                        // disabled = {true}
+                                        size="small"
                                     />
                                 </Grid>
                             </Grid>
