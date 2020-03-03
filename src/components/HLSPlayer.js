@@ -405,9 +405,11 @@ function HLSPlayer() {
         setStatus(status);
     }
 
-    let width;
+    let width, height;
     if (document.getElementById('wrapper')) {
-        width = (document.getElementById('wrapper').clientWidth) * 0.45;
+        width = (document.getElementById('wrapper').clientWidth) * 0.9;
+        height = (document.getElementById('wrapper').clientWidth) * 0.45;
+
     }
 
     const marks = [
@@ -482,7 +484,8 @@ function HLSPlayer() {
                             <img src={sub_Url}
                                 alt="img"
                                 prop="prop"
-                                className="grey"></img> : <div style={{ marginTop: "20%", marginLeft: "30%" }}><font size={10} style={{ color: "#888888" }}><b>No Data!</b></font></div>
+                                className="grey"
+                                style={{height:{height}}}></img> : <div style={{ marginTop: "20%", marginLeft: "30%" }}><font size={10} style={{ color: "#888888" }}><b>No Data!</b></font></div>
                     }
 
                     <div className="show">
@@ -491,8 +494,8 @@ function HLSPlayer() {
                             src={mode === "VOD" ? video : ""}
                             autoPlay={true}
                             controls={false}
-                            width="90%"
-                            height={width}
+                            width={width}
+                            height={height}
                             playerRef={playerRef}
                         />
                     </div>

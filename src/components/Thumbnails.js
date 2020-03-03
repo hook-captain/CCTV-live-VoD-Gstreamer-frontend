@@ -24,41 +24,65 @@ export default function Thumbnails() {
     if (CurrentTime.getDate() < 10) Day = `0${CurrentTime.getDate()}`;
     else Day = `${CurrentTime.getDate()}`;
 
-    if (CurrentTime.getHours() > 12) {
-      Hour = `${CurrentTime.getHours() - 12}:00PM`;
-    }
-    else {
-      if (CurrentTime.getHours() < 10) {
-        Hour = `0${CurrentTime.getHours()}:00AM`;
+    // if (CurrentTime.getHours() > 12) {
+    //   Hour = `0${CurrentTime.getHours() - 12}:00PM`;
+    // }
+    // else {
+    //   if (CurrentTime.getHours() < 10) {
+    //     Hour = `0${CurrentTime.getHours()}:00AM`;
+    //   }
+    //   else {
+    //     if (CurrentTime.getHours() === 12) {
+    //       Hour = `${CurrentTime.getHours()}:00PM`;
+    //     } else {
+    //       Hour = `${CurrentTime.getHours()}:00AM`;
+    //     }
+    //   }
+    // }
+
+    if (CurrentTime.getHours() < 10) {
+      Hour = `0${CurrentTime.getHours()}:00AM`;
+    }else{
+      if(CurrentTime.getHours() === 10 && CurrentTime.getHours() === 11){
+        Hour = `${CurrentTime.getHours()}:00AM`;
+      }else{
+        Hour = `${CurrentTime.getHours()-12}:00PM`;
       }
-      else {
-        if (CurrentTime.getHours() === 12) {
-          Hour = `${CurrentTime.getHours()}:00PM`;
-        } else {
-          Hour = `${CurrentTime.getHours()}:00AM`;
+    }
+
+    if(CurrentTime.getHours() < 9){
+      Hour1 = `0${CurrentTime.getHours()+1}:00AM`;
+    }else{
+      if(CurrentTime.getHours() === 9 && CurrentTime.getHours() === 10){
+        Hour1 = `${CurrentTime.getHours()}:00AM`;
+      }else{
+        if(CurrentTime.getHours() === 23){
+          Hour1 = `00:00AM`;
+        }else{
+          Hour1 = `${CurrentTime.getHours()-11}:00PM`;
         }
       }
     }
 
-    if (CurrentTime.getHours() > 11) {
-      Hour1 = `${CurrentTime.getHours() - 11}:00PM`;
-    }
-    else {
-      if (CurrentTime.getHours() < 9) {
-        Hour1 = `0${CurrentTime.getHours() + 1}:00AM`;
-      }
-      else {
-        if (CurrentTime.getHours() === 11) {
-          Hour1 = `${CurrentTime.getHours() + 1}:00PM`;
-        } else {
-          if (CurrentTime.getHours() === 23){
-            Hour1 = `00:00AM`;
-          }else{
-            Hour1 = `${CurrentTime.getHours() + 1}:00AM`;
-          }          
-        }
-      }
-    }
+    // if (CurrentTime.getHours() > 11) {
+    //   Hour1 = `${CurrentTime.getHours() - 11}:00PM`;
+    // }
+    // else {
+    //   if (CurrentTime.getHours() < 9) {
+    //     Hour1 = `0${CurrentTime.getHours() + 1}:00AM`;
+    //   }
+    //   else {
+    //     if (CurrentTime.getHours() === 11) {
+    //       Hour1 = `${CurrentTime.getHours() + 1}:00PM`;
+    //     } else {
+    //       if (CurrentTime.getHours() === 23){
+    //         Hour1 = `00:00AM`;
+    //       }else{
+    //         Hour1 = `${CurrentTime.getHours() + 1}:00AM`;
+    //       }          
+    //     }
+    //   }
+    // }
 
     // if (CurrentTime.getMinutes() < 10) Min = `0${CurrentTime.getMinutes() - CurrentTime.getMinutes() % 2}`;
     // else Min = `${CurrentTime.getMinutes() - CurrentTime.getMinutes() % 2}`;
