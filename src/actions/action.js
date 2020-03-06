@@ -51,8 +51,17 @@ export const getThumbnail =
       .get(`/api/thumbnails/${cameraid}/${starttime}/${endtime}/${duration}`)
       .then((res) => {
         if (res.data.length > 0) {
-          let initTime = parseInt(new Date(res.data[0].time2str).getTime() / (duration * 60 * 1000)) * duration * 60 * 1000;
-          let first = initTime;
+          let first, initTime;
+          if (duration === 60){
+            initTime = parseInt(new Date(res.data[0].time2str).getTime() / (duration * 60 * 1000)) * duration * 60 * 1000;
+            if(new Date(initTime).getMinutes() === 30){
+              initTime = initTime - 30*60*1000;
+            }
+            first = initTime;
+          }else{
+            initTime = parseInt(new Date(res.data[0].time2str).getTime() / (duration * 60 * 1000)) * duration * 60 * 1000;
+            first = initTime;
+          }
           let thumbnails = [], sub_Thumbnails = [];
           let _duration = duration * 60;
           let flag = 0;
