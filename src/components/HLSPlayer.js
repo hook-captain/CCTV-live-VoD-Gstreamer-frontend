@@ -278,9 +278,9 @@ function HLSPlayer() {
     const previousClick = () => {
         if (mode === "VOD") {
             if (parseInt(selected) && parseInt(selected) > 0) {
-                let start = subThumbnails[parseInt(selected) - 1][0].time;
+                let start = subThumbnails[parseInt(selected) - 1][0].time2str;
                 dispatch({ type: GET_SUB_URL, payload: subThumbnails[parseInt(selected) - 1][0].path });
-                let end = subThumbnails[parseInt(selected) - 1][subThumbnails[parseInt(selected) - 1].length - 1].time
+                let end = subThumbnails[parseInt(selected) - 1][subThumbnails[parseInt(selected) - 1].length - 1].time2str
                 dispatch({ type: START_TIME_GROUP, payload: start });
                 dispatch({ type: START_CLIPTIME_GROUP, payload: start });
                 dispatch({ type: SET_ENDTIME, payload: end });
@@ -295,9 +295,9 @@ function HLSPlayer() {
     const nextClick = () => {
         if (mode === "VOD") {
             if (parseInt(selected) < subThumbnails.length - 1) {
-                let start = subThumbnails[parseInt(selected) + 1][0].time;
+                let start = subThumbnails[parseInt(selected) + 1][0].time2str;
                 dispatch({ type: GET_SUB_URL, payload: subThumbnails[parseInt(selected) + 1][0].path });
-                let end = subThumbnails[parseInt(selected) + 1][subThumbnails[parseInt(selected) + 1].length - 1].time
+                let end = subThumbnails[parseInt(selected) + 1][subThumbnails[parseInt(selected) + 1].length - 1].time2str
                 dispatch({ type: START_TIME_GROUP, payload: start });
                 dispatch({ type: START_CLIPTIME_GROUP, payload: start });
                 dispatch({ type: SET_ENDTIME, payload: end });

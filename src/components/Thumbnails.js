@@ -116,7 +116,7 @@ export default function Thumbnails() {
 
   if (thumbnails && thumbnails[0]) {
     for (let i = thumbnails.length - 1; i >= 0; i--) {
-      let time = new Date(thumbnails[i][0].time);
+      let time = new Date(thumbnails[i][0].time2str);
       time.setMinutes(0);
       time.setSeconds(0);
       time.setMilliseconds(0);
@@ -152,7 +152,7 @@ export default function Thumbnails() {
       }
       subThumb[cnt] = timeArray[Object.keys(timeArray)[i]][j];
       if (i === 0 && j === (timeArray[Object.keys(timeArray)[i]].length - 1)) {
-        endTime = timeArray[Object.keys(timeArray)[i]][0][timeArray[Object.keys(timeArray)[i]][0].length - 1].time
+        endTime = timeArray[Object.keys(timeArray)[i]][0][timeArray[Object.keys(timeArray)[i]][0].length - 1].time2str
       }
     }
     subThumb['length'] = cnt + 1;
@@ -201,7 +201,7 @@ export default function Thumbnails() {
                       thumbnails={subThumb}
                       selected={selected}
                       url={item.path}
-                      time={item.time}
+                      time={item.time2str}
                       camera_id={item.camera_id}
                     />
                   </Grid>

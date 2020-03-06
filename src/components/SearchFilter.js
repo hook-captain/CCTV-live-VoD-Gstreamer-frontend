@@ -83,8 +83,8 @@ export default function SearchFilter() {
   useEffect(() => {    
     dispatch({ type: GET_SEARCH_KEY, payload: {starttime, endtime, duration} });
     if (thumbnails.length) {
-      let start = thumbnails[thumbnails.length - 1][0].time
-      let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
+      let start = thumbnails[thumbnails.length - 1][0].time2str
+      let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time2str
       dispatch(GetVodVideo(camera.id, start, end));
       dispatch({ type: START_TIME_GROUP, payload: start });
       dispatch({ type: START_CLIPTIME_GROUP, payload: start });

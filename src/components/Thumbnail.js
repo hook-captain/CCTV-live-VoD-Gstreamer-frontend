@@ -86,8 +86,8 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
       number = thumbnail.length - 1;
     let arrow = e.nativeEvent.offsetX / e.target.width * 100;
     let subURL = thumbnail ? thumbnail[number].path : url;
-    let subTime = thumbnail ? thumbnail[number].time : time;
-    let ClipTime = thumbnail ? thumbnail[0].time : time;
+    let subTime = thumbnail ? thumbnail[number].time2str : time;
+    let ClipTime = thumbnail ? thumbnail[0].time2str : time;
     setSubURL(subURL);
     dispatch({ type: GET_SUB_URL, payload: subURL });
     setSubTime(subTime);
@@ -95,12 +95,12 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
     let startTime = subTime;
     setstartTime(startTime);
     setstartClipTime(ClipTime);
-    setEndTime(thumbnail[thumbnail.length - 1].time);
+    setEndTime(thumbnail[thumbnail.length - 1].time2str);
   };
 
   const handleMouseOut = (e) => {
     if (over === e.target.id) {
-      let subTime = thumbnails[e.target.id][0].time
+      let subTime = thumbnails[e.target.id][0].time2str
       setSubTime(subTime);
     }
     setSubURL(url);
