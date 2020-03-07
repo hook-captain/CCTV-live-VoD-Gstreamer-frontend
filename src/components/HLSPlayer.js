@@ -363,7 +363,7 @@ function HLSPlayer() {
     function increase() {
         // timeUpdate()
         // timeDuration()    
-        setTime(new Date(addSeconds(new Date(startTime))));
+        setTime(new Date(addSeconds(new Date(startClipTime))));
     }
 
     function playVideo() {
