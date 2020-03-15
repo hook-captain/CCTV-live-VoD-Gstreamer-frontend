@@ -3,7 +3,6 @@ import {
   GET_CAMERA_LIST,
   GET_THUMBNAIL_LIST,
   SET_CAMERA_SELECT,
-  VIDEO_LIVE_MODE,
   VIDEO_VOD_MODE,
   SELECT_THUMBNAIL_GROUP,
   GET_SEARCH_TIME,
@@ -38,9 +37,10 @@ export const selectThumbnail = (id) => (dispatch) => {
 };
 
 export const GetLiveVideo = (ID) => (dispatch) => {
-  axios.get(`/api/cameras/${ID}`).then((res) => {
-    dispatch({ type: VIDEO_LIVE_MODE, payload: res.data });
-  });
+  // axios.get(`/api/cameras/${ID}`).then((res) => {
+  //   dispatch({ type: VIDEO_LIVE_MODE, payload: res.data });
+  // });
+  dispatch({type: VIDEO_VOD_MODE, payload: `/share/${ID}/playlist.m3u8`})
 };
 
 export const getThumbnail =
