@@ -510,7 +510,7 @@ function HLSPlayer() {
                     <div className="show">
                         <ReactHlsPlayer
                             key={`${selected}${startTime}`}
-                            src={mode === "VOD" ? video : ""}
+                            src={video}
                             autoPlay={true}
                             controls={false}
                             width={width}

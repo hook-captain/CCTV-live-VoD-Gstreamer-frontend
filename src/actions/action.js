@@ -4,6 +4,7 @@ import {
   GET_THUMBNAIL_LIST,
   SET_CAMERA_SELECT,
   VIDEO_VOD_MODE,
+  VIDEO_LIVE_MODE,
   SELECT_THUMBNAIL_GROUP,
   GET_SEARCH_TIME,
 } from "../redux/types";
@@ -40,7 +41,7 @@ export const GetLiveVideo = (ID) => (dispatch) => {
   // axios.get(`/api/cameras/${ID}`).then((res) => {
   //   dispatch({ type: VIDEO_LIVE_MODE, payload: res.data });
   // });
-  dispatch({type: VIDEO_VOD_MODE, payload: `/share/${ID}/playlist.m3u8`})
+  dispatch({type: VIDEO_LIVE_MODE, payload: `/share/${ID}/playlist.m3u8`})
 };
 
 export const getThumbnail =
