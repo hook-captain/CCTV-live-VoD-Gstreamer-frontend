@@ -428,7 +428,6 @@ function HLSPlayer() {
     if (document.getElementById('wrapper')) {
         width = (document.getElementById('wrapper').clientWidth) * 0.9;
         height = (document.getElementById('wrapper').clientWidth) * 0.45;
-
     }
 
     const marks = [
@@ -499,12 +498,12 @@ function HLSPlayer() {
                     </div> : <></>}
                 <div id="wrapper" >
                     {
-                        thumbnails[0] ?
+                        thumbnails[0] && mode === "VOD"?
                             <img src={sub_Url}
                                 alt="img"
                                 prop="prop"
                                 className="grey"
-                                style={{height:{height}}}></img> : <div style={{ marginTop: "20%", marginLeft: "30%" }}><font size={10} style={{ color: "#888888" }}><b>No Data!</b></font></div>
+                                height={height}></img> : mode === "VOD" ? <div style={{ marginTop: "20%", marginLeft: "30%" }}><font size={10} style={{ color: "#888888" }}><b>No Data!</b></font></div> : <></>
                     }
 
                     <div className="show">
