@@ -43,7 +43,7 @@ export default function Thumbnails() {
     if (CurrentTime.getHours() < 10) {
       Hour = `0${CurrentTime.getHours()}:00AM`;
     }else{
-      if(CurrentTime.getHours() === 10 && CurrentTime.getHours() === 11){
+      if(CurrentTime.getHours() === 10 || CurrentTime.getHours() === 11){
         Hour = `${CurrentTime.getHours()}:00AM`;
       }else{
         Hour = `${CurrentTime.getHours()-12}:00PM`;
@@ -53,8 +53,8 @@ export default function Thumbnails() {
     if(CurrentTime.getHours() < 9){
       Hour1 = `0${CurrentTime.getHours()+1}:00AM`;
     }else{
-      if(CurrentTime.getHours() === 9 && CurrentTime.getHours() === 10){
-        Hour1 = `${CurrentTime.getHours()}:00AM`;
+      if(CurrentTime.getHours() === 9 || CurrentTime.getHours() === 10){
+        Hour1 = `${CurrentTime.getHours()+1}:00AM`;
       }else{
         if(CurrentTime.getHours() === 23){
           Hour1 = `00:00AM`;

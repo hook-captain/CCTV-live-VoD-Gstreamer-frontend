@@ -192,11 +192,7 @@ function HLSPlayer() {
         let time = new Date(Dates);
 
         if (time.getMinutes() < 9) Min = `0${time.getMinutes() + 1}`;
-        else Min = `${time.getMinutes() + 1}`;
-
-        if (time.getMinutes() === 59) {
-            Min = `00`;
-        }
+        else Min = `${time.getMinutes() + 1}`;        
 
         if (time.getHours() > 12) {
             Hour = `${time.getHours() - 12}:${Min}PM`;
@@ -214,9 +210,32 @@ function HLSPlayer() {
             }
         }
 
+        if (time.getMinutes() === 59) {
+            if (time.getHours() > 11) {
+                if(time.getHours() === 23){
+                    Hour = `00:00AM`;
+                }else{
+                   Hour = `${time.getHours() - 11}:00PM`; 
+                }                
+            }
+            else {
+                if (time.getHours() < 9) {
+                    Hour = `0${time.getHours()+1}:00AM`;
+                }
+                else {
+                    if (time.getHours() === 11) {
+                        Hour = `${time.getHours()+1}:00PM`;
+                    } else {
+                        Hour = `${time.getHours()+1}:00AM`;
+                    }
+                }
+            }
+        }
+
         result = `${Hour}`;
         return result;
     };
+
 
     const getBetweenDate = (Date1, Date2) => {
         return parseInt((new Date(Date2).getTime() - new Date(Date1).getTime()) / 1000)
@@ -344,7 +363,7 @@ function HLSPlayer() {
     function increase() {
         // timeUpdate()
         // timeDuration()    
-        setTime(new Date(addSeconds(new Date(startTime))));
+        setTime(new Date(addSeconds(new Date(startClipTime))));
     }
 
     function playVideo() {
