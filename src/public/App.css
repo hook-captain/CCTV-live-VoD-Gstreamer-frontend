@@ -45,6 +45,13 @@
   margin-left: 3.3%;
 }
 
+.grey1{
+  width: 52.6%;
+  position: absolute;
+  margin-left: 3.3%;
+  z-index: 999;
+}
+
 .playcontrols {
   margin-left: 16.5%;
   max-width: 70.5%;

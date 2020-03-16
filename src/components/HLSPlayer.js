@@ -23,12 +23,12 @@ import {
 import ReactHlsPlayer from "react-hls-player";
 import { useDispatch, useSelector } from "react-redux";
 import { START_TIME_GROUP, GET_SUB_URL, SET_ENDTIME, START_CLIPTIME_GROUP } from "../redux/types";
-import { GetVodVideo, selectThumbnail, GetLiveVideo } from "../actions/action";
+import { GetVodVideo, selectThumbnail, GetLiveVideo, getCamerasOnline } from "../actions/action";
 import "../public/App.css";
 import { findDOMNode } from "react-dom";
 import screenfull from 'screenfull';
 import captureVideoFrame from 'capture-video-frame';
-// import grey from "../public/grey.jpg";
+import img_url from "../public/grey.jpg";
 
 const theme = createTheme({
     palette: {
@@ -242,6 +242,7 @@ function HLSPlayer() {
     }
 
     const camera = useSelector((state) => state.camera.camera);
+    const cameraOnlineStatus = useSelector((state) => state.camera.cameraStatus);
     const mode = useSelector((state) => state.video.mode);
     const video = useSelector((state) => state.video.video);
     const { selected, startTime, startClipTime, endTime, subThumbnails, sub_Url, thumbnails } = useSelector((state) => state.thumbnail)
@@ -363,6 +364,7 @@ function HLSPlayer() {
     function increase() {
         // timeUpdate()
         // timeDuration()    
+        dispatch(getCamerasOnline(camera.id))
         setTime(new Date(addSeconds(new Date(startClipTime))));
     }
 
@@ -503,8 +505,16 @@ function HLSPlayer() {
                                 alt="img"
                                 prop="prop"
                                 className="grey"
-                                height={height}></img> : mode === "VOD" ? <div style={{ marginTop: "20%", marginLeft: "30%" }}><font size={10} style={{ color: "#888888" }}><b>No Data!</b></font></div> : <></>
+                                height={height}></img> : mode === "VOD" ? <div style={{ marginTop: "20%", marginLeft: "30%" }}><font size={10} style={{ color: "#888888" }}><b>No Data!</b></font></div> 
+                                :<></>
                     }
+                    {
+                        cameraOnlineStatus.online === "NO" && mode == "LIVE" ?
+                        <img src={img_url}
+                                alt="img"
+                                prop="prop"
+                                className="grey1"
+                                height={height}></img>:<></>}
 
                     <div className="show">
                         <ReactHlsPlayer

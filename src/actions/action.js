@@ -7,6 +7,7 @@ import {
   VIDEO_LIVE_MODE,
   SELECT_THUMBNAIL_GROUP,
   GET_SEARCH_TIME,
+  GET_CAMERA_ONLINE_STATUS,
 } from "../redux/types";
 
 export const getCameras = (keyword, start, end) => (dispatch) => {
@@ -21,6 +22,12 @@ export const getCameras = (keyword, start, end) => (dispatch) => {
         dispatch(getThumbnail(res.data[0].id, start, end, 5));
       }
     });
+};
+
+export const getCamerasOnline = (id) => (dispatch) => {
+    axios.get(`/api/cameras/online/${id}`).then((res) => {
+      dispatch({ type: GET_CAMERA_ONLINE_STATUS, payload: res.data });
+    })
 };
 
 export const setCamera = (obj) => (dispatch) => {
