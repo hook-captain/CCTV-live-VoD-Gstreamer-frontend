@@ -7,6 +7,7 @@ import {
   VIDEO_LIVE_MODE,
   SELECT_THUMBNAIL_GROUP,
   GET_SEARCH_TIME,
+  GET_LIVE_URL,
   GET_CAMERA_ONLINE_STATUS,
 } from "../redux/types";
 
@@ -26,14 +27,14 @@ export const getCameras = (keyword, start, end) => (dispatch) => {
 
 export const getCamerasOnline = (id, mode) => (dispatch) => {
     axios.get(`/api/cameras/online/${id}`).then((res) => {
-      dispatch({ type: GET_CAMERA_ONLINE_STATUS, payload: res.data });
-      if( mode === "LIVE" ){
-        if (res.data.flag === "NO"){
-          dispatch({type: VIDEO_LIVE_MODE, payload: `/share/graylist.m3u8`})
+      let result1 = res.data[0];
+      let result2 = res.data[1];
+      dispatch({ type: GET_CAMERA_ONLINE_STATUS, payload: {...result1, ...result2} });
+        if (res.data[0].flag === "NO"){
+          dispatch({type: GET_LIVE_URL, payload: `/share/graylist.m3u8`})
         } else {
-          setTimeout(()=>{dispatch({type: VIDEO_LIVE_MODE, payload: `/share/${id}/playlist.m3u8`})}, 2000)
+          setTimeout(()=>{dispatch({type: GET_LIVE_URL, payload: `/share/${id}/playlist.m3u8`})}, 1000)
         }
-      }      
     })
 };
 

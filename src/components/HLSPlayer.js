@@ -362,9 +362,11 @@ function HLSPlayer() {
 
     function increase() {
         // timeUpdate()
-        // timeDuration() 
-        if(mode === "VOD"){ 
-        dispatch(getCamerasOnline(camera.id, mode))}
+        // timeDuration()
+        console.log("MODE>>>>>>>", mode)
+        if(mode === "LIVE"){ 
+            dispatch(getCamerasOnline(camera.id, mode))
+        }
         setTime(new Date(addSeconds(new Date(startClipTime))));
     }
 
@@ -509,9 +511,15 @@ function HLSPlayer() {
                                 :<></>
                     }   
                     {
-                         mode === "LIVE" && cameraStatus.online === "NO" ?
+                         mode === "LIVE" && cameraStatus.flag === "NO" ?
+                         <div>
+                            <img src={cameraStatus.path}
+                                alt="img"
+                                prop="prop"
+                                className="grey2"
+                                height={height}></img> 
                             <div className="grey1"
-                                style={{'height': height}}></div>:<></>
+                                style={{'height': height}}></div></div>:<></>
                     }
                     <div className="show">
                         <ReactHlsPlayer
