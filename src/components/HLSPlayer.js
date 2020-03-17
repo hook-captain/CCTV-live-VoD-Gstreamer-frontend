@@ -507,15 +507,7 @@ function HLSPlayer() {
                                 className="grey"
                                 height={height}></img> : mode === "VOD" ? <div style={{ marginTop: "20%", marginLeft: "30%" }}><font size={10} style={{ color: "#888888" }}><b>No Data!</b></font></div> 
                                 :<></>
-                    }
-                    {
-                        cameraOnlineStatus.online === "NO" && mode == "LIVE" ?
-                        <img src={img_url}
-                                alt="img"
-                                prop="prop"
-                                className="grey1"
-                                height={height}></img>:<></>}
-
+                    }                    
                     <div className="show">
                         <ReactHlsPlayer
                             key={`${selected}${startTime}`}

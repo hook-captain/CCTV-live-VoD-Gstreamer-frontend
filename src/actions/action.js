@@ -27,6 +27,11 @@ export const getCameras = (keyword, start, end) => (dispatch) => {
 export const getCamerasOnline = (id) => (dispatch) => {
     axios.get(`/api/cameras/online/${id}`).then((res) => {
       dispatch({ type: GET_CAMERA_ONLINE_STATUS, payload: res.data });
+      if (res.data.flag === "NO"){
+        dispatch({type: VIDEO_LIVE_MODE, payload: `/share/${id}/graylist.m3u8`})
+      } else {
+        setTimeout(()=>{dispatch({type: VIDEO_LIVE_MODE, payload: `/share/${id}/playlist.m3u8`})}, 2000)
+      }
     })
 };
 
