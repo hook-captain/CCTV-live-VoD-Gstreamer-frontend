@@ -362,8 +362,9 @@ function HLSPlayer() {
 
     function increase() {
         // timeUpdate()
-        // timeDuration()  
-        dispatch(getCamerasOnline(camera.id, mode, cameraStauts.flag))
+        // timeDuration() 
+        if(mode === "VOD"){ 
+        dispatch(getCamerasOnline(camera.id, mode))}
         setTime(new Date(addSeconds(new Date(startClipTime))));
     }
 
