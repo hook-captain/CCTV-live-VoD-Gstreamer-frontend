@@ -28,7 +28,6 @@ import "../public/App.css";
 import { findDOMNode } from "react-dom";
 import screenfull from 'screenfull';
 import captureVideoFrame from 'capture-video-frame';
-import img_url from "../public/grey.jpg";
 
 const theme = createTheme({
     palette: {
@@ -242,7 +241,7 @@ function HLSPlayer() {
     }
 
     const camera = useSelector((state) => state.camera.camera);
-    const cameraOnlineStatus = useSelector((state) => state.camera.cameraStatus);
+    const cameraStauts = useSelector((state) => state.camera.cameraStatus);
     const mode = useSelector((state) => state.video.mode);
     const video = useSelector((state) => state.video.video);
     const { selected, startTime, startClipTime, endTime, subThumbnails, sub_Url, thumbnails } = useSelector((state) => state.thumbnail)
@@ -280,7 +279,7 @@ function HLSPlayer() {
         let status = 0;
         setStatus(status);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [startTime]);
+    }, [startTime, mode]);
 
     const handleChange = (e) => {
         if (playerRef.current.duration) {
@@ -363,8 +362,8 @@ function HLSPlayer() {
 
     function increase() {
         // timeUpdate()
-        // timeDuration()    
-        dispatch(getCamerasOnline(camera.id))
+        // timeDuration()  
+        dispatch(getCamerasOnline(camera.id, mode, cameraStauts.flag))
         setTime(new Date(addSeconds(new Date(startClipTime))));
     }
 
