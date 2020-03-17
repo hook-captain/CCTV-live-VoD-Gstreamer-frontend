@@ -241,7 +241,7 @@ function HLSPlayer() {
     }
 
     const camera = useSelector((state) => state.camera.camera);
-    const cameraStauts = useSelector((state) => state.camera.cameraStatus);
+    const cameraStatus = useSelector((state) => state.camera.cameraStatus);
     const mode = useSelector((state) => state.video.mode);
     const video = useSelector((state) => state.video.video);
     const { selected, startTime, startClipTime, endTime, subThumbnails, sub_Url, thumbnails } = useSelector((state) => state.thumbnail)
@@ -363,7 +363,7 @@ function HLSPlayer() {
     function increase() {
         // timeUpdate()
         // timeDuration()  
-        dispatch(getCamerasOnline(camera.id, mode, cameraStauts.flag))
+        dispatch(getCamerasOnline(camera.id, mode))
         setTime(new Date(addSeconds(new Date(startClipTime))));
     }
 
@@ -506,7 +506,12 @@ function HLSPlayer() {
                                 className="grey"
                                 height={height}></img> : mode === "VOD" ? <div style={{ marginTop: "20%", marginLeft: "30%" }}><font size={10} style={{ color: "#888888" }}><b>No Data!</b></font></div> 
                                 :<></>
-                    }                    
+                    }   
+                    {
+                         mode === "LIVE" && cameraStatus.online === "NO" ?
+                            <div className="grey1"
+                                style={{'height': height}}></div>:<></>
+                    }
                     <div className="show">
                         <ReactHlsPlayer
                             key={`${selected}${startTime}`}
