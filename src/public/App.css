@@ -31,6 +31,7 @@
 }
 .show{
   transform-style: preserve-3d;
+  z-index: 999;
 }
 
 .Modetext {
@@ -49,14 +50,14 @@
   width: 52.6%;
   position: absolute;
   margin-left: 3.3%;
-  z-index: 997;
+  z-index: 990;
 }
 
 .grey1{
   width: 52.6%;
   position: absolute;
   margin-left: 3.3%;
-  z-index: 999;
+  z-index: 995;
   background-color: rgba(0, 0, 0, 0.7);
 }
 
