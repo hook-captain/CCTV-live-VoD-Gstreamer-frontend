@@ -244,6 +244,8 @@ function HLSPlayer() {
     const cameraStatus = useSelector((state) => state.camera.cameraStatus);
     const mode = useSelector((state) => state.video.mode);
     const video = useSelector((state) => state.video.video);
+    const filterStartTime = useSelector((state) => state.thumbnail.searchKey.starttime);
+    const filterEndTime = useSelector((state) => state.thumbnail.searchKey.endtime);
     const { selected, startTime, startClipTime, endTime, subThumbnails, sub_Url, thumbnails } = useSelector((state) => state.thumbnail)
     const dispatch = useDispatch();
     const [status, setStatus] = useState(0);
@@ -292,6 +294,10 @@ function HLSPlayer() {
 
     const GoLiveVideo = () => {
         dispatch(GetLiveVideo(camera.id))
+    }
+
+    const GoVodVideo = () => {
+        dispatch(GetVodVideo(camera.id, filterStartTime, filterEndTime))
     }
 
     const previousClick = () => {
@@ -498,7 +504,12 @@ function HLSPlayer() {
                         <ThemeProvider theme={theme}>
                             <Button variant="contained" onClick={GoLiveVideo}>Go To Live</Button>
                         </ThemeProvider>
-                    </div> : <></>}
+                    </div> : 
+                    <div className="liveButton">
+                        <ThemeProvider theme={theme}>
+                            <Button variant="contained" onClick={GoVodVideo}>Go To Vod</Button>
+                        </ThemeProvider>
+                    </div>}
                 <div id="wrapper" >
                     {
                         thumbnails[0] && mode === "VOD"?
