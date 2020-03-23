@@ -26,15 +26,15 @@ export const getCameras = (keyword, start, end) => (dispatch) => {
 };
 
 export const getCamerasOnline = (id, mode) => (dispatch) => {
-    axios.get(`/api/cameras/online/${id}`).then((res) => {
+    axios.get(`/api/cameras/online/${id}`).then(async (res) => {
       let result1 = res.data[0];
       let result2 = res.data[1];
       dispatch({ type: GET_CAMERA_ONLINE_STATUS, payload: {...result1, ...result2} });
         if (res.data[0].flag === "NO"){
           dispatch({type: GET_LIVE_URL, payload: `/share/graylist.m3u8`})
-        } else {
-          setTimeout(()=>{dispatch({type: GET_LIVE_URL, payload: `/share/${id}/playlist.m3u8`})}, 1000)
-        }
+        } else {          
+            await setTimeout(()=>{}, 2000)
+            dispatch({type: GET_LIVE_URL, payload: `/share/${id}/playlist.m3u8`})}
     })
 };
 

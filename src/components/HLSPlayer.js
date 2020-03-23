@@ -363,7 +363,6 @@ function HLSPlayer() {
     function increase() {
         // timeUpdate()
         // timeDuration()
-        console.log("MODE>>>>>>>", mode)
         if(mode === "LIVE"){ 
             dispatch(getCamerasOnline(camera.id, mode))
         }
