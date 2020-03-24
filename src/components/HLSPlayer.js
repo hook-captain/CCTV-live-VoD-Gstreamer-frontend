@@ -23,7 +23,7 @@ import {
 import ReactHlsPlayer from "react-hls-player";
 import { useDispatch, useSelector } from "react-redux";
 import { START_TIME_GROUP, GET_SUB_URL, SET_ENDTIME, START_CLIPTIME_GROUP } from "../redux/types";
-import { GetVodVideo, selectThumbnail, GetLiveVideo, getCamerasOnline } from "../actions/action";
+import { GetVodVideo, selectThumbnail, GetLiveVideo, getCamerasOnline, getThumbnail } from "../actions/action";
 import "../public/App.css";
 import { findDOMNode } from "react-dom";
 import screenfull from 'screenfull';
@@ -246,10 +246,12 @@ function HLSPlayer() {
     const video = useSelector((state) => state.video.video);
     const filterStartTime = useSelector((state) => state.thumbnail.searchKey.starttime);
     const filterEndTime = useSelector((state) => state.thumbnail.searchKey.endtime);
+    const filterDuration = useSelector((state) => state.thumbnail.searchKey.duration);
     const { selected, startTime, startClipTime, endTime, subThumbnails, sub_Url, thumbnails } = useSelector((state) => state.thumbnail)
     const dispatch = useDispatch();
     const [status, setStatus] = useState(0);
     const [timerID, setTimerID] = useState(0);
+    const [timerEID, setTimerEID] = useState(0);
     const [selectState, setSelectState] = useState(0);
     const playerRef = React.useRef(null);
     const [time, setTime] = useState(new Date());
@@ -281,7 +283,15 @@ function HLSPlayer() {
         let status = 0;
         setStatus(status);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [startTime, mode]);
+    }, [startTime]);
+
+    useEffect(() => {
+        if (timerEID > 0) {
+            clearInterval(timerEID);
+        }
+        let timer_id = setInterval(onlineStateCapture, 1000)
+        setTimerEID(timer_id);
+    }, [mode]);
 
     const handleChange = (e) => {
         if (playerRef.current.duration) {
@@ -297,7 +307,7 @@ function HLSPlayer() {
     }
 
     const GoVodVideo = () => {
-        dispatch(GetVodVideo(camera.id, filterStartTime, filterEndTime))
+        dispatch(getThumbnail(camera.id, filterStartTime, filterEndTime, filterDuration));
     }
 
     const previousClick = () => {
@@ -369,10 +379,13 @@ function HLSPlayer() {
     function increase() {
         // timeUpdate()
         // timeDuration()
+        setTime(new Date(addSeconds(new Date(startClipTime))));
+    }
+
+    function onlineStateCapture(){
         if(mode === "LIVE"){ 
             dispatch(getCamerasOnline(camera.id, mode))
         }
-        setTime(new Date(addSeconds(new Date(startClipTime))));
     }
 
     function playVideo() {
