@@ -291,6 +291,7 @@ function HLSPlayer() {
         }
         let timer_id = setInterval(onlineStateCapture, 1000)
         setTimerEID(timer_id);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mode]);
 
     const handleChange = (e) => {
