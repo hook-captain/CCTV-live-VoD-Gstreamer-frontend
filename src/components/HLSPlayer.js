@@ -353,11 +353,27 @@ function HLSPlayer() {
     }
 
     const onClickDownload = () => {
-        dispatch(GetDownloadUrl(video.split("/")[3]));
-        const a = document.createElement('a');
-        a.setAttribute('download', 'playlist.mp4');
-        a.setAttribute('href', `${link}`);
-        a.click();
+        // dispatch(GetDownloadUrl(video.split("/")[3]));
+        let url = GetDownloadUrl(video.split("/")[3])
+        url.then(res=>{
+            let skillName = "playlist"
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', `${res}`, true);
+            xhr.responseType = 'blob';
+            xhr.onload = function () {
+            let urlCreator = window.URL || window.webkitURL;
+            let videoUrl = urlCreator.createObjectURL(this.response);
+            let tag = document.createElement('a');
+            tag.href = videoUrl;
+            tag.target = '_blank';
+            tag.download = skillName.includes('.mp4') ? skillName : skillName + '.mp4';
+            document.body.appendChild(tag);
+            tag.click();
+            document.body.removeChild(tag);
+            };
+            xhr.onerror = (err) => {};
+            xhr.send();
+        })
     }
 
     const onClickScreenShot = () => {

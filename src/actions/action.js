@@ -26,10 +26,13 @@ export const getCameras = (keyword, start, end, mode, video) => (dispatch) => {
     });
 };
 
-export const GetDownloadUrl = (path) => (dispatch) => {
-  axios.get(`/api/videos/convert/${path}`).then((res) => {
-    dispatch({ type: GET_DOWNLOAD_URL, payload: res.data });
+export const GetDownloadUrl = async (path) => {
+  let url = "";
+  await axios.get(`/api/videos/convert/${path}`).then((res) => {
+    //dispatch({type: GET_DOWNLOAD_URL, payload: res.data})
+    url = res.data;
   });
+  return url
 };
 
 export const getCamerasOnline = (id, mode) => (dispatch) => {
