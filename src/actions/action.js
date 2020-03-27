@@ -9,10 +9,10 @@ import {
   GET_SEARCH_TIME,
   GET_LIVE_URL,
   GET_CAMERA_ONLINE_STATUS,
+  GET_DOWNLOAD_URL
 } from "../redux/types";
 
 export const getCameras = (keyword, start, end, mode, video) => (dispatch) => {
-  console.log(1, mode, video)
   keyword === ""
     ? axios.get(`/api/cameras`).then((res) => {
       dispatch({ type: GET_CAMERA_LIST, payload: res.data });
@@ -24,6 +24,12 @@ export const getCameras = (keyword, start, end, mode, video) => (dispatch) => {
         dispatch(getThumbnail(res.data[0].id, start, end, 5, mode, video));
       }
     });
+};
+
+export const GetDownloadUrl = (path) => (dispatch) => {
+  axios.get(`/api/videos/convert/${path}`).then((res) => {
+    dispatch({ type: GET_DOWNLOAD_URL, payload: res.data });
+  });
 };
 
 export const getCamerasOnline = (id, mode) => (dispatch) => {
@@ -59,7 +65,6 @@ export const selectThumbnail = (id) => (dispatch) => {
 
 export const GetLiveVideo = (ID, mode, video) => (dispatch) => {
   let url = "none"
-  console.log(mode)
   if(typeof video === "string"){
     url = video.replaceAll("/", "*");
   }
@@ -76,7 +81,6 @@ export const getThumbnail =
       url = video.replaceAll("/", "*");
     }
     setInterval(() => { count++ }, 1)
-    console.log(url)
     axios
       .get(`/api/thumbnails/${cameraid}/${starttime}/${endtime}/${duration}/${mode}/${url}`)
       .then((res) => {

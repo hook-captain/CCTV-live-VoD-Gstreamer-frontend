@@ -23,7 +23,7 @@ import {
 import ReactHlsPlayer from "react-hls-player";
 import { useDispatch, useSelector } from "react-redux";
 import { START_TIME_GROUP, GET_SUB_URL, SET_ENDTIME, START_CLIPTIME_GROUP } from "../redux/types";
-import { GetVodVideo, selectThumbnail, GetLiveVideo, getCamerasOnline, getThumbnail } from "../actions/action";
+import { GetVodVideo, selectThumbnail, GetLiveVideo, getCamerasOnline, getThumbnail, GetDownloadUrl } from "../actions/action";
 import "../public/App.css";
 import { findDOMNode } from "react-dom";
 import screenfull from 'screenfull';
@@ -247,6 +247,7 @@ function HLSPlayer() {
     const filterStartTime = useSelector((state) => state.thumbnail.searchKey.starttime);
     const filterEndTime = useSelector((state) => state.thumbnail.searchKey.endtime);
     const filterDuration = useSelector((state) => state.thumbnail.searchKey.duration);
+    const link = useSelector((state) => state.video.downloadUrl);
     const { selected, startTime, startClipTime, endTime, subThumbnails, sub_Url, thumbnails } = useSelector((state) => state.thumbnail)
     const dispatch = useDispatch();
     const [status, setStatus] = useState(0);
@@ -352,9 +353,10 @@ function HLSPlayer() {
     }
 
     const onClickDownload = () => {
+        dispatch(GetDownloadUrl(video.split("/")[3]));
         const a = document.createElement('a');
-        a.setAttribute('download', 'playlist.m3u8');
-        a.setAttribute('href', "/share/playlist.m3u8");
+        a.setAttribute('download', 'playlist.mp4');
+        a.setAttribute('href', `${link}`);
         a.click();
     }
 
