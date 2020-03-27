@@ -1,7 +1,7 @@
 import { VIDEO_LIVE_MODE, VIDEO_VOD_MODE, GET_LIVE_URL } from "../types";
 
 const initialState = {
-  mode: "",
+  mode: "VOD",
   video: {},
   videos: [],
 };

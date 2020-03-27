@@ -303,11 +303,11 @@ function HLSPlayer() {
 
 
     const GoLiveVideo = () => {
-        dispatch(GetLiveVideo(camera.id))
+        dispatch(GetLiveVideo(camera.id, mode, video))
     }
 
     const GoVodVideo = () => {
-        dispatch(getThumbnail(camera.id, filterStartTime, filterEndTime, filterDuration));
+        dispatch(getThumbnail(camera.id, filterStartTime, filterEndTime, filterDuration, mode, video));
     }
 
     const previousClick = () => {
@@ -319,7 +319,7 @@ function HLSPlayer() {
                 dispatch({ type: START_TIME_GROUP, payload: start });
                 dispatch({ type: START_CLIPTIME_GROUP, payload: start });
                 dispatch({ type: SET_ENDTIME, payload: end });
-                dispatch(GetVodVideo(camera.id, start, end));
+                dispatch(GetVodVideo(camera.id, start, end, mode, video));
                 dispatch(selectThumbnail(parseInt(selected) - 1));
             }
             let status = 0;
@@ -336,7 +336,7 @@ function HLSPlayer() {
                 dispatch({ type: START_TIME_GROUP, payload: start });
                 dispatch({ type: START_CLIPTIME_GROUP, payload: start });
                 dispatch({ type: SET_ENDTIME, payload: end });
-                dispatch(GetVodVideo(camera.id, start, end));
+                dispatch(GetVodVideo(camera.id, start, end, mode, video));
                 setSelectState(parseInt(selected) + 1);
             }
             let status = 0;

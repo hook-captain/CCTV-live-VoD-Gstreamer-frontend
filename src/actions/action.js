@@ -11,16 +11,17 @@ import {
   GET_CAMERA_ONLINE_STATUS,
 } from "../redux/types";
 
-export const getCameras = (keyword, start, end) => (dispatch) => {
+export const getCameras = (keyword, start, end, mode, video) => (dispatch) => {
+  console.log(1, mode, video)
   keyword === ""
     ? axios.get(`/api/cameras`).then((res) => {
       dispatch({ type: GET_CAMERA_LIST, payload: res.data });
-      dispatch(getThumbnail(res.data[0].id, start, end, 5));
+      dispatch(getThumbnail(res.data[0].id, start, end, 5,mode, video));
     })
     : axios.get(`/api/cameras/search/${keyword}`).then((res) => {
       dispatch({ type: GET_CAMERA_LIST, payload: res.data });
       if (res.data[0]) {
-        dispatch(getThumbnail(res.data[0].id, start, end, 5));
+        dispatch(getThumbnail(res.data[0].id, start, end, 5, mode, video));
       }
     });
 };
@@ -42,8 +43,12 @@ export const setCamera = (obj) => (dispatch) => {
   dispatch({ type: SET_CAMERA_SELECT, payload: obj });
 };
 
-export const GetVodVideo = (ID, start, end) => (dispatch) => {
-  axios.get(`/api/videos/play/${ID}/${start}/${end}`).then((res) => {
+export const GetVodVideo = (ID, start, end, mode, video) => (dispatch) => {
+  let url = "none"
+  if(typeof video === "string"){
+    url = video.replaceAll("/", "*");
+  }
+  axios.get(`/api/videos/play/${ID}/${start}/${end}/${mode}/${url}`).then((res) => {
     dispatch({ type: VIDEO_VOD_MODE, payload: res.data });
   });
 };
@@ -52,19 +57,28 @@ export const selectThumbnail = (id) => (dispatch) => {
   dispatch({ type: SELECT_THUMBNAIL_GROUP, payload: id });
 };
 
-export const GetLiveVideo = (ID) => (dispatch) => {
-  // axios.get(`/api/cameras/${ID}`).then((res) => {
-  //   dispatch({ type: VIDEO_LIVE_MODE, payload: res.data });
-  // });
-  dispatch({type: VIDEO_LIVE_MODE, payload: `/share/${ID}/playlist.m3u8`})
+export const GetLiveVideo = (ID, mode, video) => (dispatch) => {
+  let url = "none"
+  console.log(mode)
+  if(typeof video === "string"){
+    url = video.replaceAll("/", "*");
+  }
+  axios.get(`/api/cameras/${ID}/${mode}/${url}`).then((res) => {
+    dispatch({ type: VIDEO_LIVE_MODE, payload: `/share/${ID}/playlist.m3u8`});
+  });
 };
 
 export const getThumbnail =
-  (cameraid, starttime, endtime, duration) => (dispatch) => {
+  (cameraid, starttime, endtime, duration, mode, video) => (dispatch) => {
     let count = 0;
+    let url = "none"
+    if(typeof video === "string"){
+      url = video.replaceAll("/", "*");
+    }
     setInterval(() => { count++ }, 1)
+    console.log(url)
     axios
-      .get(`/api/thumbnails/${cameraid}/${starttime}/${endtime}/${duration}`)
+      .get(`/api/thumbnails/${cameraid}/${starttime}/${endtime}/${duration}/${mode}/${url}`)
       .then((res) => {
         if (res.data.length > 0) {
           let first, initTime;

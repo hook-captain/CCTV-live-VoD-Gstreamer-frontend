@@ -16,6 +16,7 @@ import { getCameras, setCamera, getThumbnail } from "./actions/action";
 function App() {
   const dispatch = useDispatch();
   const { camera, cameras } = useSelector((state) => state.camera);
+  const { mode, video } = useSelector((state) => state.video);
   const { searchKey } = useSelector((state) => state.thumbnail);
 
   const DateTime = (Date) => {
@@ -51,13 +52,13 @@ function App() {
   const searchCameras = (value) => {
     let start = getDatetime();
     let end = DateTime(new Date());
-    dispatch(getCameras(value, start, end));
+    dispatch(getCameras(value, start, end, mode, video));
   };
 
   const getSelectedVodVideo = (target) => {
     if (target.id) {
       dispatch(setCamera(cameras[target.id]));
-      dispatch(getThumbnail(cameras[target.id].id, searchKey['starttime'], searchKey['endtime'], searchKey['duration']));
+      dispatch(getThumbnail(cameras[target.id].id, searchKey['starttime'], searchKey['endtime'], searchKey['duration'], mode, video));
       // dispatch(GetVodVideo(cameras[target.id].id, start, end))
     }
   };
@@ -65,7 +66,7 @@ function App() {
   useState(() => {
     let start = getDatetime();
     let end = DateTime(new Date());
-    dispatch(getCameras("", start, end));
+    dispatch(getCameras("", start, end, mode, video));
   }, []);
 
   return (

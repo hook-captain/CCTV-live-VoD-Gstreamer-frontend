@@ -10,6 +10,8 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
 
   const thumbnail = thumbnails[id]
   const over = useSelector((state) => state.thumbnail.overed);
+  const mode = useSelector((state) => state.video.mode);
+  const video = useSelector((state) => state.video.video);
   const [sub_URL, setSubURL] = useState('');
   const [startTime, setstartTime] = useState(new Date());
   const [startClipTime, setstartClipTime] = useState(new Date());
@@ -70,7 +72,7 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
       // let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
       dispatch({ type: START_TIME_GROUP, payload: startTime });
       dispatch({ type: START_CLIPTIME_GROUP, payload: startClipTime });
-      dispatch(GetVodVideo(camera_id, startClipTime, endTime));
+      dispatch(GetVodVideo(camera_id, startClipTime, endTime, mode, video));
       dispatch({ type: SET_ENDTIME, payload: endTime });
       dispatch(selectThumbnail(id));
     }

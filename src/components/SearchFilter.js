@@ -17,6 +17,8 @@ import { START_TIME_GROUP, START_CLIPTIME_GROUP, GET_SEARCH_KEY } from "../redux
 
 export default function SearchFilter() {
   const { camera } = useSelector((state) => state.camera);
+  const mode = useSelector((state) => state.video.mode);
+  const video = useSelector((state) => state.video.video);
   const thumbnails = useSelector((state) => state.thumbnail.thumbnails);
   const [open1, setOpen1] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
@@ -85,7 +87,7 @@ export default function SearchFilter() {
     if (thumbnails.length) {
       let start = thumbnails[thumbnails.length - 1][0].time2str
       let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time2str
-      dispatch(GetVodVideo(camera.id, start, end));
+      dispatch(GetVodVideo(camera.id, start, end, mode, video));
       dispatch({ type: START_TIME_GROUP, payload: start });
       dispatch({ type: START_CLIPTIME_GROUP, payload: start });
 
@@ -95,13 +97,13 @@ export default function SearchFilter() {
 
   const handleChange = (e) => {
     setDuration(e.target.value);
-    dispatch(getThumbnail(camera.id, starttime, endtime, e.target.value));
+    dispatch(getThumbnail(camera.id, starttime, endtime, e.target.value, mode, video));
   };
 
   const setStarttimeChange = (e) => {
     setStarttime(e.target.value);
     if (e.target.value < endtime) {
-      dispatch(getThumbnail(camera.id, e.target.value, endtime, duration));
+      dispatch(getThumbnail(camera.id, e.target.value, endtime, duration, mode, video));
     }
     else {
       setOpen1(true);
@@ -111,7 +113,7 @@ export default function SearchFilter() {
   const setEndtimeChange = (e) => {
     setEndtime(e.target.value);
     if (e.target.value > starttime) {
-      dispatch(getThumbnail(camera.id, starttime, e.target.value, duration));
+      dispatch(getThumbnail(camera.id, starttime, e.target.value, duration, mode, video));
     }
     else {
       setOpen2(true);
