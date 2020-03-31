@@ -69,12 +69,12 @@
 
 .playcontrols {
   margin-left: 16.5%;
-  max-width: 70.5%;
+  max-width: 70.3%;
   height: 72px;
 }
 .subPlaycontrol {
   margin-left: 16.5%;
-  max-width: 70.5%;
+  max-width: 70.3%;
   height: 50px;
   margin-top: 5px;
 }
@@ -98,3 +98,23 @@
   margin-top: 1%;
   z-index: 1002;
 }
+
+.loader {
+  width: 30px;
+  height: 30px;
+  border: 3.5px solid #222;
+  border-bottom-color: #eee;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  }
+
+  @keyframes rotation {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+  } 
