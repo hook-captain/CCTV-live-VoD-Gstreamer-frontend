@@ -1,58 +1,99 @@
-import { useEffect, useState } from "react";
-import Canvas from "react-canvas-polygons";
+import React, { useRef, useEffect, useState } from "react";
 
-const DrawCanvas = ({ initialData, onChange, onSubmit, width, height }, ref) => {
-  const [tool, setTool] = useState("Line");
-  const [desc, setDesc] = useState("");
-  
-  const handleCleanCanva = (e) => {
-    e.stopPropagation();
-    ref.cleanCanvas();
-    setTool("Line");
-    const timeout = setTimeout(() => setTool("Polygon"), 50);
-    return () => clearTimeout(timeout);
+const DrawCanvas = (props) => {
+  const { draw, ...rest } = props;
+  const canvasRef = useRef(null);
+
+  const [dragFlag, setDragFlag] = useState(-1);
+
+  const MouseDown = (e) => {
+    props.points.map((item, index) => {
+      if (
+        Math.abs(e.nativeEvent.offsetX - item[0]) <= 20 &&
+        Math.abs(e.nativeEvent.offsetY - item[1]) <= 20
+      ) {
+        setDragFlag(index);
+        console.log(index);
+      }
+    });
   };
 
-  const handleSubmit = (desc) => {
-    onSubmit(desc);
+  const MouseMove = (e) => {
+    if (dragFlag >= 0) {
+      let points = props.points;
+      let real = props.real;
+
+      points[dragFlag][0] = e.nativeEvent.offsetX;
+      points[dragFlag][1] = e.nativeEvent.offsetY;
+
+      let x = e.nativeEvent.offsetX / props.width
+      let y = e.nativeEvent.offsetY / props.height
+
+      real[dragFlag][0] = x.toFixed(4);
+      real[dragFlag][1] = y.toFixed(4);
+
+      props.changePoint(points);
+      props.changeReal(real);
+    }
   };
 
+  const MouseUp = (e) => {
+    setDragFlag(-1);
+  };
+
+  const MouseClick = (e) => {
+    let points = props.points;
+    let real = props.real
+    let flag = true;
+
+    props.points.map((item, index) => {
+      if (
+        Math.abs(e.nativeEvent.offsetX - item[0]) <= 10 &&
+        Math.abs(e.nativeEvent.offsetY - item[1]) <= 10
+      ) {
+        flag = false;
+      }
+    });
+
+    if (flag) {
+      let x = e.nativeEvent.offsetX / props.width
+      let y = e.nativeEvent.offsetY / props.height
+      points.push([e.nativeEvent.offsetX, e.nativeEvent.offsetY]);
+      real.push([x.toFixed(4), y.toFixed(4)])
+
+      props.changePoint(points);
+      props.changeReal(real);
+    }
+  };
   useEffect(() => {
-    const timeout = setTimeout(() => setTool("Polygon"), 50);
-    return () => clearTimeout(timeout);
-  }, []);
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+    let frameCount = 0;
+    let animationFrameId;
+
+    const render = () => {
+      frameCount++;
+      draw(context, frameCount);
+      animationFrameId = window.requestAnimationFrame(render);
+    };
+    render();
+
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+    };
+  }, [draw]);
+
   return (
-    <div>
-      <div style={{position:"absolute"}}><button
-        variant="outlined"
-        style={{ marginBottom: "20px" }}
-        onClick={handleCleanCanva}
-      >
-        Clean
-      </button>
-      <button
-        variant="outlined"
-        style={{ marginBottom: "20px" }}
-        onClick={()=>handleSubmit(desc)}
-      >
-        Add Polygon
-      </button>
-      <input type="text" value={desc} onChange={(e)=>{setDesc(e.target.value) ;console.log(e.target.value)}} />
-      </div>
-      <Canvas
-        ref={(canvas) => (ref = canvas)}
-        height={height}
-        width={width}
-        canUndo={true}
-        tool={tool}
-        color="blue"
-        brushSize={4}
-        onDataUpdate={(data) => onChange(data)}
-        onFinishDraw={() => console.log("finish draw")}
-        initialData={initialData}
-        
-      />
-    </div>
+    <canvas
+      ref={canvasRef}
+      {...rest}
+      onClick={MouseClick}
+      onMouseDown={MouseDown}
+      onMouseMove={MouseMove}
+      onMouseUp={MouseUp}
+      width={props.width}
+      height={props.width}
+    />
   );
 };
 

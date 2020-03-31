@@ -139,12 +139,12 @@ function HLSPlayer() {
 
   const DateTime1 = (Dates) => {
     let result,
-        Month,
-        Day,
-        Hour,
-        Min,
-        second,
-        CurrentTime = Dates;
+      Month,
+      Day,
+      Hour,
+      Min,
+      second,
+      CurrentTime = Dates;
 
     if (CurrentTime.getMonth() < 9) Month = `0${CurrentTime.getMonth() + 1}`;
     else Month = `${CurrentTime.getMonth() + 1}`;
@@ -163,7 +163,7 @@ function HLSPlayer() {
 
     result = `${CurrentTime.getFullYear()}-${Month}-${Day} ${Hour}:${Min}:${second}`;
     return result;
-};
+  };
 
   const TimeFormat = (Dates) => {
     let result,
@@ -211,13 +211,13 @@ function HLSPlayer() {
     time.setSeconds(0);
     time.setMilliseconds(0);
     return time;
-}
+  };
 
   const AddMinute = (Dates, minute) => {
-      let time = Dates;
-      time.setMinutes(time.getMinutes() + minute);
-      return time;
-  }
+    let time = Dates;
+    time.setMinutes(time.getMinutes() + minute);
+    return time;
+  };
 
   const TimelineFormat1 = (Dates) => {
     let Hour, Min, result;
@@ -295,6 +295,14 @@ function HLSPlayer() {
     );
   };
 
+  const changePoint = (newPoints) => {
+    setPoint(newPoints);
+  };
+
+  const changeReal = (newPoints) => {
+    setRealPoints(newPoints);
+  };
+
   const camera = useSelector((state) => state.camera.camera);
   const polygons = useSelector((state) => state.polygon.polygons);
   const polygon = useSelector((state) => state.polygon.polygon);
@@ -335,17 +343,24 @@ function HLSPlayer() {
   const [selectState, setSelectState] = useState(0);
   const playerRef = React.useRef(null);
   const [time, setTime] = useState(new Date());
+
+  const [selectedPoly, setSelectedPoly] = useState(-1);
+  const [multiPoly, setMultiPoly] = useState([]);
+
   // const [startFormat, setStartFormat] = useState(0);
   const [endFormat, setEndFormat] = useState(0);
   const [startClipFormat, setStartClipFormat] = useState(0);
   const [download, setdownload] = useState(false);
-  const [points, setPoint] = useState({});
+  const [points, setPoint] = useState([]);
   const [realPoints, setRealPoints] = useState([]);
   const [sliderValue, setSliderValue] = useState([startClipFormat, endFormat]);
-  localStorage.setItem('delay1',true);
-  localStorage.setItem('delay2',true);
-  localStorage.setItem('delay3',true);
-  localStorage.setItem('Latency',true);
+
+  const [desc, setDesc] = useState("");
+
+  localStorage.setItem("delay1", true);
+  localStorage.setItem("delay2", true);
+  localStorage.setItem("delay3", true);
+  localStorage.setItem("Latency", true);
 
   useEffect(() => {
     dispatch(selectThumbnail(selectState));
@@ -353,13 +368,13 @@ function HLSPlayer() {
   }, [selectState]);
 
   useEffect(() => {
-    setSliderValue([startClipFormat, endFormat-1]);
+    setSliderValue([startClipFormat, endFormat - 1]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startClipFormat, endFormat]);
 
   useEffect(() => {
-      setTime(new Date(startClipTime));
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+    setTime(new Date(startClipTime));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startClipTime]);
 
   useEffect(() => {
@@ -373,30 +388,14 @@ function HLSPlayer() {
     setPoint(polygons);
   }, [polygons]);
 
-  const onChange = (data) => {
-    setPoint(data);
-    const entries = Object.entries(data);
-    // dispatch(
-    //   createPolygons(camera.id, entries[1][0], desc, entries[1][1].toString())
-    // );
-    if(entries[1]!==undefined){
-      let pair = entries[1][1][entries[1][1].length-1];
-      let x = pair[0] / 0.89 /width;
-      let y = pair[1]/height;
-
-      let tmpPoints = realPoints;
-      tmpPoints.push([x.toFixed(4), y.toFixed(4)])
-
-      setRealPoints(tmpPoints)
-
-    }
+  const onPointSubmit = () => {
+    dispatch(createPolygons(camera.id, desc, desc, realPoints.toString()));
+    setPoint([]);
+    setRealPoints([]);
   };
 
-  const onPointSubmit = (desc) => {
-    const entries = Object.entries(points);
-    dispatch(
-      createPolygons(camera.id, entries[1][0], desc, realPoints.toString())
-    );
+  const handleCleanCanva = () => {
+    setPoint([]);
     setRealPoints([]);
   };
 
@@ -416,31 +415,81 @@ function HLSPlayer() {
           polygons: polygons[e.target.value]["points"],
         },
       });
-      // alert(polygons[e.target.value].toString())
+
+      let tmp_points = [];
+      let tmp_multiPoly = multiPoly
+      polygons[e.target.value]["points"].map((item) => {
+        tmp_points.push([item[0] * width * 0.89, item[1] * height]);
+      });
+
+      tmp_multiPoly.push(tmp_points)
+      setMultiPoly(tmp_multiPoly)
+      // setPoint(tmp_points);
+      // setRealPoints(polygons[e.target.value]["points"]);
     } else {
       setCanvasPane(false);
+      setPoint([]);
+      setRealPoints([]);
     }
   };
 
   const draw = (ctx, frameCount) => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+    ctx.fillStyle = "rgba(255, 255, 0, 0.5)";
     ctx.beginPath();
-    // ctx.moveTo(10, 10);
-    // ctx.lineTo(100,50);
-    // ctx.lineTo(50, 100);
-    // ctx.lineTo(0, 90);
     let flag = true;
-    polygon.map((item) => {
+    points.map((item) => {
       if (flag) {
-        ctx.moveTo(item[0]*ctx.canvas.width, item[1]*ctx.canvas.height);
-        flag = !flag;
+        flag = false;
+        return ctx.moveTo(item[0], item[1]);
       } else {
-        ctx.lineTo(item[0]*ctx.canvas.width, item[1]*ctx.canvas.height);
+        return ctx.lineTo(item[0], item[1]);
       }
     });
     ctx.closePath();
     ctx.fill();
+
+    ctx.fillStyle = "rgba(0, 0, 0)";
+    ctx.beginPath();
+
+    points.map((item) => {
+      ctx.moveTo(item[0], item[1]);
+      return ctx.arc(item[0], item[1], 10, 0, 2 * Math.PI);
+    });
+
+    ctx.closePath();
+    ctx.fill();
+  };
+
+  const show = (ctx, frameCount) => {
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    multiPoly.map((points) => {
+      ctx.fillStyle = "rgba(255, 255, 0, 0.5)";
+      ctx.beginPath();
+      let flag = true;
+      points.map((item) => {
+        if (flag) {
+          flag = false;
+          return ctx.moveTo(item[0], item[1]);
+        } else {
+          return ctx.lineTo(item[0], item[1]);
+        }
+      });
+      ctx.closePath();
+      ctx.fill();
+    });
+
+    // ctx.fillStyle = "rgba(0, 0, 0)";
+    // ctx.beginPath();
+
+    // points.map((item) => {
+    //   ctx.moveTo(item[0], item[1]);
+    //   return ctx.arc(item[0], item[1], 10, 0, 2 * Math.PI);
+    // });
+
+    // ctx.closePath();
+    // ctx.fill();
   };
 
   useEffect(() => {
@@ -475,16 +524,15 @@ function HLSPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
 
-  const downloadButtonPanel = async () =>{
-    if(localStorage.getItem('Latency')==='true')
-    {
-        await localStorage.setItem('Latency',false)
-        await setTimeout(()=>{
-            setdownload(false);
-            localStorage.setItem('Latency', true);
-        }, (new Date(endTime).getTime()-new Date(startClipTime).getTime())/120);
-    }   
-  }
+  const downloadButtonPanel = async () => {
+    if (localStorage.getItem("Latency") === "true") {
+      await localStorage.setItem("Latency", false);
+      await setTimeout(() => {
+        setdownload(false);
+        localStorage.setItem("Latency", true);
+      }, (new Date(endTime).getTime() - new Date(startClipTime).getTime()) / 120);
+    }
+  };
 
   const handleChange = (e) => {
     if (playerRef.current.duration) {
@@ -497,7 +545,7 @@ function HLSPlayer() {
 
   const GetVideo = () => {
     dispatch(GetVodVideo(camera.id, startTime, endTime, mode, video));
-  }
+  };
 
   const GoLiveVideo = () => {
     dispatch(GetLiveVideo(camera.id, mode, video));
@@ -589,7 +637,7 @@ function HLSPlayer() {
         document.body.appendChild(tag);
         tag.click();
         document.body.removeChild(tag);
-        downloadButtonPanel()
+        downloadButtonPanel();
       };
       xhr.onerror = (err) => {};
       xhr.send();
@@ -620,7 +668,7 @@ function HLSPlayer() {
     // timeDuration()
     setTime(new Date(addSeconds(new Date(startClipTime))));
 
-    if( playerRef.current.currentTime === playerRef.current.duration ){
+    if (playerRef.current.currentTime === playerRef.current.duration) {
       pauseVideo();
     }
   }
@@ -662,10 +710,10 @@ function HLSPlayer() {
   // }
 
   const onClickFastRewind = () => {
-    if(playerRef.current.currentTime !== playerRef.current.duration){
+    if (playerRef.current.currentTime !== playerRef.current.duration) {
       playVideo();
     }
-    
+
     if (playerRef.current.currentTime > 10) {
       playerRef.current.currentTime = playerRef.current.currentTime - 10;
     } else {
@@ -674,7 +722,7 @@ function HLSPlayer() {
   };
 
   const onClickFastForward = () => {
-    if(playerRef.current.currentTime !== playerRef.current.duration){
+    if (playerRef.current.currentTime !== playerRef.current.duration) {
       playVideo();
     }
 
@@ -687,45 +735,67 @@ function HLSPlayer() {
     }
   };
 
-  const  onSliderChange = async (event, newValue, activeThumb) => {
+  const onSliderChange = async (event, newValue, activeThumb) => {
     let start, end, cnt1, cnt2;
-    if (localStorage.getItem('delay3')==='true')
-        {
-           await localStorage.setItem('delay3',false)
-           await setTimeout(()=>{
-                console.log();
-        }, 300);
-    }   
+    if (localStorage.getItem("delay3") === "true") {
+      await localStorage.setItem("delay3", false);
+      await setTimeout(() => {
+        console.log();
+      }, 300);
+    }
 
     if (!Array.isArray(newValue)) {
-        return;
+      return;
     }
 
-    cnt1 = Math.floor((new Date(thumbnails[thumbnails.length-1][thumbnails[thumbnails.length-1].length-1].time2str).getTime() - new Date(GetPreTimeFormat(new Date(startTime))).getTime())/60000)+1;
-    cnt2 = Math.floor((new Date(thumbnails[0][0].time2str).getTime() - new Date(GetPreTimeFormat(new Date(startTime))).getTime())/60000);
+    cnt1 =
+      Math.floor(
+        (new Date(
+          thumbnails[thumbnails.length - 1][
+            thumbnails[thumbnails.length - 1].length - 1
+          ].time2str
+        ).getTime() -
+          new Date(GetPreTimeFormat(new Date(startTime))).getTime()) /
+          60000
+      ) + 1;
+    cnt2 = Math.floor(
+      (new Date(thumbnails[0][0].time2str).getTime() -
+        new Date(GetPreTimeFormat(new Date(startTime))).getTime()) /
+        60000
+    );
 
-    if (cnt1 < 60 && newValue[1] > cnt1){
-        newValue[1] = cnt1;
+    if (cnt1 < 60 && newValue[1] > cnt1) {
+      newValue[1] = cnt1;
     }
 
-    if (cnt2 < 60 && newValue[0] < cnt2){
-        newValue[0] = cnt2;
+    if (cnt2 < 60 && newValue[0] < cnt2) {
+      newValue[0] = cnt2;
     }
 
     if (activeThumb === 0) {
-        setSliderValue([Math.min(newValue[0], sliderValue[1] - 1), sliderValue[1]]);
-      } else {
-        setSliderValue([sliderValue[0], Math.max(newValue[1], sliderValue[0] + 1)]);
+      setSliderValue([
+        Math.min(newValue[0], sliderValue[1] - 1),
+        sliderValue[1],
+      ]);
+    } else {
+      setSliderValue([
+        sliderValue[0],
+        Math.max(newValue[1], sliderValue[0] + 1),
+      ]);
     }
-         
-    start = DateTime1(AddMinute(new Date(GetPreTimeFormat(new Date(startTime))), newValue[0]));
-    end = DateTime1(AddMinute(new Date(GetPreTimeFormat(new Date(startTime))), newValue[1]));
+
+    start = DateTime1(
+      AddMinute(new Date(GetPreTimeFormat(new Date(startTime))), newValue[0])
+    );
+    end = DateTime1(
+      AddMinute(new Date(GetPreTimeFormat(new Date(startTime))), newValue[1])
+    );
 
     dispatch({ type: START_CLIPTIME_GROUP, payload: start });
     dispatch({ type: SET_ENDTIME, payload: end });
 
     dispatch(GetVodVideo(camera.id, start, end, mode, video));
-  }
+  };
 
   function pauseVideo() {
     if (playerRef.current.duration) {
@@ -808,6 +878,23 @@ function HLSPlayer() {
               dispatch({ type: POLYGON_SET_ONE, payload: [] });
             }}
           />
+
+          {showCanvas && !showCanvasPane ? (
+            <>
+              <input
+                type="text"
+                value={desc}
+                onChange={(e) => {
+                  setDesc(e.target.value);
+                }}
+              />
+              <button onClick={onPointSubmit}>Add Polygon</button>
+              <button onClick={handleCleanCanva}>Clean</button>
+            </>
+          ) : (
+            <></>
+          )}
+
           {showCanvas ? (
             <>
               <select onChange={clickList}>
@@ -838,7 +925,7 @@ function HLSPlayer() {
               <input
                 type={"button"}
                 onClick={() => {
-                  updatePolygons(indexDesc, updateDesc);
+                  updatePolygons(indexDesc, updateDesc, realPoints.toString());
                   dispatch(getPolygons(camera.id));
                 }}
                 value={"Update"}
@@ -877,11 +964,13 @@ function HLSPlayer() {
           {showCanvas && !showCanvasPane ? (
             <div className="wrapper1">
               <DrawCanvas
-                initialData={polygon_state}
-                onChange={onChange}
-                onSubmit={onPointSubmit}
+                draw={draw}
                 width={width * 0.89}
                 height={height}
+                points={points}
+                real={realPoints}
+                changePoint={changePoint}
+                changeReal={changeReal}
               />
             </div>
           ) : (
@@ -889,7 +978,16 @@ function HLSPlayer() {
           )}
           {showCanvas && showCanvasPane ? (
             <div className="wrapper1">
-              <Canvas draw={draw} width={width * 0.89} height={height} />
+              <Canvas
+                draw={show}
+                width={width * 0.89}
+                height={height}
+                points={points}
+                multi={multiPoly}
+                real={realPoints}
+                changePoint={changePoint}
+                changeReal={changeReal}
+              />
             </div>
           ) : (
             <></>
@@ -974,15 +1072,19 @@ function HLSPlayer() {
             </Grid>
             <Grid container spacing={0}>
               <Grid item xs={5.3} className="nextdate">
-              <SkipPreviousRounded cursor="pointer" sx={{ marginLeft: 2 }} fontSize="large" onClick={async() => {
-                    if(localStorage.getItem('delay2')==='true')
-                    {
-                        await localStorage.setItem('delay2',false)
-                        await setTimeout(()=>{
-                            previousClick();
-                        },100);
-                    }   
-                }} />
+                <SkipPreviousRounded
+                  cursor="pointer"
+                  sx={{ marginLeft: 2 }}
+                  fontSize="large"
+                  onClick={async () => {
+                    if (localStorage.getItem("delay2") === "true") {
+                      await localStorage.setItem("delay2", false);
+                      await setTimeout(() => {
+                        previousClick();
+                      }, 100);
+                    }
+                  }}
+                />
                 {status === 1 ? (
                   <PlayCircleOutlineRounded
                     cursor="pointer"
@@ -996,15 +1098,18 @@ function HLSPlayer() {
                     onClick={pauseVideo}
                   />
                 )}
-                <SkipNextRounded cursor="pointer" fontSize="large" onClick={async() => {
-                    if(localStorage.getItem('delay1')==='true')
-                    {
-                        await localStorage.setItem('delay1',false)
-                        await setTimeout(()=>{
-                            nextClick();
-                        },100);
-                    }                                   
-                }} />
+                <SkipNextRounded
+                  cursor="pointer"
+                  fontSize="large"
+                  onClick={async () => {
+                    if (localStorage.getItem("delay1") === "true") {
+                      await localStorage.setItem("delay1", false);
+                      await setTimeout(() => {
+                        nextClick();
+                      }, 100);
+                    }
+                  }}
+                />
 
                 <font size="2" style={{ marginLeft: 10, width: "10%" }}>
                   <b>{DateTime(time)}</b>
@@ -1031,10 +1136,18 @@ function HLSPlayer() {
                 />
               </Grid>
               <Grid item xs={1}>
-              {
-                  download === false ? <FileDownloadOutlined cursor="pointer" fontSize="large" onClick={() => onClickDownload()} />:
-                  <div className="loader" style={{marginLeft:"10%", marginTop:3}}></div>
-              }
+                {download === false ? (
+                  <FileDownloadOutlined
+                    cursor="pointer"
+                    fontSize="large"
+                    onClick={() => onClickDownload()}
+                  />
+                ) : (
+                  <div
+                    className="loader"
+                    style={{ marginLeft: "10%", marginTop: 3 }}
+                  ></div>
+                )}
               </Grid>
               <Grid item xs={0.7}>
                 <FullscreenOutlined

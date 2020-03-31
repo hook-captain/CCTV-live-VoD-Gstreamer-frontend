@@ -26,9 +26,10 @@ export const createPolygons =
   };
 
 export const updatePolygons =
-  (camera_id, desc) => {
+  (camera_id, desc, position) => {
     let data = {
-      desc: desc
+      desc: desc,
+      position: position
     };
     axios.put(`/api/polygons/${camera_id}`, data).then((res) => {
       
