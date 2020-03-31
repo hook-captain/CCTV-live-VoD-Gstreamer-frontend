@@ -9,6 +9,12 @@
   padding-top: 50%; /* 720 / 1280 = 0.5625 */
 }
 
+.wrapper1 {
+  position: absolute;
+  z-index: 1001;
+  margin-left: 3.3%;
+}
+
 .tag {
   position: absolute;
   left: 0px;
@@ -90,5 +96,5 @@
   position: absolute;
   margin-left: 45%;
   margin-top: 1%;
-  z-index: 1000;
+  z-index: 1002;
 }
