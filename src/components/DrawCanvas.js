@@ -9,8 +9,8 @@ const DrawCanvas = (props) => {
   const MouseDown = (e) => {
     props.points.map((item, index) => {
       if (
-        Math.abs(e.nativeEvent.offsetX - item[0]) <= 20 &&
-        Math.abs(e.nativeEvent.offsetY - item[1]) <= 20
+        Math.abs(e.nativeEvent.offsetX - item[0] * props.width) <= 10 &&
+        Math.abs(e.nativeEvent.offsetY - item[1] * props.height) <= 10
       ) {
         setDragFlag(index);
         console.log(index);
@@ -21,19 +21,14 @@ const DrawCanvas = (props) => {
   const MouseMove = (e) => {
     if (dragFlag >= 0) {
       let points = props.points;
-      let real = props.real;
-
-      points[dragFlag][0] = e.nativeEvent.offsetX;
-      points[dragFlag][1] = e.nativeEvent.offsetY;
 
       let x = e.nativeEvent.offsetX / props.width
       let y = e.nativeEvent.offsetY / props.height
 
-      real[dragFlag][0] = x.toFixed(4);
-      real[dragFlag][1] = y.toFixed(4);
+      points[dragFlag][0] = x.toFixed(4);
+      points[dragFlag][1] = y.toFixed(4);
 
       props.changePoint(points);
-      props.changeReal(real);
     }
   };
 
@@ -43,13 +38,12 @@ const DrawCanvas = (props) => {
 
   const MouseClick = (e) => {
     let points = props.points;
-    let real = props.real
     let flag = true;
 
     props.points.map((item, index) => {
       if (
-        Math.abs(e.nativeEvent.offsetX - item[0]) <= 10 &&
-        Math.abs(e.nativeEvent.offsetY - item[1]) <= 10
+        Math.abs(e.nativeEvent.offsetX - item[0] * props.width) <= 10 &&
+        Math.abs(e.nativeEvent.offsetY - item[1] * props.height) <= 10
       ) {
         flag = false;
       }
@@ -58,11 +52,10 @@ const DrawCanvas = (props) => {
     if (flag) {
       let x = e.nativeEvent.offsetX / props.width
       let y = e.nativeEvent.offsetY / props.height
-      points.push([e.nativeEvent.offsetX, e.nativeEvent.offsetY]);
-      real.push([x.toFixed(4), y.toFixed(4)])
+      points.push([x.toFixed(4), y.toFixed(4)])
 
       props.changePoint(points);
-      props.changeReal(real);
+      console.log(points)
     }
   };
   useEffect(() => {
@@ -92,7 +85,7 @@ const DrawCanvas = (props) => {
       onMouseMove={MouseMove}
       onMouseUp={MouseUp}
       width={props.width}
-      height={props.width}
+      height={props.height}
     />
   );
 };

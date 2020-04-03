@@ -8,6 +8,14 @@ import {
   ThemeProvider,
   Slider,
   Switch,
+  Select,
+  MenuProps,
+  MenuItem,
+  Checkbox,
+  ListItemText,
+  OutlinedInput,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 
 import {
@@ -299,8 +307,10 @@ function HLSPlayer() {
     setPoint(newPoints);
   };
 
-  const changeReal = (newPoints) => {
-    setRealPoints(newPoints);
+  const changeSelectedPoly = (newPoly) => {
+    setIndexDesc(polygons[newPoly].id);
+    setSelectedPoly(newPoly);
+    setUpdateDesc(polygons[newPoly].desc);
   };
 
   const camera = useSelector((state) => state.camera.camera);
@@ -352,7 +362,6 @@ function HLSPlayer() {
   const [startClipFormat, setStartClipFormat] = useState(0);
   const [download, setdownload] = useState(false);
   const [points, setPoint] = useState([]);
-  const [realPoints, setRealPoints] = useState([]);
   const [sliderValue, setSliderValue] = useState([startClipFormat, endFormat]);
 
   const [desc, setDesc] = useState("");
@@ -384,19 +393,18 @@ function HLSPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [camera]);
 
-  useEffect(() => {
-    setPoint(polygons);
-  }, [polygons]);
+  // useEffect(() => {
+  //   setPoint(polygons);
+  // }, [polygons]);
 
   const onPointSubmit = () => {
-    dispatch(createPolygons(camera.id, desc, desc, realPoints.toString()));
+    dispatch(createPolygons(camera.id, desc, desc, points.toString()));
+    console.log(points.toString());
     setPoint([]);
-    setRealPoints([]);
   };
 
   const handleCleanCanva = () => {
     setPoint([]);
-    setRealPoints([]);
   };
 
   useEffect(() => {
@@ -404,7 +412,9 @@ function HLSPlayer() {
   }, [polygon]);
 
   const clickList = (e) => {
-    if (e.target.value !== "none") {
+    console.log(e.target.value);
+    setSelectedPoly(e.target.value);
+    if (e.target.value !== "-1") {
       setCanvasPane(true);
       setUpdateDesc(polygons[e.target.value].desc);
       setIndexDesc(polygons[e.target.value].id);
@@ -417,33 +427,38 @@ function HLSPlayer() {
       });
 
       let tmp_points = [];
-      let tmp_multiPoly = multiPoly
+      let tmp_multiPoly = multiPoly;
       polygons[e.target.value]["points"].map((item) => {
-        tmp_points.push([item[0] * width * 0.89, item[1] * height]);
+        tmp_points.push([item[0], item[1]]);
       });
 
-      tmp_multiPoly.push(tmp_points)
-      setMultiPoly(tmp_multiPoly)
-      // setPoint(tmp_points);
-      // setRealPoints(polygons[e.target.value]["points"]);
+      tmp_multiPoly.push({ index: e.target.value, points: tmp_points });
+      setMultiPoly(tmp_multiPoly);
+      console.log(points);
     } else {
       setCanvasPane(false);
       setPoint([]);
-      setRealPoints([]);
     }
   };
 
+  function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
   const draw = (ctx, frameCount) => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.fillStyle = "rgba(255, 255, 0, 0.5)";
+
+    ctx.fillStyle = `rgba(255, 255, 0, 0.3)`;
     ctx.beginPath();
     let flag = true;
     points.map((item) => {
+      let x = item[0] * width * 0.89;
+      let y = item[1] * height;
       if (flag) {
         flag = false;
-        return ctx.moveTo(item[0], item[1]);
+        return ctx.moveTo(x, y);
       } else {
-        return ctx.lineTo(item[0], item[1]);
+        return ctx.lineTo(x, y);
       }
     });
     ctx.closePath();
@@ -453,8 +468,10 @@ function HLSPlayer() {
     ctx.beginPath();
 
     points.map((item) => {
-      ctx.moveTo(item[0], item[1]);
-      return ctx.arc(item[0], item[1], 10, 0, 2 * Math.PI);
+      let x = item[0] * width * 0.89;
+      let y = item[1] * height;
+      ctx.moveTo(x, y);
+      return ctx.arc(x, y, 10, 0, 2 * Math.PI);
     });
 
     ctx.closePath();
@@ -463,19 +480,34 @@ function HLSPlayer() {
 
   const show = (ctx, frameCount) => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    multiPoly.map((points) => {
-      ctx.fillStyle = "rgba(255, 255, 0, 0.5)";
+    multiPoly.map((item1) => {
+      let point = item1.points;
+      ctx.fillStyle = item1.color;
       ctx.beginPath();
       let flag = true;
-      points.map((item) => {
+      point.map((item) => {
+        let x = item[0] * width * 0.89;
+        let y = item[1] * height;
         if (flag) {
           flag = false;
-          return ctx.moveTo(item[0], item[1]);
+          return ctx.moveTo(x, y);
         } else {
-          return ctx.lineTo(item[0], item[1]);
+          return ctx.lineTo(x, y);
         }
       });
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(0, 0, 0)";
+      ctx.beginPath();
+
+      points.map((item) => {
+        let x = item[0] * width * 0.89;
+        let y = item[1] * height;
+        ctx.moveTo(x, y);
+        return ctx.arc(x, y, 10, 0, 2 * Math.PI);
+      });
+
       ctx.closePath();
       ctx.fill();
     });
@@ -687,28 +719,6 @@ function HLSPlayer() {
     setStatus(status);
   }
 
-  // const timeUpdate = () => {
-  //     const minutes = Math.floor(playerRef.current.currentTime / 60);
-  //     const seconds = Math.floor(playerRef.current.currentTime - minutes * 60);
-  //     const currentTime = str_pad_left(minutes, '0', 2) + ':' + str_pad_left(seconds, '0', 2);
-  //     setCurrentTime(currentTime);
-  // }
-
-  // const timeDuration = () => {
-  //     const minutes = Math.floor(playerRef.current.duration / 60);
-  //     const seconds = Math.floor(playerRef.current.duration - minutes * 60);
-  //     const currentTime = str_pad_left(minutes, '0', 2) + ':' + str_pad_left(seconds, '0', 2);
-  //     if (playerRef.current.duration) {
-  //         setDurationTime(currentTime);
-  //     } else {
-  //         setDurationTime("00:00");
-  //     }
-  // }
-
-  // const str_pad_left = (string, pad, length) => {
-  //     return (new Array(length + 1).join(pad) + string).slice(-length);
-  // }
-
   const onClickFastRewind = () => {
     if (playerRef.current.currentTime !== playerRef.current.duration) {
       playVideo();
@@ -866,6 +876,58 @@ function HLSPlayer() {
     },
   ];
 
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
+
+  const [personName, setPersonName] = React.useState([]);
+  const [selectedList, setSelected] = useState([]);
+
+  const handleChange1 = (event) => {
+    setCanvasPane(true);
+    const {
+      target: { value },
+    } = event;
+
+    console.log(value);
+
+    let selectedItems = typeof value === "string" ? value.split(",") : value;
+
+    setPersonName(
+      // On autofill we get a stringified value.
+      selectedItems
+    );
+
+    let selectedLabels = [],
+      tmp_multiPoly = [];
+    selectedItems.map((item) => {
+      selectedLabels.push(polygons[item].desc);
+      tmp_multiPoly.push({
+        index: item,
+        points: polygons[item].points,
+        color: `rgba(${getRandomArbitrary(
+          0,
+          255
+        )}, ${getRandomArbitrary(0, 255)}, ${getRandomArbitrary(
+          0,
+          255
+        )}, 0.3)`,
+      });
+    });
+
+    setSelected(selectedLabels);
+
+    setMultiPoly([ ...multiPoly, ...tmp_multiPoly,]);
+    console.log(tmp_multiPoly);
+  };
+
   return (
     <div>
       <div className="videoview">
@@ -897,8 +959,8 @@ function HLSPlayer() {
 
           {showCanvas ? (
             <>
-              <select onChange={clickList}>
-                <option key={"none"} value={"none"}>
+              <select onChange={clickList} value={selectedPoly}>
+                <option key={"none"} value={-1}>
                   {"--NONE--"}
                 </option>
                 {polygons.map((item, index) => {
@@ -909,6 +971,26 @@ function HLSPlayer() {
                   );
                 })}
               </select>
+              <FormControl sx={{ m: 1, width: 300 }} size="small">
+                <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+                <Select
+                  labelId="demo-multiple-checkbox-label"
+                  id="demo-multiple-checkbox"
+                  multiple
+                  value={personName}
+                  onChange={handleChange1}
+                  input={<OutlinedInput label="Tag" />}
+                  renderValue={(selected) => selectedList.join(", ")}
+                  MenuProps={MenuProps}
+                >
+                  {polygons.map((item, index) => (
+                    <MenuItem key={index} value={index}>
+                      <Checkbox checked={personName.indexOf(index) > -1} />
+                      <ListItemText primary={item.desc} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </>
           ) : (
             <></>
@@ -925,7 +1007,7 @@ function HLSPlayer() {
               <input
                 type={"button"}
                 onClick={() => {
-                  updatePolygons(indexDesc, updateDesc, realPoints.toString());
+                  updatePolygons(indexDesc, updateDesc, points.toString());
                   dispatch(getPolygons(camera.id));
                 }}
                 value={"Update"}
@@ -968,9 +1050,7 @@ function HLSPlayer() {
                 width={width * 0.89}
                 height={height}
                 points={points}
-                real={realPoints}
                 changePoint={changePoint}
-                changeReal={changeReal}
               />
             </div>
           ) : (
@@ -984,9 +1064,8 @@ function HLSPlayer() {
                 height={height}
                 points={points}
                 multi={multiPoly}
-                real={realPoints}
                 changePoint={changePoint}
-                changeReal={changeReal}
+                changeSelectedPoly={changeSelectedPoly}
               />
             </div>
           ) : (
