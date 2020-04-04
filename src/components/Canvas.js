@@ -62,7 +62,6 @@ const Canvas = (props) => {
     props.multi.map((item, index) => {
       if(pointInPolygon(item.points, [e.nativeEvent.offsetX, e.nativeEvent.offsetY])){
         setPolygonIndex(index);
-        console.log(item.index)
         props.changePoint(item.points)
         props.changeSelectedPoly(item.index)
       }

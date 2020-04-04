@@ -39,6 +39,7 @@ import {
   SET_ENDTIME,
   START_CLIPTIME_GROUP,
   POLYGON_SET_ONE,
+  SET_CLIP_CHECK
 } from "../redux/types";
 import {
   GetVodVideo,
@@ -349,6 +350,7 @@ function HLSPlayer() {
     subThumbnails,
     sub_Url,
     thumbnails,
+    startTimeCheck
   } = useSelector((state) => state.thumbnail);
   const dispatch = useDispatch();
   const [status, setStatus] = useState(0);
@@ -371,6 +373,9 @@ function HLSPlayer() {
   const [desc, setDesc] = useState("");
   const [msg, setMsg] = useState("");
 
+  const [startVideo, setStartVideo] = useState(startClipTime);
+  const [endVideo, setEndVideo] = useState(endTime);
+
   localStorage.setItem("delay1", true);
   localStorage.setItem("delay2", true);
   localStorage.setItem("delay3", true);
@@ -387,9 +392,15 @@ function HLSPlayer() {
   }, [startClipFormat, endFormat]);
 
   useEffect(() => {
-    setTime(new Date(startClipTime));
+    setTime(new Date(startVideo));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startClipTime]);
+  }, [startVideo]);
+
+  useEffect(() => {
+    setStartVideo(startClipTime);
+    setEndVideo(endTime);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startClipTime, endTime]);
 
   useEffect(() => {
     if (camera.id !== undefined) {
@@ -405,7 +416,6 @@ function HLSPlayer() {
   const onPointSubmit = () => {
     if (desc.length > 0 && points.length > 2) {
       dispatch(createPolygons(camera.id, desc, desc, points.toString()));
-      console.log(points.toString());
       setPoint([]);
       setMsg("");
       setDesc("");
@@ -425,7 +435,6 @@ function HLSPlayer() {
   }, [polygon]);
 
   const clickList = (e) => {
-    console.log(e.target.value);
     setSelectedPoly(e.target.value);
     if (e.target.value !== "-1") {
       setCanvasPane(true);
@@ -447,7 +456,6 @@ function HLSPlayer() {
 
       tmp_multiPoly.push({ index: e.target.value, points: tmp_points });
       setMultiPoly(tmp_multiPoly);
-      console.log(points);
     } else {
       setCanvasPane(false);
       setPoint([]);
@@ -545,20 +553,21 @@ function HLSPlayer() {
       let timer_id = setInterval(increase, 1000);
       setTimerID(timer_id);
       // setStartFormat(parseInt(GetMinute(new Date(startTime))));
-      setStartClipFormat(parseInt(GetMinute(new Date(startClipTime))));
-      if (endTime) {
-        setEndFormat(parseInt(GetMinute(new Date(endTime))) + 1);
+      setStartClipFormat(parseInt(GetMinute(new Date(startVideo))));
+      if (endVideo) {
+        setEndFormat(parseInt(GetMinute(new Date(endVideo))) + 1);
       }
-      if (playerRef.current) {
-        playerRef.current.currentTime =
-          playerRef.current.currentTime +
-          getBetweenDate(startClipTime, startTime);
+      if(startTimeCheck === 1){
+        if (playerRef.current) {
+          playerRef.current.currentTime = getBetweenDate(startClipTime, startTime);
+          dispatch({ type: SET_CLIP_CHECK, payload: 0 });
+        }
       }
     }
     let status = 0;
     setStatus(status);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startTime, startClipTime]);
+  }, [startTime, startClipTime, startVideo, endVideo]);
 
   useEffect(() => {
     if (timerEID > 0) {
@@ -711,8 +720,7 @@ function HLSPlayer() {
   function increase() {
     // timeUpdate()
     // timeDuration()
-    setTime(new Date(addSeconds(new Date(startClipTime))));
-
+    setTime(new Date(addSeconds(new Date(startVideo))));
     if (playerRef.current.currentTime === playerRef.current.duration) {
       pauseVideo();
     }
@@ -759,7 +767,7 @@ function HLSPlayer() {
   };
 
   const onSliderChange = async (event, newValue, activeThumb) => {
-    let start, end, cnt1, cnt2;
+    let cnt1, cnt2;
     if (localStorage.getItem("delay3") === "true") {
       await localStorage.setItem("delay3", false);
       await setTimeout(() => {
@@ -807,17 +815,17 @@ function HLSPlayer() {
       ]);
     }
 
-    start = DateTime1(
+    setStartVideo(DateTime1(
       AddMinute(new Date(GetPreTimeFormat(new Date(startTime))), newValue[0])
-    );
-    end = DateTime1(
+    ));
+    setEndVideo(DateTime1(
       AddMinute(new Date(GetPreTimeFormat(new Date(startTime))), newValue[1])
-    );
+    ));
 
-    dispatch({ type: START_CLIPTIME_GROUP, payload: start });
-    dispatch({ type: SET_ENDTIME, payload: end });
+    // dispatch({ type: START_CLIPTIME_GROUP, payload: start });
+    // dispatch({ type: SET_ENDTIME, payload: end });
 
-    dispatch(GetVodVideo(camera.id, start, end, mode, video));
+    dispatch(GetVodVideo(camera.id, startVideo, endVideo, mode, video));
   };
 
   function pauseVideo() {
@@ -910,8 +918,6 @@ function HLSPlayer() {
     const {
       target: { value },
     } = event;
-
-    console.log(value);
 
     let selectedItems = typeof value === "string" ? value.split(",") : value;
 
@@ -1167,7 +1173,7 @@ function HLSPlayer() {
             <Grid container spacing={0}>
               <Grid item xs={1}>
                 <div style={{ marginTop: 5, marginLeft: 10 }}>
-                  {`${TimelineFormat1(new Date(startClipTime))}`}
+                  {`${TimelineFormat1(new Date(startVideo))}`}
                 </div>
               </Grid>
               <Grid item xs={10}>
@@ -1191,7 +1197,7 @@ function HLSPlayer() {
               </Grid>
               <Grid item xs={1}>
                 <div style={{ marginTop: 5, marginRight: 10 }}>
-                  {`${TimelineFormat2(new Date(endTime))}`}
+                  {`${TimelineFormat2(new Date(endVideo))}`}
                 </div>
               </Grid>
             </Grid>

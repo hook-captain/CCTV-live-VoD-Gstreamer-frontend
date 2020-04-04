@@ -13,7 +13,6 @@ const DrawCanvas = (props) => {
         Math.abs(e.nativeEvent.offsetY - item[1] * props.height) <= 10
       ) {
         setDragFlag(index);
-        console.log(index);
       }
     });
   };
@@ -55,7 +54,6 @@ const DrawCanvas = (props) => {
       points.push([x.toFixed(4), y.toFixed(4)])
 
       props.changePoint(points);
-      console.log(points)
     }
   };
   useEffect(() => {

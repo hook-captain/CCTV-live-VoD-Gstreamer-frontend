@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ButtonBase } from "@mui/material";
-import { OVER_THUMBNAIL_GROUP, START_TIME_GROUP, GET_SUBTHUMBNAILS_LIST, SET_ENDTIME, GET_SUB_URL, START_CLIPTIME_GROUP } from "../redux/types";
+import { OVER_THUMBNAIL_GROUP, START_TIME_GROUP, GET_SUBTHUMBNAILS_LIST, SET_ENDTIME, GET_SUB_URL, START_CLIPTIME_GROUP, SET_CLIP_CHECK } from "../redux/types";
 import { useDispatch, useSelector } from "react-redux";
 import { GetVodVideo, selectThumbnail } from "../actions/action";
 import "../public/Thumbnail.css";
@@ -71,6 +71,7 @@ export default function Thumbnail({ id, thumbnails, selected, url, time, camera_
     if (id) {
       // let end = thumbnails[thumbnails.length - 1][thumbnails[thumbnails.length - 1].length - 2].time
       dispatch({ type: START_TIME_GROUP, payload: startTime });
+      dispatch({ type: SET_CLIP_CHECK, payload: 1 });
       dispatch({ type: START_CLIPTIME_GROUP, payload: startClipTime });
       dispatch(GetVodVideo(camera_id, startClipTime, endTime, mode, video));
       dispatch({ type: SET_ENDTIME, payload: endTime });
