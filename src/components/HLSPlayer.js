@@ -906,6 +906,7 @@ function HLSPlayer() {
   const handleChange1 = (event) => {
     setCanvasPane(true);
     setShowCanvas(false);
+    setPoint([]);
     const {
       target: { value },
     } = event;
@@ -958,6 +959,8 @@ function HLSPlayer() {
                   setShowCanvas(!showCanvas);
                   setPoint([]);
                   setMultiPoly([]);
+                  setSelected([]);
+                  setPersonName([]);
                 }}
               >
                 Create
