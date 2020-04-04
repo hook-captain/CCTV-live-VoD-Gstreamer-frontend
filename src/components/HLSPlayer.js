@@ -16,6 +16,7 @@ import {
   OutlinedInput,
   FormControl,
   InputLabel,
+  TextField,
 } from "@mui/material";
 
 import {
@@ -319,6 +320,9 @@ function HLSPlayer() {
 
   const [polygon_state, setPolygonState] = useState({});
   const [showCanvas, setShowCanvas] = useState(false);
+
+  const [showTool, setShowTool] = useState(false);
+
   const [showCanvasPane, setCanvasPane] = useState(false);
 
   const [updateDesc, setUpdateDesc] = useState("");
@@ -365,6 +369,7 @@ function HLSPlayer() {
   const [sliderValue, setSliderValue] = useState([startClipFormat, endFormat]);
 
   const [desc, setDesc] = useState("");
+  const [msg, setMsg] = useState("");
 
   localStorage.setItem("delay1", true);
   localStorage.setItem("delay2", true);
@@ -398,13 +403,21 @@ function HLSPlayer() {
   // }, [polygons]);
 
   const onPointSubmit = () => {
-    dispatch(createPolygons(camera.id, desc, desc, points.toString()));
-    console.log(points.toString());
-    setPoint([]);
+    if (desc.length > 0 && points.length > 2) {
+      dispatch(createPolygons(camera.id, desc, desc, points.toString()));
+      console.log(points.toString());
+      setPoint([]);
+      setMsg("");
+      setDesc("");
+    } else if (points.length < 3){
+      alert("Please 3 points at least")
+    }
   };
 
   const handleCleanCanva = () => {
     setPoint([]);
+    setMultiPoly([]);
+    setDesc("");
   };
 
   useEffect(() => {
@@ -892,6 +905,7 @@ function HLSPlayer() {
 
   const handleChange1 = (event) => {
     setCanvasPane(true);
+    setShowCanvas(false);
     const {
       target: { value },
     } = event;
@@ -912,20 +926,13 @@ function HLSPlayer() {
       tmp_multiPoly.push({
         index: item,
         points: polygons[item].points,
-        color: `rgba(${getRandomArbitrary(
-          0,
-          255
-        )}, ${getRandomArbitrary(0, 255)}, ${getRandomArbitrary(
-          0,
-          255
-        )}, 0.3)`,
+        color: polygons[item].color,
       });
     });
 
     setSelected(selectedLabels);
 
-    setMultiPoly([ ...multiPoly, ...tmp_multiPoly,]);
-    console.log(tmp_multiPoly);
+    setMultiPoly(tmp_multiPoly);
   };
 
   return (
@@ -935,51 +942,37 @@ function HLSPlayer() {
           {mode === "LIVE" ? "Live Video Mode" : "Vod Video Mode"}
           <Switch
             onChange={() => {
-              setShowCanvas(!showCanvas);
+              setShowTool(!showTool);
               setCanvasPane(false);
               dispatch({ type: POLYGON_SET_ONE, payload: [] });
+              setMultiPoly([]);
+              setPoint([]);
             }}
           />
-
-          {showCanvas && !showCanvasPane ? (
+          {showTool ? (
             <>
-              <input
-                type="text"
-                value={desc}
-                onChange={(e) => {
-                  setDesc(e.target.value);
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setCanvasPane(false);
+                  setShowCanvas(!showCanvas);
+                  setPoint([]);
+                  setMultiPoly([]);
                 }}
-              />
-              <button onClick={onPointSubmit}>Add Polygon</button>
-              <button onClick={handleCleanCanva}>Clean</button>
-            </>
-          ) : (
-            <></>
-          )}
-
-          {showCanvas ? (
-            <>
-              <select onChange={clickList} value={selectedPoly}>
-                <option key={"none"} value={-1}>
-                  {"--NONE--"}
-                </option>
-                {polygons.map((item, index) => {
-                  return (
-                    <option key={index} value={index}>
-                      {item.desc}
-                    </option>
-                  );
-                })}
-              </select>
-              <FormControl sx={{ m: 1, width: 300 }} size="small">
-                <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+              >
+                Create
+              </Button>
+              <FormControl sx={{ width: 250 }} size="small">
+                <InputLabel id="demo-multiple-checkbox-label">
+                  Selected Polygons
+                </InputLabel>
                 <Select
                   labelId="demo-multiple-checkbox-label"
                   id="demo-multiple-checkbox"
                   multiple
                   value={personName}
                   onChange={handleChange1}
-                  input={<OutlinedInput label="Tag" />}
+                  input={<OutlinedInput label="Selected Polygons" />}
                   renderValue={(selected) => selectedList.join(", ")}
                   MenuProps={MenuProps}
                 >
@@ -995,31 +988,81 @@ function HLSPlayer() {
           ) : (
             <></>
           )}
-          {showCanvas && showCanvasPane ? (
+          {showCanvas ? (
             <>
-              <input
-                type={"text"}
+              <TextField
+                error={msg.length > 0 ? true : false}
+                id="outlined-basic"
+                value={desc}
+                onChange={(e) => {
+                  setDesc(e.target.value);
+                  if (e.target.value.length <= 0) {
+                    setMsg("* Field is Required");
+                  }
+                }}
+                label="Create Label"
+                variant="outlined"
+                helperText={msg.length > 0 ? msg : ""}
+                size="small"
+              />
+
+              <Button
+                variant="contained"
+                color="success"
+                onClick={onPointSubmit}
+              >
+                Save
+              </Button>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleCleanCanva}
+              >
+                Clean
+              </Button>
+            </>
+          ) : (
+            <></>
+          )}
+          {showCanvasPane ? (
+            <>
+              <TextField
+                id="outlined-basic"
+                value={updateDesc}
+                error={msg.length > 0 ? true : false}
                 onChange={(e) => {
                   setUpdateDesc(e.target.value);
+                  if (e.target.value.length <= 0) {
+                    setMsg("* Field is Required");
+                  }
                 }}
-                value={updateDesc}
+                label="Update Label"
+                variant="outlined"
+                helperText={msg.length > 0 ? msg : ""}
+                size="small"
               />
-              <input
-                type={"button"}
+              <Button
+                variant="contained"
                 onClick={() => {
-                  updatePolygons(indexDesc, updateDesc, points.toString());
-                  dispatch(getPolygons(camera.id));
+                  if (desc.length > 0) {
+                    updatePolygons(indexDesc, updateDesc, points.toString());
+                    dispatch(getPolygons(camera.id));
+                    setMsg("");
+                    setMultiPoly([]);
+                  }
                 }}
-                value={"Update"}
-              />
-              <input
-                type={"button"}
+              >
+                {"Update"}
+              </Button>
+              <Button
+                variant="outlined"
                 onClick={() => {
                   deletePolygons(indexDesc);
                   dispatch(getPolygons(camera.id));
                 }}
-                value={"delete"}
-              />
+              >
+                {"Delete"}
+              </Button>
             </>
           ) : (
             <></>
@@ -1043,7 +1086,7 @@ function HLSPlayer() {
           </div>
         )}
         <div id="wrapper">
-          {showCanvas && !showCanvasPane ? (
+          {showCanvas ? (
             <div className="wrapper1">
               <DrawCanvas
                 draw={draw}
@@ -1056,7 +1099,7 @@ function HLSPlayer() {
           ) : (
             <></>
           )}
-          {showCanvas && showCanvasPane ? (
+          {showCanvasPane ? (
             <div className="wrapper1">
               <Canvas
                 draw={show}

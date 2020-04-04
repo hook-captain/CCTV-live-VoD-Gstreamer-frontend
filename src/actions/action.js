@@ -12,6 +12,10 @@ import {
   POLYGON_GET_MODE,
 } from "../redux/types";
 
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
 export const createPolygons =
   (camera_id, name, desc, position) => (dispatch) => {
     let data = {
@@ -19,29 +23,27 @@ export const createPolygons =
       name: name,
       desc: desc,
       position: position,
+      color: `rgba(${getRandomArbitrary(0, 255)}, ${getRandomArbitrary(
+        0,
+        255
+      )}, ${getRandomArbitrary(0, 255)}, 0.5)`,
     };
     axios.post(`/api/polygons`, data).then((res) => {
       dispatch(getPolygons(camera_id));
     });
   };
 
-export const updatePolygons =
-  (camera_id, desc, position) => {
-    let data = {
-      desc: desc,
-      position: position
-    };
-    axios.put(`/api/polygons/${camera_id}`, data).then((res) => {
-      
-    });
+export const updatePolygons = (camera_id, desc, position) => {
+  let data = {
+    desc: desc,
+    position: position,
+  };
+  axios.put(`/api/polygons/${camera_id}`, data).then((res) => {});
 };
 
-export const deletePolygons =
-  (camera_id) => {
-    axios.delete(`/api/polygons/${camera_id}`).then((res) => {
-      
-    });
-  };
+export const deletePolygons = (camera_id) => {
+  axios.delete(`/api/polygons/${camera_id}`).then((res) => {});
+};
 
 export const getPolygons = (camera_id) => (dispatch) => {
   axios.get(`/api/polygons/${camera_id}`).then((res) => {
@@ -67,6 +69,7 @@ export const getPolygons = (camera_id) => (dispatch) => {
       polygons.points = points;
       polygons.desc = item.desc;
       polygons.id = item.id;
+      polygons.color = item.color;
       data.push(polygons);
       polygons = {};
       points = [];
