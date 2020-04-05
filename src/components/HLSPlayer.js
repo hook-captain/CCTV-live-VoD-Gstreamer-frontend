@@ -350,7 +350,8 @@ function HLSPlayer() {
     subThumbnails,
     sub_Url,
     thumbnails,
-    startTimeCheck
+    startTimeCheck,
+    listCheck
   } = useSelector((state) => state.thumbnail);
   const dispatch = useDispatch();
   const [status, setStatus] = useState(0);
@@ -375,6 +376,9 @@ function HLSPlayer() {
 
   const [startVideo, setStartVideo] = useState(startClipTime);
   const [endVideo, setEndVideo] = useState(endTime);
+  const [selectOption, setSelectOption] = useState(0);
+  const [checkOption, setCheckOption] = useState(0);
+
 
   localStorage.setItem("delay1", true);
   localStorage.setItem("delay2", true);
@@ -385,6 +389,11 @@ function HLSPlayer() {
     dispatch(selectThumbnail(selectState));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectState]);
+
+  useEffect(() => {
+    setCheckOption(listCheck);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listCheck]);
 
   useEffect(() => {
     setSliderValue([startClipFormat, endFormat - 1]);
@@ -720,7 +729,9 @@ function HLSPlayer() {
   function increase() {
     // timeUpdate()
     // timeDuration()
-    setTime(new Date(addSeconds(new Date(startVideo))));
+    if(startVideo){
+      setTime(new Date(addSeconds(new Date(startVideo))));
+    }
     if (playerRef.current.currentTime === playerRef.current.duration) {
       pauseVideo();
     }
@@ -751,6 +762,14 @@ function HLSPlayer() {
       playerRef.current.currentTime = 0;
     }
   };
+
+  const onOpenChange = () => {
+    setSelectOption(1);
+  }
+
+  const onCloseChange = () => {
+    setSelectOption(0);
+  }
 
   const onClickFastForward = () => {
     if (playerRef.current.currentTime !== playerRef.current.duration) {
@@ -980,6 +999,8 @@ function HLSPlayer() {
                   id="demo-multiple-checkbox"
                   multiple
                   value={personName}
+                  onOpen={onOpenChange}
+                  onClose={onCloseChange}
                   onChange={handleChange1}
                   input={<OutlinedInput label="Selected Polygons" />}
                   renderValue={(selected) => selectedList.join(", ")}
@@ -1123,7 +1144,7 @@ function HLSPlayer() {
           ) : (
             <></>
           )}
-          {thumbnails[0] && mode === "VOD" ? (
+          {thumbnails[0] && mode === "VOD" && selectOption === 0 && checkOption === 0? (
             <img
               src={sub_Url}
               alt="img"
@@ -1131,7 +1152,7 @@ function HLSPlayer() {
               className="grey"
               height={height}
             ></img>
-          ) : mode === "VOD" ? (
+          ) : mode === "VOD" && selectOption === 0 && checkOption === 0? (
             <div style={{ marginTop: "20%", marginLeft: "30%" }}>
               <font size={10} style={{ color: "#888888" }}>
                 <b>No Data!</b>
@@ -1140,7 +1161,7 @@ function HLSPlayer() {
           ) : (
             <></>
           )}
-          {mode === "LIVE" && cameraStatus.flag === "NO" ? (
+          {mode === "LIVE" && cameraStatus.flag === "NO" && selectOption === 0 && checkOption === 0? (
             <div>
               <img
                 src={cameraStatus.path}
@@ -1197,7 +1218,7 @@ function HLSPlayer() {
               </Grid>
               <Grid item xs={1}>
                 <div style={{ marginTop: 5, marginRight: 10 }}>
-                  {`${TimelineFormat2(new Date(endVideo))}`}
+                  {`${TimelineFormat1(new Date(endVideo))}`}
                 </div>
               </Grid>
             </Grid>
@@ -1207,12 +1228,13 @@ function HLSPlayer() {
                   cursor="pointer"
                   sx={{ marginLeft: 2 }}
                   fontSize="large"
+                  disable = "true"
                   onClick={async () => {
                     if (localStorage.getItem("delay2") === "true") {
                       await localStorage.setItem("delay2", false);
                       await setTimeout(() => {
                         previousClick();
-                      }, 100);
+                      }, 300);
                     }
                   }}
                 />
@@ -1237,7 +1259,7 @@ function HLSPlayer() {
                       await localStorage.setItem("delay1", false);
                       await setTimeout(() => {
                         nextClick();
-                      }, 100);
+                      }, 300);
                     }
                   }}
                 />

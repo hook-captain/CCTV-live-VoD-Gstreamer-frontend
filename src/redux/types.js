@@ -14,6 +14,7 @@ export const GET_SUB_URL = "GET_SUB_URL"
 export const GET_SEARCH_KEY = "GET_SEARCH_KEY"
 export const GET_DOWNLOAD_URL = "GET_DOWNLOAD_URL"
 export const SET_CLIP_CHECK = "SET_CLIP_CHECK"
+export const SET_LIST_CHECK = "SET_LIST_CHECK"
 
 export const VIDEO_LIVE_MODE = "VIDEO_LIVE_MODE"
 export const GET_LIVE_URL = "GET_LIVE_URL"

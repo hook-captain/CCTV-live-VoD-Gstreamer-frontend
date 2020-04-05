@@ -13,7 +13,7 @@ import {
   Snackbar
 } from "@mui/material";
 import { getThumbnail, GetVodVideo } from "../actions/action";
-import { START_TIME_GROUP, START_CLIPTIME_GROUP, GET_SEARCH_KEY } from "../redux/types";
+import { START_TIME_GROUP, START_CLIPTIME_GROUP, GET_SEARCH_KEY, SET_LIST_CHECK } from "../redux/types";
 
 export default function SearchFilter() {
   const { camera } = useSelector((state) => state.camera);
@@ -110,6 +110,14 @@ export default function SearchFilter() {
     }
   };
 
+  const onOpenChange = () => {
+    dispatch({ type: SET_LIST_CHECK, payload: 1 });
+  }
+
+  const onCloseChange = () => {
+    dispatch({ type: SET_LIST_CHECK, payload: 0 });
+  }
+
   const setEndtimeChange = (e) => {
     setEndtime(e.target.value);
     if (e.target.value > starttime) {
@@ -174,6 +182,8 @@ export default function SearchFilter() {
               id="demo-simple-select"
               value={duration}
               label="Clip Duration"
+              onOpen={onOpenChange}
+              onClose={onCloseChange}
               onChange={(e) => handleChange(e)}
             >
               <MenuItem value={1}>1 minute</MenuItem>
