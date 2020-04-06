@@ -9,7 +9,6 @@ import {
   Slider,
   Switch,
   Select,
-  MenuProps,
   MenuItem,
   Checkbox,
   ListItemText,
@@ -39,7 +38,7 @@ import {
   SET_ENDTIME,
   START_CLIPTIME_GROUP,
   POLYGON_SET_ONE,
-  SET_CLIP_CHECK
+  SET_CLIP_CHECK,
 } from "../redux/types";
 import {
   GetVodVideo,
@@ -254,50 +253,50 @@ function HLSPlayer() {
     return result;
   };
 
-  const TimelineFormat2 = (Dates) => {
-    let Hour, Min, result;
-    let time = new Date(Dates);
+  // const TimelineFormat2 = (Dates) => {
+  //   let Hour, Min, result;
+  //   let time = new Date(Dates);
 
-    if (time.getMinutes() < 9) Min = `0${time.getMinutes() + 1}`;
-    else Min = `${time.getMinutes() + 1}`;
+  //   if (time.getMinutes() < 9) Min = `0${time.getMinutes() + 1}`;
+  //   else Min = `${time.getMinutes() + 1}`;
 
-    if (time.getHours() > 12) {
-      Hour = `${time.getHours() - 12}:${Min}PM`;
-    } else {
-      if (time.getHours() < 10) {
-        Hour = `0${time.getHours()}:${Min}AM`;
-      } else {
-        if (time.getHours() === 12) {
-          Hour = `${time.getHours()}:${Min}PM`;
-        } else {
-          Hour = `${time.getHours()}:${Min}AM`;
-        }
-      }
-    }
+  //   if (time.getHours() > 12) {
+  //     Hour = `${time.getHours() - 12}:${Min}PM`;
+  //   } else {
+  //     if (time.getHours() < 10) {
+  //       Hour = `0${time.getHours()}:${Min}AM`;
+  //     } else {
+  //       if (time.getHours() === 12) {
+  //         Hour = `${time.getHours()}:${Min}PM`;
+  //       } else {
+  //         Hour = `${time.getHours()}:${Min}AM`;
+  //       }
+  //     }
+  //   }
 
-    if (time.getMinutes() === 59) {
-      if (time.getHours() > 11) {
-        if (time.getHours() === 23) {
-          Hour = `00:00AM`;
-        } else {
-          Hour = `${time.getHours() - 11}:00PM`;
-        }
-      } else {
-        if (time.getHours() < 9) {
-          Hour = `0${time.getHours() + 1}:00AM`;
-        } else {
-          if (time.getHours() === 11) {
-            Hour = `${time.getHours() + 1}:00PM`;
-          } else {
-            Hour = `${time.getHours() + 1}:00AM`;
-          }
-        }
-      }
-    }
+  //   if (time.getMinutes() === 59) {
+  //     if (time.getHours() > 11) {
+  //       if (time.getHours() === 23) {
+  //         Hour = `00:00AM`;
+  //       } else {
+  //         Hour = `${time.getHours() - 11}:00PM`;
+  //       }
+  //     } else {
+  //       if (time.getHours() < 9) {
+  //         Hour = `0${time.getHours() + 1}:00AM`;
+  //       } else {
+  //         if (time.getHours() === 11) {
+  //           Hour = `${time.getHours() + 1}:00PM`;
+  //         } else {
+  //           Hour = `${time.getHours() + 1}:00AM`;
+  //         }
+  //       }
+  //     }
+  //   }
 
-    result = `${Hour}`;
-    return result;
-  };
+  //   result = `${Hour}`;
+  //   return result;
+  // };
 
   const getBetweenDate = (Date1, Date2) => {
     return parseInt(
@@ -351,7 +350,7 @@ function HLSPlayer() {
     sub_Url,
     thumbnails,
     startTimeCheck,
-    listCheck
+    listCheck,
   } = useSelector((state) => state.thumbnail);
   const dispatch = useDispatch();
   const [status, setStatus] = useState(0);
@@ -378,7 +377,6 @@ function HLSPlayer() {
   const [endVideo, setEndVideo] = useState(endTime);
   const [selectOption, setSelectOption] = useState(0);
   const [checkOption, setCheckOption] = useState(0);
-
 
   localStorage.setItem("delay1", true);
   localStorage.setItem("delay2", true);
@@ -413,7 +411,8 @@ function HLSPlayer() {
 
   useEffect(() => {
     if (camera.id !== undefined) {
-      dispatch(getPolygons(camera.id));
+      setShowTool(false);
+      clear();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [camera]);
@@ -422,14 +421,27 @@ function HLSPlayer() {
   //   setPoint(polygons);
   // }, [polygons]);
 
+  const clear = () => {
+    setCanvasPane(false);
+    setShowCanvas(false)
+    dispatch({ type: POLYGON_SET_ONE, payload: [] });
+    setMultiPoly([]);
+    setPoint([]);
+    dispatch(getPolygons(camera.id));
+    setSelected([]);
+    setPersonName([]);
+    setDesc("");
+    setUpdateDesc("");
+  }
+
   const onPointSubmit = () => {
     if (desc.length > 0 && points.length > 2) {
       dispatch(createPolygons(camera.id, desc, desc, points.toString()));
       setPoint([]);
       setMsg("");
       setDesc("");
-    } else if (points.length < 3){
-      alert("Please 3 points at least")
+    } else if (points.length < 3) {
+      alert("Please 3 points at least");
     }
   };
 
@@ -566,9 +578,12 @@ function HLSPlayer() {
       if (endVideo) {
         setEndFormat(parseInt(GetMinute(new Date(endVideo))) + 1);
       }
-      if(startTimeCheck === 1){
+      if (startTimeCheck === 1) {
         if (playerRef.current) {
-          playerRef.current.currentTime = getBetweenDate(startClipTime, startTime);
+          playerRef.current.currentTime = getBetweenDate(
+            startClipTime,
+            startTime
+          );
           dispatch({ type: SET_CLIP_CHECK, payload: 0 });
         }
       }
@@ -729,7 +744,7 @@ function HLSPlayer() {
   function increase() {
     // timeUpdate()
     // timeDuration()
-    if(startVideo){
+    if (startVideo) {
       setTime(new Date(addSeconds(new Date(startVideo))));
     }
     if (playerRef.current.currentTime === playerRef.current.duration) {
@@ -765,11 +780,11 @@ function HLSPlayer() {
 
   const onOpenChange = () => {
     setSelectOption(1);
-  }
+  };
 
   const onCloseChange = () => {
     setSelectOption(0);
-  }
+  };
 
   const onClickFastForward = () => {
     if (playerRef.current.currentTime !== playerRef.current.duration) {
@@ -834,12 +849,16 @@ function HLSPlayer() {
       ]);
     }
 
-    setStartVideo(DateTime1(
-      AddMinute(new Date(GetPreTimeFormat(new Date(startTime))), newValue[0])
-    ));
-    setEndVideo(DateTime1(
-      AddMinute(new Date(GetPreTimeFormat(new Date(startTime))), newValue[1])
-    ));
+    setStartVideo(
+      DateTime1(
+        AddMinute(new Date(GetPreTimeFormat(new Date(startTime))), newValue[0])
+      )
+    );
+    setEndVideo(
+      DateTime1(
+        AddMinute(new Date(GetPreTimeFormat(new Date(startTime))), newValue[1])
+      )
+    );
 
     // dispatch({ type: START_CLIPTIME_GROUP, payload: start });
     // dispatch({ type: SET_ENDTIME, payload: end });
@@ -969,11 +988,9 @@ function HLSPlayer() {
           <Switch
             onChange={() => {
               setShowTool(!showTool);
-              setCanvasPane(false);
-              dispatch({ type: POLYGON_SET_ONE, payload: [] });
-              setMultiPoly([]);
-              setPoint([]);
+              clear();
             }}
+            checked={showTool}
           />
           {showTool ? (
             <>
@@ -1074,11 +1091,18 @@ function HLSPlayer() {
               <Button
                 variant="contained"
                 onClick={() => {
-                  if (desc.length > 0) {
-                    updatePolygons(indexDesc, updateDesc, points.toString());
-                    dispatch(getPolygons(camera.id));
-                    setMsg("");
-                    setMultiPoly([]);
+                  if (updateDesc.length > 0 && points.length > 0) {
+                    updatePolygons(
+                      indexDesc,
+                      updateDesc,
+                      points.toString()
+                    ).then(() => {
+                      dispatch(getPolygons(camera.id));
+                      setMsg("");
+                      setMultiPoly([]);
+                      setPersonName([]);
+                      setUpdateDesc("");
+                    });
                   }
                 }}
               >
@@ -1087,8 +1111,12 @@ function HLSPlayer() {
               <Button
                 variant="outlined"
                 onClick={() => {
-                  deletePolygons(indexDesc);
-                  dispatch(getPolygons(camera.id));
+                  deletePolygons(indexDesc).then(() => {
+                    dispatch(getPolygons(camera.id));
+                    setPersonName([]);
+                    setUpdateDesc("");
+                    setMultiPoly([]);
+                  });
                 }}
               >
                 {"Delete"}
@@ -1144,7 +1172,10 @@ function HLSPlayer() {
           ) : (
             <></>
           )}
-          {thumbnails[0] && mode === "VOD" && selectOption === 0 && checkOption === 0? (
+          {thumbnails[0] &&
+          mode === "VOD" &&
+          selectOption === 0 &&
+          checkOption === 0 ? (
             <img
               src={sub_Url}
               alt="img"
@@ -1152,7 +1183,7 @@ function HLSPlayer() {
               className="grey"
               height={height}
             ></img>
-          ) : mode === "VOD" && selectOption === 0 && checkOption === 0? (
+          ) : mode === "VOD" && selectOption === 0 && checkOption === 0 ? (
             <div style={{ marginTop: "20%", marginLeft: "30%" }}>
               <font size={10} style={{ color: "#888888" }}>
                 <b>No Data!</b>
@@ -1161,7 +1192,10 @@ function HLSPlayer() {
           ) : (
             <></>
           )}
-          {mode === "LIVE" && cameraStatus.flag === "NO" && selectOption === 0 && checkOption === 0? (
+          {mode === "LIVE" &&
+          cameraStatus.flag === "NO" &&
+          selectOption === 0 &&
+          checkOption === 0 ? (
             <div>
               <img
                 src={cameraStatus.path}
@@ -1228,7 +1262,7 @@ function HLSPlayer() {
                   cursor="pointer"
                   sx={{ marginLeft: 2 }}
                   fontSize="large"
-                  disable = "true"
+                  disable="true"
                   onClick={async () => {
                     if (localStorage.getItem("delay2") === "true") {
                       await localStorage.setItem("delay2", false);

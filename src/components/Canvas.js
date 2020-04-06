@@ -57,15 +57,34 @@ const Canvas = (props) => {
   };
 
 
-  const MouseClick = (e) => {
-
-    props.multi.map((item, index) => {
+  const MouseClick = async (e) => {
+    let points = props.points;
+    let outFlag = true, pointFlag = false;
+    await props.multi.map((item, index) => {
       if(pointInPolygon(item.points, [e.nativeEvent.offsetX, e.nativeEvent.offsetY])){
         setPolygonIndex(index);
+        outFlag = false;
         props.changePoint(item.points)
         props.changeSelectedPoly(item.index)
       }
     });
+
+    await props.points.map((item, index) => {
+      if (
+        Math.abs(e.nativeEvent.offsetX - item[0] * props.width) <= 10 &&
+        Math.abs(e.nativeEvent.offsetY - item[1] * props.height) <= 10
+      ) {
+        pointFlag = true;
+      }
+    });
+
+    if(outFlag && !pointFlag){
+      let x = e.nativeEvent.offsetX / props.width
+      let y = e.nativeEvent.offsetY / props.height
+
+      points.push([x.toFixed(4), y.toFixed(4)])
+      props.changePoint(points);
+    }
   };
 
   useEffect(() => {

@@ -33,16 +33,17 @@ export const createPolygons =
     });
   };
 
-export const updatePolygons = (camera_id, desc, position) => {
+export const updatePolygons = async (camera_id, desc, position) => {
   let data = {
     desc: desc,
     position: position,
   };
-  axios.put(`/api/polygons/${camera_id}`, data).then((res) => {});
+  console.log(camera_id, desc, position)
+  await axios.put(`/api/polygons/${camera_id}`, data).then((res) => {});
 };
 
-export const deletePolygons = (camera_id) => {
-  axios.delete(`/api/polygons/${camera_id}`).then((res) => {});
+export const deletePolygons = async (camera_id) => {
+  await axios.delete(`/api/polygons/${camera_id}`).then((res) => {});
 };
 
 export const getPolygons = (camera_id) => (dispatch) => {
